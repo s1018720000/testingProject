@@ -60,6 +60,7 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:
+    #(不需要修改，生产部署时只需做替换即可，sed -i "s/dev/prod/g" /xx/src/main/resources/application.yml)
     active: dev
   # 文件上传
   servlet:
