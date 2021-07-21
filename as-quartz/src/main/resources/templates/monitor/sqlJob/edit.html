@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改SQL检测任务')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sqlJob-edit" th:object="${moniJob}">
+            <h4 class="form-header h4">[[#{user.add.basic.information}]]</h4>
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">ASID：</label>
+                <div class="col-sm-8">
+                    <input name="asid" th:field="*{asid}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Ticket Number：</label>
+                <div class="col-sm-8">
+                    <input name="ticketNumber" th:field="*{ticketNumber}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.name_zh}]]：</label>
+                <div class="col-sm-8">
+                    <input name="chName" th:field="*{chName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.name_en}]]：</label>
+                <div class="col-sm-8">
+                    <input name="enName" th:field="*{enName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.status}]]：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:field="*{status}" required>
+                        <label th:for="${'status_' + dict.dictCode}" th:text="#{${dict.dictLabel}}"></label>
+                    </div>
+                </div>
+            </div>
+            <div  id="select-platform-jdbc">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">[[#{sql.job.platform}]]：</label>
+                    <div class="col-sm-8">
+                        <select name="platform" class="platform form-control m-b" th:data-value="*{platform}" required></select>
+<!--                        <select name="platform" class="form-control m-b" th:with="type=${@dict.getType('ub8_platform_type')}" required>-->
+<!--                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{platform}"></option>-->
+<!--                        </select>-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">JDBC：</label>
+                    <div class="col-sm-8">
+                        <select name="jdbc" class="jdbc form-control m-b" th:data-value="*{jdbc}" required></select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.cron.expression}]]：</label>
+                <div class="col-sm-8">
+                    <input name="cronExpression" th:field="*{cronExpression}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{sql.job.related.export}]]：</label>
+                <div class="col-sm-8">
+                    <input name="relExport" th:field="*{relExport}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.alert}]]：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                        <input type="radio" th:id="${'telegramAlert_' + dict.dictCode}" name="telegramAlert" th:value="${dict.dictValue}" th:field="*{telegramAlert}" required>
+                        <label th:for="${'telegramAlert_' + dict.dictCode}" th:text="#{${dict.dictLabel}}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" th:title="#{sql.job.tg.info.info}"><i class="fa fa-question-circle-o"></i> [[#{sql.job.tg.info}]]：</label>
+                <div class="col-sm-8">
+                    <textarea name="telegramInfo" class="form-control" rows="5">[[*{telegramInfo}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+                <div class="col-sm-8">
+                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}">
+                        <option value="">--[[#{dict.data.select}]]--</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{telegramConfig}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.requester}]]：</label>
+                <div class="col-sm-8">
+                    <select name="requester" class="form-control m-b" th:with="type=${@dict.getType('job_requester_list')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{requester}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.priority}]]：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('job_priority_list')}">
+                        <input type="radio" th:id="${'priority_' + dict.dictCode}" name="priority" th:value="${dict.dictValue}" th:field="*{priority}" required>
+                        <label th:for="${'priority_' + dict.dictCode}" th:text="#{${dict.dictLabel}}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.action}]]：</label>
+                <div class="col-sm-8">
+                    <select name="actionItem" class="form-control m-b" th:with="type=${@dict.getType('job_call_who')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{actionItem}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{sql.job.descr}]]：</label>
+                <div class="col-sm-8">
+                    <textarea name="descr" class="form-control" rows="5">[[*{descr}]]</textarea>
+                </div>
+            </div>
+            <h4 class="form-header h4">[[#{sql.job.script}]]</h4>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <textarea name="script" class="form-control" rows="10" required>[[*{script}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-4">
+                    <button id="testBtn" type="button" class="btn btn-block btn-outline btn-primary"
+                            th:data-loading-text="'<i class=\'fa fa-hourglass-2\'></i> '+#{sql.job.script.test.loading}"
+                            th:data-error-text="'<i class=\'fa fa-exclamation-circle\'></i> '+#{home.server.error}"
+                            th:data-success-text="'<i class=\'fa fa-check-circle\'></i> '+#{sql.job.script.test.success}+' <i class=\'fa fa-thumbs-o-up\'></i>'"
+                            th:data-failure-text="'<i class=\'fa fa-times-circle\'></i> '+#{sql.job.script.test.failure}+' <i class=\'fa fa-frown-o\'></i>'"
+                            autocomplete="off"><i class="fa fa-bug"></i> [[#{sql.job.script.test}]]</button>&nbsp;
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.auto.match}]]：</label>
+                <div class="col-sm-8">
+                    <select name="autoMatch" class="form-control m-b" th:with="type=${@dict.getType('job_auto_comparison')}" required>
+                        <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}" th:value="${dict.dictValue}" th:field="*{autoMatch}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label" th:title="#{sql.job.expected.result.info}">[[#{sql.job.expected.result}]]：<i class="fa fa-question-circle-o"></i></label>
+                <div class="col-sm-8">
+                    <input name="expectedResult" th:field="*{expectedResult}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: jquery-cxselect-js" />
+    <script th:inline="javascript">
+        var PF1JDBCDatas = [[${@dict.getType('pf1_data_base_source')}]];
+        var PF2JDBCDatas = [[${@dict.getType('pf2_data_base_source')}]];
+        var ASJDBCDatas = [[${@dict.getType('as_data_base_source')}]];
+        var prefix = ctx + "monitor/sqlJob";
+
+        // 联动下拉框
+        $('#select-platform-jdbc').cxSelect({
+            selects: ['platform', 'jdbc'],
+            required: true,
+            jsonValue: 'dictValue',
+            jsonName: 'dictLabel',
+            data: [
+                {'dictValue': 'PF1', 'dictLabel': 'Platform 1.0', 's': PF1JDBCDatas},
+                {'dictValue': 'PF2', 'dictLabel': 'Platform 5.0', 's': PF2JDBCDatas},
+                {'dictValue': 'AS', 'dictLabel': 'AS Monitor', 's': ASJDBCDatas},
+            ]
+        });
+
+        $("#form-sqlJob-edit").validate({
+            onkeyup: false,
+            rules:{
+                cronExpression:{
+                    remote: {
+                        url: prefix + "/checkCronExpressionIsValid",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "cronExpression": function() {
+                                return $.common.trim($("#cronExpression").val());
+                            }
+                        },
+                        dataFilter: function(data, type) {
+                            return data;
+                        }
+                    }
+                },
+            },
+            messages: {
+                "cronExpression": {
+                    remote: i18n('sql.job.cron.expression.error')
+                }
+            },
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-sqlJob-edit').serialize());
+            }
+        }
+
+        function testStart(){
+            $('#testBtn').button('loading')
+            $('#testBtn').removeClass('btn-danger')
+            $('#testBtn').removeClass('btn-info')
+            $('#testBtn').addClass('btn-primary')
+            $('#testBtn').css('color','white')
+        }
+
+        function testSuccess(){
+            $('#testBtn').removeClass('btn-primary')
+            $('#testBtn').removeClass('btn-danger')
+            $('#testBtn').addClass('btn-info')
+            $('#testBtn').removeAttr('style')
+            $('#testBtn').button('success')
+        }
+
+        function testFailure(){
+            $('#testBtn').removeClass('btn-primary')
+            $('#testBtn').removeClass('btn-info')
+            $('#testBtn').addClass('btn-danger')
+            $('#testBtn').removeAttr('style')
+            $('#testBtn').button('failure')
+        }
+
+        function testError(){
+            $('#testBtn').removeClass('btn-primary')
+            $('#testBtn').removeClass('btn-info')
+            $('#testBtn').addClass('btn-danger')
+            $('#testBtn').removeAttr('style')
+            $('#testBtn').button('error')
+        }
+
+        $(document).ready(function(){
+            $('#testBtn').on('click',function(){
+                if ($.validate.form()) {
+                    testStart()
+                    var script = $("[name='script']").val();
+                    var jdbc = $("[name='jdbc']").val();
+                    $.ajax({
+                        type:"POST",
+                        url:prefix + "/test",
+                        contentType: "application/x-www-form-urlencoded",
+                        data : {
+                            "script": script,
+                            "jdbc": jdbc
+                        },
+                        error : function(){
+                            testError()
+                        },
+                        success : function(data) {
+                            if(data.code === 0){
+                                testSuccess()
+                            } else {
+                                testFailure()
+                                $.modal.alertError(data.msg)
+                            }
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

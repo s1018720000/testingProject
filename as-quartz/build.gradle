@@ -1,0 +1,18 @@
+dependencies {
+    compile project(':as-common')
+
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-quartz"
+    implementation "org.springframework:spring-context-support"
+
+    implementation "org.apache.commons:commons-lang3"
+    implementation "javax.validation:validation-api"
+    implementation("org.quartz-scheduler:quartz") {
+        exclude group: "com.mchange", module: "c3p0"
+    }
+    implementation 'com.github.pengrad:java-telegram-bot-api:5.2.0'
+    implementation 'org.apache.commons:commons-text:1.9'
+// https://mvnrepository.com/artifact/com.github.xuwei-k/html2image
+    implementation 'com.github.xuwei-k:html2image:0.1.0'
+
+}

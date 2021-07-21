@@ -1,0 +1,16 @@
+dependencies {
+    compile project(':as-framework')
+    compile project(':as-quartz')
+    compile project(':as-generator')
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "io.springfox:springfox-swagger2"
+    implementation "io.swagger:swagger-annotations:1.5.21"
+    implementation "io.swagger:swagger-models:1.5.21"
+    implementation "io.springfox:springfox-swagger-ui"
+    implementation "mysql:mysql-connector-java"
+    implementation "com.oracle.ojdbc:ojdbc8"
+
+    implementation "org.apache.commons:commons-lang3"
+
+}

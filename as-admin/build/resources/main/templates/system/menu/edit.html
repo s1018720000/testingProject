@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改菜单')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-menu-edit" th:object="${menu}">
+			<input name="menuId"   type="hidden" th:field="*{menuId}"   />
+			<input id="treeId" name="parentId" type="hidden" th:field="*{parentId}" />
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.father.menu}]]：</label>
+				<div class="col-sm-8">
+				    <div class="input-group">
+						<input class="form-control" type="text" onclick="selectMenuTree()" id="treeName" readonly="true" th:value="${menu.parentName == null ? '--' : menu.parentName}">
+					    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+				    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">[[#{menu.menu.type}]]：</label>
+				<div class="col-sm-8">
+					<label class="radio-box"> <input type="radio" th:field="*{menuType}" name="menuType" value="M" /> [[#{menu.catalogue}]] </label>
+					<label class="radio-box"> <input type="radio" th:field="*{menuType}" name="menuType" value="C" /> [[#{menu.menu}]] </label>
+					<label class="radio-box"> <input type="radio" th:field="*{menuType}" name="menuType" value="F" /> [[#{menu.button}]] </label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">[[#{menu.name.chinese}]]：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="menuName" id="menuName" th:field="*{menuName}" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.name.traditional.chinese}]]：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="menuNameTw" id="menuNameTw" th:field="*{menuNameTw}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.name.english}]]：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="menuNameUs" id="menuNameUs" th:field="*{menuNameUs}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.url}]]：</label>
+				<div class="col-sm-8">
+					<input id="url" name="url" class="form-control" type="text" th:field="*{url}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.menu.open.way}]]：</label>
+				<div class="col-sm-8">
+					<select id="target" name="target" class="form-control m-b">
+	                    <option value="menuItem" th:field="*{target}">[[#{menu.menu.open.inside}]]</option>
+	                    <option value="menuBlank" th:selected="*{target == 'menuBlank'}">[[#{menu.menu.open.new.tab}]]</option>
+	                </select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.permission}]]：</label>
+				<div class="col-sm-8">
+					<input id="perms" name="perms" class="form-control" type="text" th:field="*{perms}">
+				    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> [[#{menu.menu.permission.info}]]</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">[[#{menu.menu.show.sort}]]：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="orderNum" th:field="*{orderNum}" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.menu.icon}]]：</label>
+				<div class="col-sm-8">
+					<input id="icon" name="icon" class="form-control" type="text" th:placeholder="#{menu.menu.select.icon}" th:field="*{icon}">
+                    <div class="ms-parent" style="width: 100%;">
+                        <div class="icon-drop animated flipInX" style="display: none;max-height:200px;overflow-y:auto">
+                            <div data-th-include="system/menu/icon"></div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">[[#{menu.status}]]：</label>
+				<div class="col-sm-3">
+					<div class="radio-box" th:each="dict : ${@dict.getType('sys_show_hide')}">
+						<input type="radio" th:id="${dict.dictCode}" name="visible" th:value="${dict.dictValue}" th:field="*{visible}">
+						<label th:for="${dict.dictCode}" th:text="#{${dict.dictLabel}}"></label>
+					</div>
+				</div>
+				<label class="col-sm-2 control-label is-refresh" th:title="#{menu.menu.open.if.ref}">[[#{menu.menu.if.ref}]]：<i class="fa fa-question-circle-o"></i></label>
+				<div class="col-sm-3 is-refresh">
+				    <div class="radio-box">
+						<input type="radio" id="refresh-no" name="isRefresh" value="1" th:field="*{isRefresh}">
+						<label for="refresh-no">[[#{menu.menu.no.ref}]]</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" id="refresh-yes" name="isRefresh" value="0" th:field="*{isRefresh}">
+						<label for="refresh-yes">[[#{menu.menu.yes.ref}]]</label>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+        var prefix = ctx + "system/menu";
+
+        $(function() {
+            var menuType = $('input[name="menuType"]:checked').val();
+            menuVisible(menuType);
+        });
+
+        $("#form-menu-edit").validate({
+        	onkeyup: false,
+        	rules:{
+        		menuType:{
+        			required:true,
+        		},
+        		menuName:{
+        			remote: {
+                        url: prefix + "/checkMenuNameUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                        	"menuId": function() {
+                                return $("#menuId").val();
+                            },
+                            "parentId": function() {
+		                		return $("input[name='parentId']").val();
+		                    },
+                			"menuName": function() {
+                                return $.common.trim($("#menuName").val());
+                            }
+                        },
+                        dataFilter: function(data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        		orderNum:{
+        			digits:true
+        		},
+        	},
+        	messages: {
+                "menuName": {
+                    remote: i18n('menu.menu.exist')
+                }
+            },
+            focusCleanup: true
+        });
+        
+        function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-menu-edit').serialize());
+	        }
+	    }
+
+        $(function() {
+            $("input[name='icon']").focus(function() {
+                $(".icon-drop").show();
+            });
+            $("#form-menu-edit").click(function(event) {
+                var obj = event.srcElement || event.target;
+                if (!$(obj).is("input[name='icon']")) {
+                    $(".icon-drop").hide();
+                }
+            });
+            $(".icon-drop").find(".ico-list i").on("click",
+            function() {
+                $('#icon').val($(this).attr('class'));
+            });
+            $('input').on('ifChecked',
+            function(event) {
+                var menuType = $(event.target).val();
+                menuVisible(menuType);
+            });
+        });
+
+        function menuVisible(menuType) {
+            if (menuType == "M") {
+				$("#menuNameTw").parents(".form-group").show();
+				$("#menuNameUs").parents(".form-group").show();
+                $("#url").parents(".form-group").hide();
+                $("#perms").parents(".form-group").hide();
+                $("#icon").parents(".form-group").show();
+                $("#target").parents(".form-group").hide();
+                $("input[name='visible']").parents(".form-group").show();
+                $(".is-refresh").hide();
+            } else if (menuType == "C") {
+				$("#menuNameTw").parents(".form-group").show();
+				$("#menuNameUs").parents(".form-group").show();
+                $("#url").parents(".form-group").show();
+                $("#perms").parents(".form-group").show();
+                $("#icon").parents(".form-group").show();
+                $("#target").parents(".form-group").show();
+                $("input[name='visible']").parents(".form-group").show();
+                $(".is-refresh").show();
+            } else if (menuType == "F") {
+				$("#menuNameTw").parents(".form-group").hide();
+				$("#menuNameUs").parents(".form-group").hide();
+                $("#url").parents(".form-group").hide();
+                $("#perms").parents(".form-group").show();
+                $("#icon").parents(".form-group").hide();
+                $("#target").parents(".form-group").hide();
+                $("input[name='visible']").parents(".form-group").hide();
+                $(".is-refresh").hide();
+            }
+        }
+
+        /*菜单管理-修改-选择菜单树*/
+        function selectMenuTree() {
+        	var menuId = $("#treeId").val();
+        	if(menuId > 0) {
+        		var url = prefix + "/selectMenuTree/" + menuId;
+        		$.modal.open(i18n('menu.menu.select'), url, '380', '380');
+        	} else {
+        		$.modal.alertError(i18n('menu.menu.not.root'));
+        	}
+        }
+        
+        function selectMenuTree() {
+        	var menuId = $("#treeId").val();
+        	if(menuId > 0) {
+        		var url = prefix + "/selectMenuTree/" + menuId;
+        		var options = {
+       				title: i18n('menu.menu.select'),
+       				width: "380",
+       				url: url,
+       				callBack: doSubmit
+       			};
+       			$.modal.openOptions(options);
+        	} else {
+        		$.modal.alertError(i18n('menu.menu.not.root'));
+        	}
+		}
+		
+		function doSubmit(index, layero){
+			var body = layer.getChildFrame('body', index);
+   			$("#treeId").val(body.find('#treeId').val());
+   			$("#treeName").val(body.find('#treeName').val());
+   			layer.close(index);
+		}
+    </script>
+</body>
+</html>

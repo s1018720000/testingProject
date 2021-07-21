@@ -1,0 +1,112 @@
+# 数据源配置
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+            # AS Portal mysql dev
+            master:
+                url: jdbc:mysql://localhost:3306/kolin?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: root
+                password: 1qaz2wsx
+                driverClassName: com.mysql.cj.jdbc.Driver
+            # pf1 lottery dev
+            pf1:
+                # pf1 lottery
+                main:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.PF1DEV1-OOB.COM:1521/lottery
+                    username: lott_new_a3d1
+                    password: 2wsxzaq1
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+                # pf1 lottery sec
+                sec:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.PF1DEV1-OOB.COM:1521/lottery
+                    username: lott_new_a3d1
+                    password: 2wsxzaq1
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 core dev
+            pf2-core:
+                # pf2 core
+                main:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.PF2DEV1-OOB.COM:1521/UB8.pf2dev1.com
+                    username: core
+                    password: core
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+                # pf2 core sec
+                sec:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.PF2DEV1-OOB.COM:1521/UB8.pf2dev1.com
+                    username: core
+                    password: core
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 draw dev
+            pf2-draw:
+                # enabled 数据源开关
+                enabled: true
+                url: jdbc:oracle:thin:@DB.PF2DEV1-OOB.COM:1521/UB8.pf2dev1.com
+                username: core
+                password: core
+                driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 dw dev
+            pf2-dw:
+                # enabled 数据源开关
+                enabled: true
+                url: jdbc:oracle:thin:@DWDB.PF2DEV1-OOB.COM:1521/DW.pf2dev1.com
+                username: AS_MONITOR
+                password: BBdsk_1720ij
+                driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 ods dev
+            pf2-ods:
+                # enabled 数据源开关
+                enabled: true
+                url: jdbc:oracle:thin:@ODSDB.PF2DEV1-OOB.COM:1521/ods.pf2dev1.com
+                username: AS_MONITOR
+                password: BBdsk_1720ij
+                driverClassName: oracle.jdbc.driver.OracleDriver
+
+
+            # 初始连接数
+            initialSize: 5
+            # 最小连接池数量
+            minIdle: 10
+            # 最大连接池数量
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            # 配置一个连接在池中最大生存的时间，单位是毫秒
+            maxEvictableIdleTimeMillis: 900000
+            # 配置检测连接是否有效
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            webStatFilter: 
+                enabled: true
+            statViewServlet:
+                enabled: true
+                # 设置白名单，不填则允许所有访问
+                allow:
+                url-pattern: /druid/*
+                # 控制台管理用户名和密码
+                login-username: admin
+                login-password: 123456
+            filter:
+                stat:
+                    enabled: true
+                    # 慢SQL记录
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: true
+                wall:
+                    config:
+                        multi-statement-allow: true

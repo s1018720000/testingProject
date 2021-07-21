@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.order.mapper.PF1OrderNumberMapper">
+    
+    <resultMap type="PF1OrderNumber" id="PF1OrderNumberResult">
+        <result property="orderNo"    column="ORDERNO"/>
+        <result property="account"    column="ACCOUNTS"/>
+        <result property="restarNo"    column="RESTARNO"/>
+        <result property="sortId"    column="SORTID"/>
+        <result property="totalTimes"    column="TOTAL_TIMES"/>
+        <result property="recall"    column="RECALL"/>
+        <result property="kindValue"    column="KINDVALUE"/>
+        <result property="recallNum"    column="RECALL_NUM"/>
+        <result property="winQuit"    column="WIN_QUIT"/>
+        <result property="winStop"    column="WIN_STOP"/>
+        <result property="seriesValue"    column="SERIES_VALUE"/>
+    </resultMap>
+
+    <sql id="selectPF1OrderNumberVo">
+        select ORDERNO, ACCOUNTS, RESTARNO, SORTID, TOTAL_TIMES, RECALL, KINDVALUE, RECALL_NUM,  WIN_QUIT, WIN_STOP, SERIES_VALUE from lott_new_a3d1.lott_fc3d_order_main
+    </sql>
+    
+    <select id="selectPF1OrderNumber" parameterType="String" resultMap="PF1OrderNumberResult">
+        <include refid="selectPF1OrderNumberVo"/>
+        where ORDERNO = #{orderNo}
+    </select>
+
+</mapper>

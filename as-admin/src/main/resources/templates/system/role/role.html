@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('角色列表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								[[#{user.role.name}]]：<input type="text" name="roleName"/>
+							</li>
+							<li>
+								[[#{user.role.permission}]]：<input type="text" name="roleKey"/>
+							</li>
+							<li>
+								[[#{user.role.status}]]：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+									<option value="">[[#{user.list.all}]]</option>
+									<option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>[[#{common.create.time}]]： </label>
+								<input type="text" class="time-input" id="startTime" th:placeholder="#{common.start.time}" name="params[beginTime]"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" th:placeholder="#{common.end.time}" name="params[endTime]"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{common.query}]]</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{common.reset}]]</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:role:add">
+	                <i class="fa fa-plus"></i> [[#{common.add}]]
+	            </a>
+	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:role:edit">
+		            <i class="fa fa-edit"></i> [[#{common.modify}]]
+		        </a>
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:role:remove">
+		            <i class="fa fa-remove"></i> [[#{common.delete}]]
+		        </a>
+		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:role:export">
+		            <i class="fa fa-download"></i> [[#{common.export}]]
+		        </a>
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var editFlag = [[${@permission.hasPermi('system:role:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('system:role:remove')}]];
+		var prefix = ctx + "system/role";
+		
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+		        sortName: "roleSort",
+		        modalName: i18n('user.add.role'),
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'roleId',
+		            title: i18n('user.role.num')
+		        },
+		        {
+		            field: 'roleName',
+		            title: i18n('user.role.name'),
+		            sortable: true
+		        },
+		        {
+		            field: 'roleKey',
+		            title: i18n('user.role.permission'),
+		            sortable: true
+		        },
+		        {
+		            field: 'roleSort',
+		            title: i18n('user.role.show.sort'),
+		            sortable: true
+		        },
+		        {
+		        	visible: editFlag == 'hidden' ? false : true,
+		        	title: i18n('user.role.status'),
+		        	align: 'center',
+		        	formatter: function (value, row, index) {
+		        		return statusTools(row);
+		        	}
+		        },
+		        {
+		            field: 'createTime',
+		            title: i18n('common.create.time'),
+		            sortable: true
+		        },
+		        {
+		            title: i18n('user.list.operating'),
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	if (row.roleId != 1) {
+		                    var actions = [];
+		                    actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.roleId + '\')"><i class="fa fa-edit"></i>' + i18n('common.edit') + '</a> ');
+		                    actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.roleId + '\')"><i class="fa fa-remove"></i>' + i18n('common.delete') + '</a> ');
+		                    var more = [];
+		                    more.push("<a class='btn btn-default btn-xs " + editFlag + "' href='javascript:void(0)' onclick='authDataScope(" + row.roleId + ")'><i class='fa fa-check-square-o'></i>" + i18n('user.role.data.permission') + "</a> ");
+		                    more.push("<a class='btn btn-default btn-xs " + editFlag + "' href='javascript:void(0)' onclick='authUser(" + row.roleId + ")'><i class='fa fa-user'></i>" + i18n('user.role.assign.users') + "</a>");
+		                    actions.push('<a tabindex="0" class="btn btn-info btn-xs" role="button" data-container="body" data-placement="left" data-toggle="popover" data-html="true" data-trigger="hover" data-content="' + more.join('') + '"><i class="fa fa-chevron-circle-right"></i>'+ i18n('common.more') +'</a>');
+		                    return actions.join('');
+		            	} else {
+		                    return "";
+		                }
+		            }
+		        }]
+		    };
+		    $.table.init(options);
+		});
+		
+		/* 角色管理-分配数据权限 */
+		function authDataScope(roleId) {
+		    var url = prefix + '/authDataScope/' + roleId;
+		    $.modal.open(i18n('user.role.assign.data'), url);
+		}
+		
+		/* 角色管理-分配用户 */
+		function authUser(roleId) {
+		    var url = prefix + '/authUser/' + roleId;
+		    $.modal.openTab(i18n('user.role.assign.users'), url);
+		}
+		
+		/* 角色状态显示 */
+		function statusTools(row) {
+		    if (row.status == 1) {
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.roleId + '\')"></i> ';
+    		} else {
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.roleId + '\')"></i> ';
+    		}
+		}
+		
+		/* 角色管理-停用 */
+		function disable(roleId) {
+			$.modal.confirm(i18n('user.role.disable'), function() {
+				$.operate.post(prefix + "/changeStatus", { "roleId": roleId, "status": 1 });
+		    })
+		}
+
+		/* 角色管理启用 */
+		function enable(roleId) {
+			$.modal.confirm(i18n('user.role.enable'), function() {
+				$.operate.post(prefix + "/changeStatus", { "roleId": roleId, "status": 0 });
+		    })
+		}
+	</script>
+</body>
+</html>

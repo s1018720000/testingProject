@@ -1,0 +1,8 @@
+rootProject.name = 'AS-portal'
+include 'as-common'
+include 'as-generator'
+include 'as-framework'
+include 'as-quartz'
+include 'as-system'
+include 'as-admin'
+
