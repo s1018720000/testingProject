@@ -8,9 +8,11 @@ as:
   copyrightYear: 2021
   # 实例演示开关
   demoEnabled: true
-  # 文件路径 示例（ Windows配置D:/kolin/uploadPath，Linux配置 /home/kolin/uploadPath）
-  profile: D:/kolin/uploadPath
+  # 文件路径 示例（ Windows配置D:/as/uploadPath，Linux配置 /home/as/uploadPath）
+  #(不需要修改，生产部署时只需做替换即可，sed -i "s/D:/as/uploadPath/生产路径/g" /xx/src/main/resources/application.yml)
+  profile: D:/as/uploadPath
   # 项目域名
+  #(不需要修改，生产部署时只需做替换即可，sed -i "s/http://127.0.0.1/生产域名/g" /xx/src/main/resources/application.yml)
   asDomain: http://127.0.0.1
   # 获取ip地址开关
   addressEnabled: false
