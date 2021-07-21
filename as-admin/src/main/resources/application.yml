@@ -10,8 +10,8 @@ as:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/kolin/uploadPath，Linux配置 /home/kolin/uploadPath）
   profile: D:/kolin/uploadPath
-  #telegram告警图片存储路径
-  telegramPhoto: D:/kolin/telegram-photo
+  # 项目域名
+  asDomain: http://127.0.0.1
   # 获取ip地址开关
   addressEnabled: false
 

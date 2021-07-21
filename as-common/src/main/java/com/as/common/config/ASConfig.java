@@ -42,9 +42,10 @@ public class ASConfig {
     private static boolean addressEnabled;
 
     /**
-     * 获取地址开关
+     * 获取项目域名
      */
-    private static String telegramPhoto;
+    private static String asDomain;
+
 
     public static String getName() {
         return name;
@@ -94,12 +95,12 @@ public class ASConfig {
         ASConfig.addressEnabled = addressEnabled;
     }
 
-    public static String getTelegramPhoto() {
-        return telegramPhoto;
+    public static String getAsDomain() {
+        return asDomain;
     }
 
-    public void setTelegramPhoto(String telegramPhoto) {
-        ASConfig.telegramPhoto = telegramPhoto;
+    public void setAsDomain(String asDomain) {
+        ASConfig.asDomain = asDomain;
     }
 
     /**
@@ -121,5 +122,12 @@ public class ASConfig {
      */
     public static String getUploadPath() {
         return getProfile() + "/upload";
+    }
+
+    /**
+     * 获取telegram推送图片路径
+     */
+    public static String getTelegramPhotoPath() {
+        return getProfile() + "/photo";
     }
 }

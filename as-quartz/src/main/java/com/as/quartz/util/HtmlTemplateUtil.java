@@ -51,8 +51,16 @@ public class HtmlTemplateUtil {
      * @param fileName
      * @return
      */
-    public static String getPath(String fileName) {
-        Path filePath = Paths.get(ASConfig.getTelegramPhoto(), fileName);
+    public static String getPath(String fileName) throws IOException {
+        File desc = new File(ASConfig.getTelegramPhotoPath() + File.separator + fileName);
+        if (!desc.exists())
+        {
+            if (!desc.getParentFile().exists())
+            {
+                desc.getParentFile().mkdirs();
+            }
+        }
+        Path filePath = Paths.get(ASConfig.getTelegramPhotoPath(), fileName);
         return filePath.toString();
     }
 }

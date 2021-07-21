@@ -1,5 +1,6 @@
 package com.as.quartz.job;
 
+import com.as.common.config.ASConfig;
 import com.as.common.constant.Constants;
 import com.as.common.constant.DictTypeConstants;
 import com.as.common.constant.ScheduleConstants;
@@ -50,7 +51,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
      */
     private static final String JOB_CODE = "SQL-JOB";
 
-    private static final String DETAIL_URL = "http://127.0.0.1/monitor/sqlJobLog/detail/";
+    private static final String DETAIL_URL = "/monitor/sqlJobLog/detail/";
 
     private final MoniJobLog moniJobLog = new MoniJobLog();
 
@@ -378,7 +379,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         SendPhoto sendPhoto = new SendPhoto(tgData[1], new File(imgPath));
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("View log details in webpage").url(DETAIL_URL.concat(String.valueOf(moniJobLog.getId()))));
+                new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
         sendPhoto.replyMarkup(inlineKeyboard);
         SendResponse response = telegramBot.execute(sendPhoto);
         return response;
@@ -397,7 +398,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 HtmlImageGenerator imageGenerator = new HtmlImageGenerator();
                 imageGenerator.loadHtml(htmlContent);
                 imageGenerator.getBufferedImage();
-                path = HtmlTemplateUtil.getPath(DateUtils.dateTimeNow() + ".png");
+                path = HtmlTemplateUtil.getPath(DateUtils.datePath() + "/" + DateUtils.dateTimeNow() + ".png");
                 imageGenerator.saveAsImage(path);
             } catch (Exception e) {
                 log.error("创建图片发生异常", e);
