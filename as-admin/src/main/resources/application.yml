@@ -112,6 +112,7 @@ shiro:
     # 首页地址
     indexUrl: /index
     # 验证码开关
+    ##(不需要修改，生产部署时只需做替换即可，sed -i "s/captchaEnabled: false/captchaEnabled: true/g" /xx/src/main/resources/application.yml)
     captchaEnabled: false
     # 验证码类型 math 数组计算 char 字符
     captchaType: math
