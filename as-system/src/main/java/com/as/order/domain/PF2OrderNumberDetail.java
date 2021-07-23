@@ -1,9 +1,8 @@
 package com.as.order.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -12,6 +11,8 @@ import java.io.Serializable;
  * @author kolin
  * @date 2021-07-05
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class PF2OrderNumberDetail implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -34,36 +35,4 @@ public class PF2OrderNumberDetail implements Serializable {
      * 中奖金额
      */
     private String winAmount;
-
-    public String getMultiple() {
-        return multiple;
-    }
-
-    public void setMultiple(String multiple) {
-        this.multiple = multiple;
-    }
-
-    public String getBetAmount() {
-        return betAmount;
-    }
-
-    public void setBetAmount(String betAmount) {
-        this.betAmount = betAmount;
-    }
-
-    public String getWinningNumber() {
-        return winningNumber;
-    }
-
-    public void setWinningNumber(String winningNumber) {
-        this.winningNumber = winningNumber;
-    }
-
-    public String getWinAmount() {
-        return winAmount;
-    }
-
-    public void setWinAmount(String winAmount) {
-        this.winAmount = winAmount;
-    }
 }

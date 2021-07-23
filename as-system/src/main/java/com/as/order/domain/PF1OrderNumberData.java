@@ -1,12 +1,12 @@
 package com.as.order.domain;
 
 import com.as.common.annotation.Excel;
-import com.as.common.core.domain.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * PF1订单对象
@@ -14,6 +14,8 @@ import java.math.BigDecimal;
  * @author kolin
  * @date 2021-07-05
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class PF1OrderNumberData implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -35,36 +37,12 @@ public class PF1OrderNumberData implements Serializable {
     @Excel(name = "log值")
     private String logValue;
 
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public String getDbValue() {
-        return dbValue;
-    }
-
-    public void setDbValue(String dbValue) {
-        this.dbValue = dbValue;
-    }
-
-    public String getLogValue() {
-        return logValue;
-    }
-
-    public void setLogValue(String logValue) {
-        this.logValue = logValue;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("columnName", getColumnName())
-                .append("dbValue", getDbValue())
-                .append("logValue", getLogValue())
+                .append("columnName" , getColumnName())
+                .append("dbValue" , getDbValue())
+                .append("logValue" , getLogValue())
                 .toString();
     }
 }

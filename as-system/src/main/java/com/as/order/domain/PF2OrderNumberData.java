@@ -1,6 +1,8 @@
 package com.as.order.domain;
 
 import com.as.common.annotation.Excel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * @author kolin
  * @date 2021-07-05
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class PF2OrderNumberData implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,36 +37,12 @@ public class PF2OrderNumberData implements Serializable {
     @Excel(name = "RDC值")
     private String rdcValue;
 
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public String getDbValue() {
-        return dbValue;
-    }
-
-    public void setDbValue(String dbValue) {
-        this.dbValue = dbValue;
-    }
-
-    public String getRdcValue() {
-        return rdcValue;
-    }
-
-    public void setRdcValue(String rdcValue) {
-        this.rdcValue = rdcValue;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("columnName", getColumnName())
-                .append("dbValue", getDbValue())
-                .append("rdcValue", getRdcValue())
+                .append("columnName" , getColumnName())
+                .append("dbValue" , getDbValue())
+                .append("rdcValue" , getRdcValue())
                 .toString();
     }
 }

@@ -1,5 +1,8 @@
 package com.as.query;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -9,32 +12,18 @@ import java.io.Serializable;
  * @author kolin
  * @date 2021-07-05
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class DBQuery implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
      * sql
      */
+    @NotBlank(message = "script不能为空")
     private String script;
     /**
      * 字段
      */
-    private String datasource;
-
-    @NotBlank(message = "script不能为空")
-    public String getScript() {
-        return script;
-    }
-
-    public void setScript(String script) {
-        this.script = script;
-    }
-
     @NotBlank(message = "DataSource不能为空")
-    public String getDatasource() {
-        return datasource;
-    }
-
-    public void setDatasource(String datasource) {
-        this.datasource = datasource;
-    }
+    private String datasource;
 }
