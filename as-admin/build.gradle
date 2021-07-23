@@ -10,6 +10,7 @@ dependencies {
     implementation "io.springfox:springfox-swagger-ui"
     implementation "mysql:mysql-connector-java"
     implementation "com.oracle.ojdbc:ojdbc8"
+    implementation 'org.flywaydb:flyway-core'
 
     implementation "org.apache.commons:commons-lang3"
 

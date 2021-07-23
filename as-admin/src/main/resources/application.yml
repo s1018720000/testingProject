@@ -10,10 +10,8 @@ as:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/as/uploadPath，Linux配置 /home/as/uploadPath）
   #所有文件都会保存在里面(telegram photo、export excel等)，路径不存在会自动创建，不需要手工创建
-  #(本地不需要修改，生产部署时只需做替换即可，sed -i "s/D:/as/uploadPath/生产路径/g" /xx/src/main/resources/application.yml)
   profile: D:/as/uploadPath
-  # 项目域名
-  #(不需要修改，生产部署时只需做替换即可，sed -i "s/http://127.0.0.1/生产域名/g" /xx/src/main/resources/application.yml)
+  # 项目域名(仅在telegram推送告警时使用，别无他用)
   asDomain: http://127.0.0.1
   # 获取ip地址开关
   addressEnabled: false
@@ -61,7 +59,6 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:
-    #(不需要修改，生产部署时只需做替换即可，sed -i "s/dev/prod/g" /xx/src/main/resources/application.yml)
     active: dev
   # 文件上传
   servlet:
@@ -113,7 +110,6 @@ shiro:
     # 首页地址
     indexUrl: /index
     # 验证码开关
-    #(不需要修改，生产部署时只需做替换即可，sed -i "s/captchaEnabled: false/captchaEnabled: true/g" /xx/src/main/resources/application.yml)
     captchaEnabled: false
     # 验证码类型 math 数组计算 char 字符
     captchaType: math
