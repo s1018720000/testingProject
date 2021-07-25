@@ -137,7 +137,11 @@
                     field: 'status',
                     title: i18n('sql.job.execute.status'),
                     formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(statusDatas, value);
+                        var status = $.table.selectDictLabel(statusDatas, value)
+                        if(value === '2'){
+                            return '<p><span data-toggle="tooltip" data-placement="left" title="'+ row.exceptionLog +'">'+ status +'</span></p>'
+                        }
+                       return status;
                     }
                 }]
             };

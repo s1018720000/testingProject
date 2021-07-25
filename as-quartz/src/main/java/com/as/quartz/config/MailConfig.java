@@ -23,31 +23,43 @@ public class MailConfig {
     private String host;
 
     /**
-     * 主机
+     * 端口
      */
     @Value("${mail.port}")
     private Integer port;
 
     /**
-     * 主机
+     * 协议
+     */
+    @Value("${mail.protocol}")
+    private String protocol;
+
+    /**
+     * 编码
+     */
+    @Value("${mail.DefaultEncoding}")
+    private String DefaultEncoding;
+
+    /**
+     * 用户名
      */
     @Value("${mail.username}")
     private String username;
 
     /**
-     * 主机
+     * 密码
      */
     @Value("${mail.password}")
     private String password;
 
     /**
-     * 主机
+     * 安全验证
      */
     @Value("${mail.smtp.auth}")
     private String smtpAuth;
 
     /**
-     * 主机
+     * STARTTLS安全连接
      */
     @Value("${mail.smtp.starttls.enable}")
     private String starttls;
@@ -59,6 +71,8 @@ public class MailConfig {
         javaMailSender.setPort(port);
         javaMailSender.setUsername(username);
         javaMailSender.setPassword(password);
+        javaMailSender.setDefaultEncoding(DefaultEncoding);
+        javaMailSender.setProtocol(protocol);
         Properties props = new Properties();
         //设置使用验证
         props.setProperty("mail.smtp.auth", smtpAuth);
