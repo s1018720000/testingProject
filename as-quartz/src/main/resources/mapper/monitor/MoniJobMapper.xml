@@ -46,6 +46,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="telegramAlert != null  and telegramAlert != ''"> and TELEGRAM_ALERT = #{telegramAlert}</if>
             <if test="asid != null  and asid != ''"> and ASID = #{asid}</if>
             <if test="actionItem != null  and actionItem != ''"> and ACTION_ITEM = #{actionItem}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''"><!-- 开始时间检索 -->
+                AND date_format(CREATE_TIME,'%y%m%d') &gt;= date_format(#{params.beginCreateTime},'%y%m%d')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''"><!-- 结束时间检索 -->
+                AND date_format(CREATE_TIME,'%y%m%d') &lt;= date_format(#{params.endCreateTime},'%y%m%d')
+            </if>
         </where>
     </select>
 

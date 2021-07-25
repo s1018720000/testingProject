@@ -130,4 +130,11 @@ public class ASConfig {
     public static String getTelegramPhotoPath() {
         return getProfile() + "/photo";
     }
+
+    /**
+     * 获取telegram推送图片路径
+     */
+    public static String getExcelPath() {
+        return getProfile() + "/export";
+    }
 }

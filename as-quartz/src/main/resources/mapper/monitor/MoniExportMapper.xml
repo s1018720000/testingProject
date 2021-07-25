@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.quartz.mapper.MoniExportMapper">
+    
+    <resultMap type="MoniExport" id="MoniExportResult">
+        <result property="id"    column="ID"    />
+        <result property="asid"    column="ASID"    />
+        <result property="ticketNumber"    column="TICKET_NUMBER"    />
+        <result property="enName"    column="EN_NAME"    />
+        <result property="chName"    column="CH_NAME"    />
+        <result property="status"    column="STATUS"    />
+        <result property="jdbc"    column="JDBC"    />
+        <result property="platform"    column="PLATFORM"    />
+        <result property="cronExpression"    column="CRON_EXPRESSION"    />
+        <result property="script"    column="SCRIPT"    />
+        <result property="mailTo"    column="MAIL_TO"    />
+        <result property="mailCc"    column="MAIL_CC"    />
+        <result property="mailBcc"    column="MAIL_BCC"    />
+        <result property="mailSubject"    column="MAIL_SUBJECT"    />
+        <result property="mailContent"    column="MAIL_CONTENT"    />
+        <result property="createBy"    column="CREATE_BY"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateBy"    column="UPDATE_BY"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+        <result property="requester"    column="REQUESTER"    />
+        <result property="lastExport"    column="LAST_EXPORT"    />
+    </resultMap>
+
+    <sql id="selectMoniExportVo">
+        select ID, ASID, TICKET_NUMBER, EN_NAME, CH_NAME, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, MAIL_TO, MAIL_CC, MAIL_BCC, MAIL_SUBJECT, MAIL_CONTENT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REQUESTER, LAST_EXPORT from moni_export
+    </sql>
+
+    <select id="selectMoniExportList" parameterType="MoniExport" resultMap="MoniExportResult">
+        <include refid="selectMoniExportVo"/>
+        <where>
+            <if test="id != null  and id != ''"> and ID = #{id}</if>
+            <if test="asid != null  and asid != ''"> and ASID = #{asid}</if>
+            <if test="ticketNumber != null  and ticketNumber != ''"> and TICKET_NUMBER = #{ticketNumber}</if>
+            <if test="chName != null  and chName != ''"> and (CH_NAME like concat('%', #{chName}, '%') or EN_NAME like concat('%', #{chName}, '%'))</if>
+            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="platform != null  and platform != ''"> and PLATFORM = #{platform}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''"><!-- 开始时间检索 -->
+                AND date_format(CREATE_TIME,'%y%m%d') &gt;= date_format(#{params.beginCreateTime},'%y%m%d')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''"><!-- 结束时间检索 -->
+                AND date_format(CREATE_TIME,'%y%m%d') &lt;= date_format(#{params.endCreateTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectMoniExportById" parameterType="Long" resultMap="MoniExportResult">
+        <include refid="selectMoniExportVo"/>
+        where ID = #{id}
+    </select>
+        
+    <insert id="insertMoniExport" parameterType="MoniExport" useGeneratedKeys="true" keyProperty="id">
+        insert into moni_export
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="asid != null and asid != ''">ASID,</if>
+            <if test="ticketNumber != null">TICKET_NUMBER,</if>
+            <if test="enName != null and enName != ''">EN_NAME,</if>
+            <if test="chName != null and chName != ''">CH_NAME,</if>
+            <if test="status != null and status != ''">STATUS,</if>
+            <if test="jdbc != null and jdbc != ''">JDBC,</if>
+            <if test="platform != null and platform != ''">PLATFORM,</if>
+            <if test="cronExpression != null and cronExpression != ''">CRON_EXPRESSION,</if>
+            <if test="script != null and script != ''">SCRIPT,</if>
+            <if test="mailTo != null and mailTo != ''">MAIL_TO,</if>
+            <if test="mailCc != null">MAIL_CC,</if>
+            <if test="mailBcc != null">MAIL_BCC,</if>
+            <if test="mailSubject != null and mailSubject != ''">MAIL_SUBJECT,</if>
+            <if test="mailContent != null">MAIL_CONTENT,</if>
+            <if test="createBy != null">CREATE_BY,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="updateBy != null">UPDATE_BY,</if>
+            <if test="updateTime != null">UPDATE_TIME,</if>
+            <if test="requester != null and requester != ''">REQUESTER,</if>
+            <if test="lastExport != null">LAST_EXPORT,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="asid != null and asid != ''">#{asid},</if>
+            <if test="ticketNumber != null">#{ticketNumber},</if>
+            <if test="enName != null and enName != ''">#{enName},</if>
+            <if test="chName != null and chName != ''">#{chName},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="jdbc != null and jdbc != ''">#{jdbc},</if>
+            <if test="platform != null and platform != ''">#{platform},</if>
+            <if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
+            <if test="script != null and script != ''">#{script},</if>
+            <if test="mailTo != null and mailTo != ''">#{mailTo},</if>
+            <if test="mailCc != null">#{mailCc},</if>
+            <if test="mailBcc != null">#{mailBcc},</if>
+            <if test="mailSubject != null and mailSubject != ''">#{mailSubject},</if>
+            <if test="mailContent != null">#{mailContent},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="requester != null and requester != ''">#{requester},</if>
+            <if test="lastExport != null">#{lastExport},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMoniExport" parameterType="MoniExport">
+        update moni_export
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="asid != null and asid != ''">ASID = #{asid},</if>
+            <if test="ticketNumber != null">TICKET_NUMBER = #{ticketNumber},</if>
+            <if test="enName != null and enName != ''">EN_NAME = #{enName},</if>
+            <if test="chName != null and chName != ''">CH_NAME = #{chName},</if>
+            <if test="status != null and status != ''">STATUS = #{status},</if>
+            <if test="jdbc != null and jdbc != ''">JDBC = #{jdbc},</if>
+            <if test="platform != null and platform != ''">PLATFORM = #{platform},</if>
+            <if test="cronExpression != null and cronExpression != ''">CRON_EXPRESSION = #{cronExpression},</if>
+            <if test="script != null and script != ''">SCRIPT = #{script},</if>
+            <if test="mailTo != null and mailTo != ''">MAIL_TO = #{mailTo},</if>
+            <if test="mailCc != null">MAIL_CC = #{mailCc},</if>
+            <if test="mailBcc != null">MAIL_BCC = #{mailBcc},</if>
+            <if test="mailSubject != null and mailSubject != ''">MAIL_SUBJECT = #{mailSubject},</if>
+            <if test="mailContent != null">MAIL_CONTENT = #{mailContent},</if>
+            <if test="createBy != null">CREATE_BY = #{createBy},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="updateBy != null">UPDATE_BY = #{updateBy},</if>
+            <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+            <if test="requester != null and requester != ''">REQUESTER = #{requester},</if>
+            <if test="lastExport != null">LAST_EXPORT = #{lastExport},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <update id="updateMoniExportLastExportTime" parameterType="MoniExport">
+        update moni_export
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lastExport != null">LAST_EXPORT = #{lastExport},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteMoniExportById" parameterType="Long">
+        delete from moni_export where ID = #{id}
+    </delete>
+
+    <delete id="deleteMoniExportByIds" parameterType="String">
+        delete from moni_export where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectMoniExportAll" resultMap="MoniExportResult">
+        <include refid="selectMoniExportVo"/>
+    </select>
+
+</mapper>

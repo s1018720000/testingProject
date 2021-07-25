@@ -46,9 +46,6 @@
                     <label class="col-sm-3 control-label is-required">[[#{sql.job.platform}]]：</label>
                     <div class="col-sm-8">
                         <select name="platform" class="platform form-control m-b" th:data-value="*{platform}" required></select>
-<!--                        <select name="platform" class="form-control m-b" th:with="type=${@dict.getType('ub8_platform_type')}" required>-->
-<!--                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{platform}"></option>-->
-<!--                        </select>-->
                     </div>
                 </div>
                 <div class="form-group">
@@ -174,7 +171,7 @@
             data: [
                 {'dictValue': 'PF1', 'dictLabel': 'Platform 1.0', 's': PF1JDBCDatas},
                 {'dictValue': 'PF2', 'dictLabel': 'Platform 5.0', 's': PF2JDBCDatas},
-                {'dictValue': 'AS', 'dictLabel': 'AS Monitor', 's': ASJDBCDatas},
+                {'dictValue': 'AS', 'dictLabel': 'Platform AS', 's': ASJDBCDatas},
             ]
         });
 

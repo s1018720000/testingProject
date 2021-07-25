@@ -29,6 +29,13 @@ public interface IMoniJobLogService
     public List<MoniJobLog> selectMoniJobLogList(MoniJobLog moniJobLog);
 
     /**
+     * 查询SQL检测任務未成功LOG
+     *
+     * @return SQL检测任務LOG集合
+     */
+    public List<MoniJobLog> selectMoniJobLogListNoSuccess();
+
+    /**
      * 新增SQL检测任務LOG
      *
      * @param moniJobLog 调度日志信息

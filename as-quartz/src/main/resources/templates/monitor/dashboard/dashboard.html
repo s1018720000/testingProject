@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('仪表盘')"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h1><i class="fa fa-desktop"></i> [[#{monitor.dashboard}]]</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <button id="switchButton" class="btn btn-danger dim pull-right" type="button"><i class="fa fa-bell-o"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-sql"></table>
+                                    <div class="update_time badge badge-success pull-right"><span class="title">最后更新时间：</span><span class="time"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-export"></table>
+                                    <div class="update_time badge badge-success pull-right"><span class="title">最后更新时间：</span><span class="time"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-elastic"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-api"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<audio id="alarmSound" style="margin:0; display:none;" loop>
+    <source th:src="'/music/Gold-PLease_' + #{locale} +'.mp3'" type="audio/mpeg"/>
+</audio>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var statusDatas = [[${@dict.getType('sys_common_status')}]];
+    var PLATFORMDatas = [[${@dict.getType('ub8_platform_type')}]];
+    var prefix = ctx + "monitor/dashboard";
+
+    var time1 = 10000; //定时的时间
+    var time2 = 1000; //定时的时间
+    var interval1;//定时器1
+    var interval2;//定时器2
+
+    $(function (){
+        switchOn()
+        searchTable()
+        interval1 = setInterval(searchTable,time1);
+        interval2 = setInterval(checkAlert,time2);
+    })
+
+    function searchTable(){
+        if(!table.get('bootstrap-table-sql')){
+            initSqlJobTable();
+            initExportJobTable();
+        } else {
+            refreshTable();
+        }
+        $(".update_time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+    }
+
+    function checkAlert(){
+        if (isSwitchOn()){
+            var sqlJobRow = $('#bootstrap-table-sql').bootstrapTable('getOptions').totalRows
+            var switchOnNum = $("table .fa-toggle-on").length
+
+            if (sqlJobRow && switchOnNum){
+                if (isPaused()){
+                    play()
+                }
+            } else if (!isPaused()){
+                pause()
+            }
+        }
+    }
+
+    function refreshTable() {
+        $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
+        $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
+        // $("#" + table.config['bootstrap-table-info'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-info']);
+        // $("#" + table.config['bootstrap-table-agent'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-agent']);
+    }
+
+    function play(){
+        document.getElementById("alarmSound").play();
+    }
+
+    //      暫停播放音效
+    function pause(){
+        document.getElementById("alarmSound").pause();
+    }
+
+    //      是否播放音效中
+    function isPaused(){
+        return document.getElementById("alarmSound").paused;
+    }
+
+    //      打開開關
+    function switchOn(){
+        $("#switchButton").html('<i class="fa fa-bell-o"></i>');
+    }
+
+    //      關閉開關
+    function switchOff(){
+        $("#switchButton").html('<i class="fa fa-bell-slash-o"></i>');
+    }
+
+    function isSwitchOn(){
+        return $("#switchButton").html() === '<i class="fa fa-bell-o"></i>';
+    }
+
+    $(document).ready(function(){
+
+        $("#switchButton").bind("click", function(){
+            if(isSwitchOn()){
+                switchOff();
+            }else{
+                switchOn();
+            }
+            if(isSwitchOn()){
+                checkAlert();
+            }else{
+                pause();
+            }
+        });
+    });
+
+    function initSqlJobTable(){
+        var options = {
+            url: prefix + "/updateSqlJob",
+            id:'bootstrap-table-sql',
+            pageSize: 5,
+            pageNumber: 1,
+            pageList: [5,10],
+            striped: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            headerStyle: headerStyle,
+            modalName: i18n('pf2.order.query'),
+            columns: [
+                [{
+                    title : i18n('sql.job.sql.task'),
+                    align : 'center',
+                    field: '',
+                    colspan : 6
+                }
+                ],
+                [{
+                    field: 'startTime',
+                    title: i18n('common.start.time'),
+                    align: 'center'
+                },
+                    {
+                        field: 'moniJob.chName',
+                        title: i18n('sql.job.name_zh'),
+                        visible: i18n('locale') !== 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniJob.enName',
+                        title: i18n('sql.job.name_en'),
+                        visible: i18n('locale') === 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniJob.platform',
+                        title: i18n('sql.job.platform'),
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(PLATFORMDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'status',
+                        title: i18n('sql.job.execute.status'),
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(statusDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'alertStatus',
+                        title: i18n('monitor.alert.switch'),
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return sqlJobAlertTools(row);
+                        },
+                    }
+                ]
+            ]
+        };
+        $.table.init(options);
+    }
+
+    function initExportJobTable(){
+        var options = {
+            url: prefix + "/updateExportJob",
+            id:'bootstrap-table-export',
+            pageSize: 5,
+            pageNumber: 1,
+            pageList: [5,10],
+            striped: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            headerStyle: headerStyle,
+            modalName: i18n('pf2.order.query'),
+            columns: [
+                [{
+                    title : i18n('export.job'),
+                    align : 'center',
+                    field: '',
+                    colspan : 6
+                }
+                ],
+                [{
+                    field: 'startTime',
+                    title: i18n('common.start.time'),
+                    align: 'center'
+                },
+                    {
+                        field: 'moniExport.ticketNumber',
+                        title: 'Ticket Number',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniExport.chName',
+                        title: i18n('sql.job.name_zh'),
+                        visible: i18n('locale') !== 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniExport.enName',
+                        title: i18n('sql.job.name_en'),
+                        visible: i18n('locale') === 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniExport.platform',
+                        title: i18n('sql.job.platform'),
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(PLATFORMDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'status',
+                        title: i18n('sql.job.execute.status'),
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(statusDatas, value);
+                        },
+                        align: 'center',
+                    }
+                ]
+            ]
+        };
+        $.table.init(options);
+    }
+
+
+    /* sql检测调度任务告警显示 */
+    function sqlJobAlertTools(row) {
+        if (row.alertStatus == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="sqlJobAlertStart(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="sqlJobAlertStop(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    /* sql检测告警-停用 */
+    function sqlJobAlertStop(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
+            $.operate.post(prefix + "/stopSqlJobAlert", {"id": jobId, "alertStatus": 1});
+        })
+    }
+
+    /* sql检测告警-启用 */
+    function sqlJobAlertStart(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
+            $.operate.post(prefix + "/startSqlJobAlert", {"id": jobId, "alertStatus": 0});
+        })
+    }
+
+
+    function headerStyle(column) {
+        return {
+            '': {
+                css: { background: '#3c8dbc','font-size': '100%',color:'white','font-weight': 'bolder' }
+            }
+        }[column.field]
+    }
+</script>
+</body>
+</html>

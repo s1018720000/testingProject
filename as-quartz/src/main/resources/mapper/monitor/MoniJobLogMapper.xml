@@ -23,11 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="enName"    column="EN_NAME"    />
         <result property="chName"    column="CH_NAME"    />
         <result property="descr"    column="DESCR"    />
+        <result property="platform"    column="PLATFORM"    />
     </resultMap>
 
     <sql id="selectMoniJobLogVo">
         select MJL.ID, MJL.JOB_ID, MJL.START_TIME, MJL.END_TIME, MJL.EXECUTE_RESULT, MJL.EXPECTED_RESULT, MJL.EXCEPTION_LOG, MJL.EXECUTE_TIME, MJL.STATUS, MJL.ALERT_STATUS, MJL.OPERATOR,
-        MJ.EN_NAME, MJ.CH_NAME, MJ.DESCR
+        MJ.EN_NAME, MJ.CH_NAME, MJ.DESCR, MJ.PLATFORM
         from moni_job_log MJL
         left join moni_job MJ on MJL.JOB_ID = MJ.ID
     </sql>
@@ -35,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMoniJobLogList" parameterType="MoniJobLog" resultMap="MoniJobLogResult">
         <include refid="selectMoniJobLogVo"/>
         <where>  
-            <if test="jobName != null "> and (MJ.CH_NAME like concat('%', #{jobName}, '%') or MJ.EN_NAME like concat('%', #{jobName}, '%'))</if>
+            <if test="params.jobName != null "> and (MJ.CH_NAME like concat('%', #{params.jobName}, '%') or MJ.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="jobId != null "> and MJL.JOB_ID = #{jobId}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
                 AND date_format(MJL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
@@ -45,6 +46,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="status != null  and status != ''"> and MJL.STATUS = #{status}</if>
         </where>
+    </select>
+
+    <select id="selectMoniJobLogListNoSuccess" resultMap="MoniJobLogResult">
+        <include refid="selectMoniJobLogVo"/>
+        where MJL.STATUS != '0'
     </select>
     
     <select id="selectMoniJobLogById" parameterType="Long" resultMap="MoniJobLogResult">

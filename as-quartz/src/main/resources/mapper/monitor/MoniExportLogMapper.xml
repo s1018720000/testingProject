@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.quartz.mapper.MoniExportLogMapper">
+    
+    <resultMap type="MoniExportLog" id="MoniExportLogResult">
+        <result property="id"    column="ID"    />
+        <result property="exportId"    column="EXPORT_ID"    />
+        <result property="startTime"    column="START_TIME"    />
+        <result property="endTime"    column="END_TIME"    />
+        <result property="fileName"    column="FILE_NAME"    />
+        <result property="exceptionLog"    column="EXCEPTION_LOG"    />
+        <result property="executeTime"    column="EXECUTE_TIME"    />
+        <result property="status"    column="STATUS"    />
+        <result property="operator"    column="OPERATOR"    />
+        <collection  property="moniExport"   javaType="MoniExport"   resultMap="moniExportResult" />
+    </resultMap>
+
+    <resultMap type="MoniExport" id="moniExportResult">
+        <result property="enName"    column="EN_NAME"    />
+        <result property="chName"    column="CH_NAME"    />
+        <result property="platform"    column="PLATFORM"    />
+        <result property="ticketNumber"    column="TICKET_NUMBER"    />
+    </resultMap>
+
+    <sql id="selectMoniExportLogVo">
+        select MEL.ID, MEL.EXPORT_ID, MEL.START_TIME, MEL.END_TIME, MEL.FILE_NAME, MEL.EXCEPTION_LOG, MEL.EXECUTE_TIME, MEL.STATUS, MEL.OPERATOR,
+         ME.EN_NAME, ME.CH_NAME, ME.PLATFORM, ME.TICKET_NUMBER
+        from moni_export_log MEL
+        left join moni_export ME on MEL.EXPORT_ID = ME.ID
+    </sql>
+
+    <select id="selectMoniExportLogList" parameterType="MoniExportLog" resultMap="MoniExportLogResult">
+        <include refid="selectMoniExportLogVo"/>
+        <where>
+            <if test="params.jobName != null "> and (ME.CH_NAME like concat('%', #{params.jobName}, '%') or ME.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
+            <if test="exportId != null "> and MEL.EXPORT_ID = #{exportId}</if>
+            <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
+                AND date_format(MEL.CREATE_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
+            </if>
+            <if test="params.endStartTime != null and params.endStartTime != ''"><!-- 结束时间检索 -->
+                AND date_format(MEL.CREATE_TIME,'%y%m%d') &lt;= date_format(#{params.endStartTime},'%y%m%d')
+            </if>
+            <if test="status != null  and status != ''"> and MEL.STATUS = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectMoniExportLogById" parameterType="Long" resultMap="MoniExportLogResult">
+        <include refid="selectMoniExportLogVo"/>
+        where MEL.ID = #{id}
+    </select>
+
+    <select id="selectMoniExportLogListNoSuccess" resultMap="MoniExportLogResult">
+        <include refid="selectMoniExportLogVo"/>
+        where MEL.STATUS != '0'
+    </select>
+
+    <update id="cleanExportJobLog">
+            truncate table moni_export_log
+        </update>
+        
+    <insert id="insertMoniExportLog" parameterType="MoniExportLog" useGeneratedKeys="true" keyProperty="id">
+        insert into moni_export_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="exportId != null">EXPORT_ID,</if>
+            <if test="startTime != null">START_TIME,</if>
+            <if test="endTime != null">END_TIME,</if>
+            <if test="fileName != null">FILE_NAME,</if>
+            <if test="exceptionLog != null">EXCEPTION_LOG,</if>
+            <if test="executeTime != null">EXECUTE_TIME,</if>
+            <if test="status != null">STATUS,</if>
+            <if test="operator != null">OPERATOR,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="exportId != null">#{exportId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="exceptionLog != null">#{exceptionLog},</if>
+            <if test="executeTime != null">#{executeTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="operator != null">#{operator},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMoniExportLog" parameterType="MoniExportLog">
+        update moni_export_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="exportId != null">EXPORT_ID = #{exportId},</if>
+            <if test="startTime != null">START_TIME = #{startTime},</if>
+            <if test="endTime != null">END_TIME = #{endTime},</if>
+            <if test="fileName != null">FILE_NAME = #{fileName},</if>
+            <if test="exceptionLog != null">EXCEPTION_LOG = #{exceptionLog},</if>
+            <if test="executeTime != null">EXECUTE_TIME = #{executeTime},</if>
+            <if test="status != null">STATUS = #{status},</if>
+            <if test="operator != null">OPERATOR = #{operator},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteMoniExportLogById" parameterType="Long">
+        delete from moni_export_log where ID = #{id}
+    </delete>
+
+    <delete id="deleteMoniExportLogByIds" parameterType="String">
+        delete from moni_export_log where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

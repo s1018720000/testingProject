@@ -61,5 +61,5 @@ public interface MoniJobMapper {
      * 修改最后告警时间
      * @param moniJob
      */
-    void updateMoniJobLastAlertTime(MoniJob moniJob);
+    int updateMoniJobLastAlertTime(MoniJob moniJob);
 }

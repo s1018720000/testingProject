@@ -12,6 +12,7 @@ import com.as.common.utils.spring.SpringUtils;
 import com.as.quartz.domain.MoniJob;
 import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.service.IMoniJobLogService;
+import com.as.quartz.service.IMoniJobService;
 import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.HtmlTemplateUtil;
@@ -92,6 +93,10 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (!sendResponse.isOk()) {
                     moniJobLog.setStatus(Constants.ERROR);
                     moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
+                } else {
+                    //更新最后告警时间
+                    moniJob.setLastAlert(DateUtils.getNowDate());
+                    SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
                 }
             }
         }
@@ -114,9 +119,8 @@ public class MoniJobExecution extends AbstractQuartzJob {
         moniJobLog.setExpectedResult(moniJob.getExpectedResult());
         //此处先插入一条日志以获取日志id，方便告警拼接url使用
         SpringUtils.getBean(IMoniJobLogService.class).addJobLog(moniJobLog);
-//        moniJob.getLastAlert().equals("");
         //输出日志
-        log.info("任务 ID:{},任务名称:{},准备执行",
+        log.info("[SQL检测任务]任务ID:{},任务名称:{},准备执行",
                 moniJob.getId(), moniJob.getChName());
     }
 
@@ -130,7 +134,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
     protected void after(JobExecutionContext context, Object job, Exception e) {
         if (e != null) {
             moniJobLog.setStatus(Constants.ERROR);
-            moniJobLog.setAlertStatus(Constants.FAIL);
+            moniJobLog.setAlertStatus(Constants.SUCCESS);
             moniJobLog.setExceptionLog(ExceptionUtil.getExceptionMessage(e));
         }
     }
@@ -146,14 +150,19 @@ public class MoniJobExecution extends AbstractQuartzJob {
         moniJobLog.setEndTime(new Date());
         long runTime = (moniJobLog.getEndTime().getTime() - moniJobLog.getStartTime().getTime()) / 1000;
         moniJobLog.setExecuteTime(runTime);
-        moniJobLog.setOperator("system");
+        String operator = (String) context.getMergedJobDataMap().get("operator");
+        if (StringUtils.isNotEmpty(operator)) {
+            moniJobLog.setOperator(operator);
+        } else {
+            moniJobLog.setOperator("system");
+        }
 
         //之前已经插入,本次更新日志到数据库中
         SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(moniJobLog);
         //输出日志
-        log.info("任务 ID:{},任务名称:{},开始时间:{},结束时间:{},执行结束,耗时：{}秒,执行状态:{}",
+        log.info("[SQL检测任务]任务ID:{},任务名称:{},开始时间:{},结束时间:{},执行结束,耗时：{}秒,执行状态:{}",
                 moniJob.getId(), moniJob.getChName(), DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, moniJobLog.getStartTime()),
-                DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, moniJobLog.getEndTime()), runTime, moniJobLog.getStatus());
+                DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, moniJobLog.getEndTime()), runTime, Constants.SUCCESS.equals(moniJobLog.getStatus()) ? "Success" : "failed");
     }
 
     /**
@@ -398,7 +407,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 HtmlImageGenerator imageGenerator = new HtmlImageGenerator();
                 imageGenerator.loadHtml(htmlContent);
                 imageGenerator.getBufferedImage();
-                path = HtmlTemplateUtil.getPath(DateUtils.datePath() + "/" + DateUtils.dateTimeNow() + ".png");
+                path = HtmlTemplateUtil.getPath(DateUtils.datePath() + File.separator + DateUtils.dateTimeNow() + ".png");
                 imageGenerator.saveAsImage(path);
             } catch (Exception e) {
                 log.error("创建图片发生异常", e);

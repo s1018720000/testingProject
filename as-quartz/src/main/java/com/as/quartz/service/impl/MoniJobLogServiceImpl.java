@@ -2,9 +2,7 @@ package com.as.quartz.service.impl;
 
 import com.as.common.constant.Constants;
 import com.as.common.core.text.Convert;
-import com.as.common.utils.DateUtils;
 import com.as.common.utils.ShiroUtils;
-import com.as.quartz.domain.MoniJob;
 import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.mapper.MoniJobLogMapper;
 import com.as.quartz.mapper.MoniJobMapper;
@@ -49,6 +47,16 @@ public class MoniJobLogServiceImpl implements IMoniJobLogService {
     @Override
     public List<MoniJobLog> selectMoniJobLogList(MoniJobLog moniJobLog) {
         return moniJobLogMapper.selectMoniJobLogList(moniJobLog);
+    }
+
+    /**
+     * 查询SQL检测任務未成功LOG
+     *
+     * @return SQL检测任務LOG集合
+     */
+    @Override
+    public List<MoniJobLog> selectMoniJobLogListNoSuccess() {
+        return moniJobLogMapper.selectMoniJobLogListNoSuccess();
     }
 
     /**
@@ -115,11 +123,6 @@ public class MoniJobLogServiceImpl implements IMoniJobLogService {
         moniJobLog.setStatus(Constants.SUCCESS);
         moniJobLog.setAlertStatus(Constants.FAIL);
         moniJobLog.setOperator(ShiroUtils.getSysUser().getLoginName());
-
-        MoniJob moniJob = new MoniJob();
-        moniJob.setLastAlert(DateUtils.getNowDate());
-        moniJob.setId(moniJobLog.getJobId());
-        moniJobMapper.updateMoniJobLastAlertTime(moniJob);
         return moniJobLogMapper.callbackMoniJobLog(moniJobLog);
     }
 }

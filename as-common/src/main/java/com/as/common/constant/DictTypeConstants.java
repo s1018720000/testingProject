@@ -102,4 +102,9 @@ public class DictTypeConstants
      */
     public static final String JOB_PRIORITY_LIST = "job_priority_list";
 
+    /**
+     * 邮件设置
+     */
+    public static final String SEND_MAIL_CONFIG = "send_mail_config";
+
 }

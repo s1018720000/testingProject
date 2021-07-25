@@ -1,20 +1,33 @@
 package com.as.quartz.service.impl;
 
+import com.as.common.utils.StringUtils;
+import com.as.quartz.domain.MoniExport;
 import com.as.quartz.domain.MoniJob;
+import com.as.quartz.job.MoniExportExecution;
 import com.as.quartz.job.MoniJobExecution;
+import com.as.quartz.mapper.MoniExportMapper;
 import com.as.quartz.mapper.MoniJobMapper;
 import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.CronUtils;
+import com.as.quartz.util.Mail;
 import com.as.quartz.util.ScheduleUtils;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.sql.DataSource;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +44,12 @@ public class SysJobServiceImpl implements ISysJobService {
 
     @Autowired
     private MoniJobMapper moniJobMapper;
+
+    @Autowired
+    private MoniExportMapper moniExportMapper;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
 
     @Autowired
@@ -74,10 +93,15 @@ public class SysJobServiceImpl implements ISysJobService {
     @PostConstruct
     public void init() throws SchedulerException {
         scheduler.clear();
-        List<MoniJob> jobList = moniJobMapper.selectMoniJobAll();
-        for (MoniJob job : jobList) {
-            MoniJobExecution moniJobExecution = MoniJobExecution.buildJob(job);
+        List<MoniJob> moniJobs = moniJobMapper.selectMoniJobAll();
+        for (MoniJob moniJob : moniJobs) {
+            MoniJobExecution moniJobExecution = MoniJobExecution.buildJob(moniJob);
             ScheduleUtils.createScheduleJob(scheduler, moniJobExecution);
+        }
+        List<MoniExport> exports = moniExportMapper.selectMoniExportAll();
+        for (MoniExport export : exports) {
+            MoniExportExecution moniExportExecution = MoniExportExecution.buildJob(export);
+            ScheduleUtils.createScheduleJob(scheduler, moniExportExecution);
         }
         setjdbcTemplateMap();
     }
@@ -114,35 +138,53 @@ public class SysJobServiceImpl implements ISysJobService {
         jdbcMap.put("ub8-pf5-draw", new JdbcTemplate(pf2DrawDataSource));
         jdbcMap.put("ub8-pf5-ods", new JdbcTemplate(pf2OdsDataSource));
         jdbcMap.put("data-warehouse", new JdbcTemplate(pf2DwDataSource));
-//        switch (database) {
-//            case "mysql-as-portal":
-//                jdbcTemplate = new JdbcTemplate(masterDataSource);
-//                break;
-//            case "ub8-pf1":
-//                jdbcTemplate = new JdbcTemplate(pf1DataSource);
-//                break;
-//            case "ub8-pf1-sec":
-//                jdbcTemplate = new JdbcTemplate(pf1SecDataSource);
-//                break;
-//            case "ub8-pf5-core":
-//                jdbcTemplate = new JdbcTemplate(pf2CoreDataSource);
-//                break;
-//            case "ub8-pf5-core-sec":
-//                jdbcTemplate = new JdbcTemplate(pf2CoreSecDataSource);
-//                break;
-//            case "ub8-pf5-draw":
-//                jdbcTemplate = new JdbcTemplate(pf2DrawDataSource);
-//                break;
-//            case "ub8-pf5-ods":
-//                jdbcTemplate = new JdbcTemplate(pf2OdsDataSource);
-//                break;
-//            case "data-warehouse":
-//                jdbcTemplate = new JdbcTemplate(pf2DwDataSource);
-//                break;
-//        }
     }
 
     public Map<String, JdbcTemplate> getJdbcMap() {
         return jdbcMap;
+    }
+
+    /**
+     * 发送邮件
+     *
+     * @return
+     */
+    @Override
+    public void sendEmail(Mail mail) throws MessagingException, UnsupportedEncodingException {
+
+        //	step1.	mail參數設定
+        MimeMessage mailMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mailMessage, true, "UTF-8");
+
+        //寄信人
+        messageHelper.setFrom(new InternetAddress(((JavaMailSenderImpl) javaMailSender).getUsername(), "AS Monitor"));
+
+        //	step2.	設定寄信資訊
+        //收信人
+        if (StringUtils.isNotEmpty(mail.getTo())) {
+            messageHelper.setTo(mail.getTo());
+        }
+        //收件人副本
+        if (StringUtils.isNotEmpty(mail.getCc())) {
+            messageHelper.setCc(mail.getCc());
+        }
+        //收件人密件副本
+        if (StringUtils.isNotEmpty(mail.getBcc())) {
+            messageHelper.setBcc(mail.getBcc());
+        }
+        //附件
+        if (mail.getAttachment() != null) {
+            FileSystemResource fileSystemResource = new FileSystemResource(mail.getAttachment());
+            messageHelper.addAttachment(mail.getAttachment().getName(), fileSystemResource);
+        }
+        //主題
+        messageHelper.setSubject(mail.getSubject());
+        //內容
+        if (mail.getContent() != null) {
+            messageHelper.setText(mail.getContent());
+        }
+
+        //寄信
+        javaMailSender.send(mailMessage);
     }
 }

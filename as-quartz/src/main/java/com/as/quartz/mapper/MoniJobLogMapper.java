@@ -70,4 +70,11 @@ public interface MoniJobLogMapper {
      * @return
      */
     public int callbackMoniJobLog(MoniJobLog moniJobLog);
+
+    /**
+     * 查询SQL检测任務未成功LOG
+     *
+     * @return SQL检测任務LOG集合
+     */
+    public List<MoniJobLog> selectMoniJobLogListNoSuccess();
 }

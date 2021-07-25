@@ -1,7 +1,10 @@
 package com.as.quartz.service;
 
+import com.as.quartz.util.Mail;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -34,4 +37,9 @@ public interface ISysJobService {
      * @return 结果
      */
     public Map<String, JdbcTemplate> getJdbcMap();
+
+    /**
+     * 发送邮件
+     */
+    public void sendEmail(Mail mail) throws MessagingException, UnsupportedEncodingException;
 }

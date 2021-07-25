@@ -54,6 +54,12 @@
                                         th:value="${dict.dictValue}"></option>
                             </select>
                         </li>
+                        <li class="select-time">
+                            <label>[[#{common.create.time}]]：</label>
+                            <input type="text" class="time-input" id="startTime" th:placeholder="#{common.start.time}" name="params[beginCreateTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:placeholder="#{common.end.time}" name="params[endCreateTime]"/>
+                        </li>
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
                                     class="fa fa-search"></i>&nbsp;[[#{common.query}]]</a>
@@ -94,6 +100,7 @@
     var editFlag = [[${@permission.hasPermi('monitor:sqlJob:edit')}]];
     var removeFlag = [[${@permission.hasPermi('monitor:sqlJob:remove')}]];
     var detailFlag = [[${@permission.hasPermi('monitor:sqlJob:detail')}]];
+    var logFlag = [[${@permission.hasPermi('monitor:sqlJobLog:view')}]];
     var statusFlag = [[${@permission.hasPermi('monitor:sqlJob:changeStatus')}]];
     var alertFlag = [[${@permission.hasPermi('monitor:sqlJob:changeAlert')}]];
     var runFlag = [[${@permission.hasPermi('monitor:sqlJob:runOnce')}]];
@@ -216,7 +223,7 @@
                         var more = [];
                         more.push("<a class='btn btn-default btn-xs " + runFlag + "' href='javascript:void(0)' onclick='run(" + row.id + ")'><i class='fa fa-play-circle-o'></i> " + i18n('sql.job.run.once') + "</a> ");
                         more.push("<a class='btn btn-default btn-xs " + detailFlag + "' href='javascript:void(0)' onclick='$.operate.detail(" + row.id + ")'><i class='fa fa-search'></i>" + i18n('sql.job.detail') + "</a> ");
-                        more.push("<a class='btn btn-default btn-xs " + detailFlag + "' href='javascript:void(0)' onclick='jobLog(" + row.id + ")'><i class='fa fa-list'></i>" + i18n('sql.job.log') + "</a>");
+                        more.push("<a class='btn btn-default btn-xs " + logFlag + "' href='javascript:void(0)' onclick='jobLog(" + row.id + ")'><i class='fa fa-list'></i>" + i18n('sql.job.log') + "</a>");
                         actions.push('<a class="btn btn-info btn-xs" role="button" data-container="body" data-placement="left" data-toggle="popover" data-html="true" data-trigger="hover" data-content="' + more.join('') + '"><i class="fa fa-chevron-circle-right"></i>' + i18n('common.more') + '</a>');
                         return actions.join('');
                     }
@@ -267,14 +274,14 @@
 
     /* 告警-停用 */
     function tgStop(jobId, jobGroup) {
-        $.modal.confirm(i18n('sql.job.confirm.stop'), function () {
+        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
             $.operate.post(prefix + "/changeAlert", {"id": jobId, "platform": jobGroup, "telegramAlert": 1});
         })
     }
 
     /* 告警-启用 */
     function tgStart(jobId, jobGroup) {
-        $.modal.confirm(i18n('sql.job.confirm.start'), function () {
+        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
             $.operate.post(prefix + "/changeAlert", {"id": jobId, "platform": jobGroup, "telegramAlert": 0});
         })
     }

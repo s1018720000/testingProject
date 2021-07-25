@@ -16,6 +16,20 @@ as:
   # 获取ip地址开关
   addressEnabled: false
 
+mail:
+  #主机
+  host: smtp.gmail.com
+  #端口号
+  port: 587
+  #发件人账号
+  username: unistar.as@gmail.com
+  #发件人密码
+  password: cpg098ub8lkj
+  #设置使用验证
+  smtp.auth: true
+  #使用 STARTTLS安全连接
+  smtp.starttls.enable: true
+
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
@@ -123,12 +137,12 @@ shiro:
     # 设置Cookie的过期时间，天为单位
     maxAge: 30
   session:
-    # Session超时时间，-1代表永不过期（默认30分钟）
-    expireTime: 30
+    # Session超时时间，-1代表永不过期（默认8小时）
+    expireTime: 480
     # 同步session到数据库的周期（默认1分钟）
     dbSyncPeriod: 1
-    # 相隔多久检查一次session的有效性，默认就是10分钟
-    validationInterval: 10
+    # 相隔多久检查一次session的有效性，默认就是30分钟
+    validationInterval: 30
     # 同一个用户最大会话数，比如2的意思是同一个账号允许最多同时两个人登录（默认-1不限制）
     maxSession: 1
     # 踢出之前登录的/之后登录的用户，默认踢出之前登录的用户

@@ -317,13 +317,10 @@ insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, 
 values('SQL检测任务执行一次', @parentId, '8',  '#', 'F', '0', 'monitor:sqlJob:runOnce',              '#', 'admin', sysdate(), '', null, '');
 
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('SQL检测任务调度日志', @parentId, '9',  '#', 'F', '0', 'monitor:sqlJob:log',              '#', 'admin', sysdate(), '', null, '');
-
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('SQL检测任务告警修改', @parentId, '10',  '#', 'F', '0', 'monitor:sqlJob:changeAlert',              '#', 'admin', sysdate(), '', null, '');
 
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('SQL检测任務LOG', @parentId, '11', '#', 'F', '0', 'monitor:sqlJobLog:view', '#', 'admin', sysdate(), '', null, '');
+values('SQL检测任务调度日志', @parentId, '11', '#', 'F', '0', 'monitor:sqlJobLog:view', '#', 'admin', sysdate(), '', null, '');
 
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('SQL检测任務LOG查询', @parentId, '12',  '#',  'F', '0', 'monitor:sqlJobLog:list',         '#', 'admin', sysdate(), '', null, '');
@@ -663,7 +660,7 @@ insert into sys_dict_data values(268, 4,  'AS KOLIN',     '3',       'telegram_n
 insert into sys_dict_data values(269, 1,  'PF1 KIBANA',     '0',       'telegram_notice_group',   '',   '',  'N', '0', 'admin', sysdate(), '', null, '1249943110:AAGPtzsqJpmlvssPN2odE4LWboLBjrICFzM;-407006276');
 insert into sys_dict_data values(270, 2,  'PF2 KIBANA',     '1',       'telegram_notice_group',   '',   '',  'N', '0', 'admin', sysdate(), '', null, '1249943110:AAGPtzsqJpmlvssPN2odE4LWboLBjrICFzM;-448890314');
 insert into sys_dict_data values(271, 3,  'GOLD PLEASE',     '2',       'telegram_notice_group',   '',   '',  'N', '0', 'admin', sysdate(), '', null, '1249943110:AAGPtzsqJpmlvssPN2odE4LWboLBjrICFzM;-187555239');
-insert into sys_dict_data values(272, 3,  'AS Monitor',     'AS',       'ub8_platform_type',   '',   'info',  'N', '0', 'admin', sysdate(), '', null, 'AS 监控平台');
+insert into sys_dict_data values(272, 3,  'Platform AS',     'AS',       'ub8_platform_type',   '',   'info',  'N', '0', 'admin', sysdate(), '', null, 'AS 监控平台');
 
 -- ----------------------------
 -- 13、参数配置表

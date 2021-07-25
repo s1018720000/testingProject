@@ -82,6 +82,7 @@ public class MoniJobServiceImpl implements IMoniJobService {
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateMoniJob(MoniJob moniJob) throws SchedulerException {
         MoniJob properties = selectMoniJobById(moniJob.getId());
         moniJob.setUpdateTime(DateUtils.getNowDate());
@@ -99,7 +100,7 @@ public class MoniJobServiceImpl implements IMoniJobService {
      * @param job      任务对象
      * @param jobGroup 任务组名
      */
-    public void updateSchedulerJob(MoniJob job, String jobGroup) throws SchedulerException {
+    private void updateSchedulerJob(MoniJob job, String jobGroup) throws SchedulerException {
         MoniJobExecution moniJobExecution = MoniJobExecution.buildJob(job);
         String jobCode = moniJobExecution.toString();
         // 判断是否存在
@@ -110,6 +111,11 @@ public class MoniJobServiceImpl implements IMoniJobService {
         }
 
         ScheduleUtils.createScheduleJob(scheduler, moniJobExecution);
+    }
+
+    @Override
+    public int updateMoniJobLastAlertTime(MoniJob moniJob) {
+        return moniJobMapper.updateMoniJobLastAlertTime(moniJob);
     }
 
     /**
@@ -168,7 +174,7 @@ public class MoniJobServiceImpl implements IMoniJobService {
     }
 
     /**
-     * SQL检测任务状态修改
+     * SQL检测任务告警状态修改
      *
      * @param moniJob 调度信息
      */
@@ -237,6 +243,7 @@ public class MoniJobServiceImpl implements IMoniJobService {
         MoniJob tmpObj = selectMoniJobById(job.getId());
         // 参数
         JobDataMap dataMap = new JobDataMap();
+        dataMap.put("operator", ShiroUtils.getLoginName());
         dataMap.put(ScheduleConstants.TASK_PROPERTIES, tmpObj);
         scheduler.triggerJob(ScheduleUtils.getJobKey(jobCode, tmpObj.getPlatform()), dataMap);
     }

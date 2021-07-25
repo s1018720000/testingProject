@@ -45,6 +45,15 @@ public interface IMoniJobService {
     public int updateMoniJob(MoniJob moniJob) throws SchedulerException;
 
     /**
+     * 修改SQL检测任务
+     *
+     * @param moniJob SQL检测任务最后告警时间
+     * @return 结果
+     */
+    public int updateMoniJobLastAlertTime(MoniJob moniJob);
+
+
+    /**
      * 批量删除SQL检测任务
      *
      * @param ids 需要删除的数据ID

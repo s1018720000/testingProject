@@ -11,27 +11,27 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * SQL检测任務LOG对象 moni_job_log
+ * 自动报表任务LOG对象 moni_export_log
  *
  * @author kolin
- * @date 2021-07-16
+ * @date 2021-07-23
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class MoniJobLog extends BaseEntity {
+public class MoniExportLog extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
      * ID
      */
-    @Excel(name = "日志编号")
+    @Excel(name = "ID")
     private Long id;
 
     /**
      * 任务ID
      */
     @Excel(name = "任务ID")
-    private Long jobId;
+    private Long exportId;
 
     /**
      * 开始时间
@@ -48,16 +48,10 @@ public class MoniJobLog extends BaseEntity {
     private Date endTime;
 
     /**
-     * 执行结果
+     * 文件名称
      */
-    @Excel(name = "执行结果")
-    private String executeResult;
-
-    /**
-     * 预期结果
-     */
-    @Excel(name = "预期结果")
-    private String expectedResult;
+    @Excel(name = "文件名称")
+    private String fileName;
 
     /**
      * 异常信息
@@ -78,32 +72,24 @@ public class MoniJobLog extends BaseEntity {
     private String status;
 
     /**
-     * 告警（0正常、1停用）
-     */
-    @Excel(name = "告警" , readConverterExp = "0正常、1停用")
-    private String alertStatus;
-
-    /**
      * 操作者,系统则为system
      */
-    @Excel(name = "操作者" , readConverterExp = "系统则为system")
+    @Excel(name = "操作者,系统则为system")
     private String operator;
 
-    private MoniJob moniJob;
+    private MoniExport moniExport;
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id" , getId())
-                .append("jobId" , getJobId())
+                .append("exportId" , getExportId())
                 .append("startTime" , getStartTime())
                 .append("endTime" , getEndTime())
-                .append("executeResult" , getExecuteResult())
-                .append("expectedResult" , getExpectedResult())
+                .append("fileName" , getFileName())
                 .append("exceptionLog" , getExceptionLog())
                 .append("executeTime" , getExecuteTime())
                 .append("status" , getStatus())
-                .append("alertStatus" , getAlertStatus())
                 .append("operator" , getOperator())
                 .toString();
     }
