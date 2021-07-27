@@ -5,9 +5,10 @@ import com.as.common.core.controller.BaseController;
 import com.as.common.core.domain.AjaxResult;
 import com.as.common.core.page.TableDataInfo;
 import com.as.common.enums.BusinessType;
+import com.as.quartz.domain.MoniApiLog;
 import com.as.quartz.domain.MoniExportLog;
-import com.as.quartz.domain.MoniJob;
 import com.as.quartz.domain.MoniJobLog;
+import com.as.quartz.service.IMoniApiLogService;
 import com.as.quartz.service.IMoniExportLogService;
 import com.as.quartz.service.IMoniJobLogService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +37,9 @@ public class DashboardController extends BaseController {
 
     @Autowired
     private IMoniExportLogService moniExportLogService;
+
+    @Autowired
+    private IMoniApiLogService moniApiLogService;
 
     @RequiresPermissions("monitor:dashboard:view")
     @GetMapping()
@@ -86,7 +90,7 @@ public class DashboardController extends BaseController {
      */
     @PostMapping("/updateElasticJob")
     @ResponseBody
-    public TableDataInfo updateElasticJob(MoniJob moniJob) {
+    public TableDataInfo updateElasticJob() {
         startPage();
         return getDataTable(null);
     }
@@ -96,8 +100,26 @@ public class DashboardController extends BaseController {
      */
     @PostMapping("/updateApiJob")
     @ResponseBody
-    public TableDataInfo updateApiJob(MoniJob moniJob) {
+    public TableDataInfo updateApiJob() {
         startPage();
-        return getDataTable(null);
+        List<MoniApiLog> list = moniApiLogService.selectMoniApiLogListNoSuccess();
+        return getDataTable(list);
+    }
+
+
+    @Log(title = "仪表盘", businessType = BusinessType.UPDATE)
+    @PostMapping("/stopApiJobAlert")
+    @ResponseBody
+    public AjaxResult stopApiJobAlert(MoniApiLog moniApiLog) {
+        moniApiLogService.updateMoniApiLog(moniApiLog);
+        return success();
+    }
+
+    @Log(title = "仪表盘", businessType = BusinessType.UPDATE)
+    @PostMapping("/startApiJobAlert")
+    @ResponseBody
+    public AjaxResult startApiJobAlert(MoniApiLog moniApiLog) {
+        moniApiLogService.updateMoniApiLog(moniApiLog);
+        return success();
     }
 }

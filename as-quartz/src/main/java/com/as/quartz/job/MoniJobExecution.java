@@ -9,8 +9,10 @@ import com.as.common.utils.DictUtils;
 import com.as.common.utils.ExceptionUtil;
 import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
+import com.as.quartz.domain.MoniExport;
 import com.as.quartz.domain.MoniJob;
 import com.as.quartz.domain.MoniJobLog;
+import com.as.quartz.service.IMoniExportService;
 import com.as.quartz.service.IMoniJobLogService;
 import com.as.quartz.service.IMoniJobService;
 import com.as.quartz.service.ISysJobService;
@@ -26,6 +28,7 @@ import gui.ava.html.image.generator.HtmlImageGenerator;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,7 +88,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
             moniJobLog.setAlertStatus(Constants.SUCCESS);
 
             //关联导出
-
+            doExport(moniJob.getRelExport());
 
             //发送告警
             if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
@@ -348,18 +351,21 @@ public class MoniJobExecution extends AbstractQuartzJob {
         throw new Exception("Never do match function");
     }
 
-//    /**
-//     * 关联导出
-//     * @param jobService
-//     * @param relExport
-//     */
-//    private void DoExport(IJobService jobService, String relExport) {
-//        if (relExport != null && relExport.length() > 0) {
-//            JobManager jobManager = jobService.getJobManager();
-//
-//            jobManager.addMoniExportByIds(relExport);
-//        }
-//    }
+    /**
+     * 关联导出
+     *
+     * @param relExport
+     */
+    private void doExport(String relExport) throws SchedulerException {
+        if (StringUtils.isNotEmpty(relExport)) {
+            IMoniExportService moniExportService = SpringUtils.getBean(IMoniExportService.class);
+            String[] ids = relExport.split(",");
+            for (String id : ids) {
+                MoniExport moniExport = moniExportService.selectMoniExportById(Long.parseLong(id));
+                moniExportService.run(moniExport);
+            }
+        }
+    }
 
     private SendResponse sendTelegram(MoniJob moniJob, MoniJobLog moniJobLog) throws Exception {
         String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniJob.getTelegramConfig());

@@ -338,7 +338,7 @@ insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, 
 values('SQL检测任務LOG详细', @parentId, '16',  '#',  'F', '0', 'monitor:sqlJobLog:detail',       '#', 'admin', sysdate(), '', null, '');
 
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('SQL检测任務LOG回调', @parentId, '16',  '#',  'F', '0', 'monitor:sqlJobLog:callback',       '#', 'admin', sysdate(), '', null, '');
+values('SQL检测任務LOG回调', @parentId, '17',  '#',  'F', '0', 'monitor:sqlJobLog:callback',       '#', 'admin', sysdate(), '', null, '');
 
 
 -- ----------------------------

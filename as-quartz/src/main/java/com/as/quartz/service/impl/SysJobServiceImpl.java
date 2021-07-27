@@ -1,10 +1,13 @@
 package com.as.quartz.service.impl;
 
 import com.as.common.utils.StringUtils;
+import com.as.quartz.domain.MoniApi;
 import com.as.quartz.domain.MoniExport;
 import com.as.quartz.domain.MoniJob;
+import com.as.quartz.job.MoniApiExecution;
 import com.as.quartz.job.MoniExportExecution;
 import com.as.quartz.job.MoniJobExecution;
+import com.as.quartz.mapper.MoniApiMapper;
 import com.as.quartz.mapper.MoniExportMapper;
 import com.as.quartz.mapper.MoniJobMapper;
 import com.as.quartz.service.ISysJobService;
@@ -47,6 +50,9 @@ public class SysJobServiceImpl implements ISysJobService {
 
     @Autowired
     private MoniExportMapper moniExportMapper;
+
+    @Autowired
+    private MoniApiMapper moniApiMapper;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -102,6 +108,11 @@ public class SysJobServiceImpl implements ISysJobService {
         for (MoniExport export : exports) {
             MoniExportExecution moniExportExecution = MoniExportExecution.buildJob(export);
             ScheduleUtils.createScheduleJob(scheduler, moniExportExecution);
+        }
+        List<MoniApi> apis = moniApiMapper.selectMoniApiAll();
+        for (MoniApi api : apis) {
+            MoniApiExecution moniApiExecution = MoniApiExecution.buildJob(api);
+            ScheduleUtils.createScheduleJob(scheduler, moniApiExecution);
         }
         setjdbcTemplateMap();
     }

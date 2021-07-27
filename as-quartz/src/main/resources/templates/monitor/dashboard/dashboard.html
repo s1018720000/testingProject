@@ -43,6 +43,7 @@
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
                                     <table id="bootstrap-table-elastic"></table>
+                                    <div class="update_time badge badge-success pull-right"><span class="title">最后更新时间：</span><span class="time"></span></div>
                                 </div>
                             </div>
                         </div>
@@ -50,6 +51,7 @@
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
                                     <table id="bootstrap-table-api"></table>
+                                    <div class="update_time badge badge-success pull-right"><span class="title">最后更新时间：</span><span class="time"></span></div>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +89,8 @@
     function searchTable(){
         if(!table.get('bootstrap-table-sql')){
             initSqlJobTable();
-            initExportJobTable();
+            initExportJobTable()
+            initApiJobTable()
         } else {
             refreshTable();
         }
@@ -97,9 +100,10 @@
     function checkAlert(){
         if (isSwitchOn()){
             var sqlJobRow = $('#bootstrap-table-sql').bootstrapTable('getOptions').totalRows
+            var apiJobRow = $('#bootstrap-table-api').bootstrapTable('getOptions').totalRows
             var switchOnNum = $("table .fa-toggle-on").length
-
-            if (sqlJobRow && switchOnNum){
+            var totalRow = sqlJobRow + apiJobRow
+            if (totalRow && switchOnNum){
                 if (isPaused()){
                     play()
                 }
@@ -112,7 +116,7 @@
     function refreshTable() {
         $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
         $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
-        // $("#" + table.config['bootstrap-table-info'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-info']);
+        $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-api']);
         // $("#" + table.config['bootstrap-table-agent'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-agent']);
     }
 
@@ -164,16 +168,18 @@
         var options = {
             url: prefix + "/updateSqlJob",
             id:'bootstrap-table-sql',
-            pageSize: 5,
+            pageSize: 100,
             pageNumber: 1,
-            pageList: [5],
+            pageList: [100],
             striped: true,
             showSearch: false,
             showRefresh: false,
             showToggle: false,
             showColumns: false,
             headerStyle: headerStyle,
-            modalName: i18n('pf2.order.query'),
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: i18n('sql.job.sql.task'),
             columns: [
                 [{
                     title : i18n('sql.job.sql.task'),
@@ -233,16 +239,18 @@
         var options = {
             url: prefix + "/updateExportJob",
             id:'bootstrap-table-export',
-            pageSize: 5,
+            pageSize: 100,
             pageNumber: 1,
-            pageList: [5],
+            pageList: [100],
             striped: true,
             showSearch: false,
             showRefresh: false,
             showToggle: false,
             showColumns: false,
             headerStyle: headerStyle,
-            modalName: i18n('pf2.order.query'),
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: i18n('export.job'),
             columns: [
                 [{
                     title : i18n('export.job'),
@@ -296,6 +304,78 @@
     }
 
 
+    function initApiJobTable(){
+        var options = {
+            url: prefix + "/updateApiJob",
+            id:'bootstrap-table-api',
+            pageSize: 100,
+            pageNumber: 1,
+            pageList: [100],
+            striped: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            headerStyle: headerStyle,
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: i18n('api.job'),
+            columns: [
+                [{
+                    title : i18n('api.job'),
+                    align : 'center',
+                    field: '',
+                    colspan : 6
+                }
+                ],
+                [{
+                    field: 'startTime',
+                    title: i18n('common.start.time'),
+                    align: 'center'
+                },
+                    {
+                        field: 'moniApi.chName',
+                        title: i18n('sql.job.name_zh'),
+                        visible: i18n('locale') !== 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniApi.enName',
+                        title: i18n('sql.job.name_en'),
+                        visible: i18n('locale') === 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniApi.platform',
+                        title: i18n('sql.job.platform'),
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(PLATFORMDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'status',
+                        title: i18n('sql.job.execute.status'),
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(statusDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'alertStatus',
+                        title: i18n('monitor.alert.switch'),
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return apiJobAlertTools(row);
+                        },
+                    }
+                ]
+            ]
+        };
+        $.table.init(options);
+    }
+
+
     /* sql检测调度任务告警显示 */
     function sqlJobAlertTools(row) {
         if (row.alertStatus == 1) {
@@ -316,6 +396,29 @@
     function sqlJobAlertStart(jobId) {
         $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
             $.operate.post(prefix + "/startSqlJobAlert", {"id": jobId, "alertStatus": 0});
+        })
+    }
+
+    /* api检测调度任务告警显示 */
+    function apiJobAlertTools(row) {
+        if (row.alertStatus == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="apiJobAlertStart(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="apiJobAlertStop(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    /* api检测告警-停用 */
+    function apiJobAlertStop(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
+            $.operate.post(prefix + "/stopApiJobAlert", {"id": jobId, "alertStatus": 1});
+        })
+    }
+
+    /* api检测告警-启用 */
+    function apiJobAlertStart(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
+            $.operate.post(prefix + "/startApiJobAlert", {"id": jobId, "alertStatus": 0});
         })
     }
 

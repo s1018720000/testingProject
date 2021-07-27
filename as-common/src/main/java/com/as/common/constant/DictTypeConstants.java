@@ -107,4 +107,14 @@ public class DictTypeConstants
      */
     public static final String SEND_MAIL_CONFIG = "send_mail_config";
 
+    /**
+     * 请求方法
+     */
+    public static final String API_JOB_METHOD = "api_job_method";
+
+    /**
+     * 请求类型
+     */
+    public static final String API_JOB_CONTENT = "api_job_content";
+
 }

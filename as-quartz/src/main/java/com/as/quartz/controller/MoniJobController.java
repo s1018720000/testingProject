@@ -111,6 +111,9 @@ public class MoniJobController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(@Validated MoniJob moniJob) throws SchedulerException {
+        if (!CronUtils.isValid(moniJob.getCronExpression())) {
+            return AjaxResult.error("编辑任务'" + moniJob.getChName() + "'失败，Cron表达式不正确");
+        }
         //此处处理sql 防止特殊符号被转义
         unescapeHtml4(moniJob);
         return toAjax(moniJobService.updateMoniJob(moniJob));

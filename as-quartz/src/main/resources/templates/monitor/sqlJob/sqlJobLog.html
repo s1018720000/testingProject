@@ -85,11 +85,13 @@
                     title: i18n('sql.job.sql.log.date'),
                     formatter:function (value, row, index){
                         return $.common.dateFormat(value,'yyyy-MM-dd')
-                    }
+                    },
+                    sortable: true
                 },
                 {
                     field: 'jobId',
-                    title: i18n('sql.job.id')
+                    title: i18n('sql.job.id'),
+                    sortable: true
                 },
                 {
                     field: 'moniJob.chName',
@@ -106,18 +108,21 @@
                     title: i18n('common.start.time'),
                     formatter:function (value, row, index){
                         return $.common.dateFormat(value,'HH:mm:ss')
-                    }
+                    },
+                    sortable: true
                 },
                 {
                     field: 'endTime',
                     title: i18n('common.end.time'),
                     formatter:function (value, row, index){
                         return $.common.dateFormat(value,'HH:mm:ss')
-                    }
+                    },
+                    sortable: true
                 },
                 {
                     field: 'executeTime',
-                    title: i18n('sql.job.execution.time')
+                    title: i18n('sql.job.execution.time'),
+                    sortable: true
                 },
                 {
                     field: 'operator',

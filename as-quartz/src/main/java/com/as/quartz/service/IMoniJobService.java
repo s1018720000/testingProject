@@ -64,7 +64,7 @@ public interface IMoniJobService {
     /**
      * 删除SQL检测任务信息
      *
-     * @param moniJob SQL检测任务ID
+     * @param moniJob SQL检测任务
      * @return 结果
      */
     public int deleteMoniJob(MoniJob moniJob) throws SchedulerException;

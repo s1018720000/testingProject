@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('自动API检测任务LOG列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>[[#{sql.job.id}]]：</label>
+                            <input type="text" name="apiId" th:value="${job!=null?job.id:''}"/>
+                        </li>
+                        <li>
+                            <label>[[#{sql.job.name}]]：</label>
+                            <input type="text" name="params[jobName]"/>
+                        </li>
+                        <li>
+                            <label>[[#{sql.job.execute.status}]]：</label>
+                            <select name="status" th:with="type=${@dict.getType('sys_common_status')}">
+                                <option value="">[[#{user.list.all}]]</option>
+                                <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>[[#{sql.job.execute.time}]]：</label>
+                            <input type="text" class="time-input" id="startTime" th:placeholder="#{common.start.time}"
+                                   name="params[beginStartTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:placeholder="#{common.end.time}"
+                                   name="params[endStartTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;[[#{common.query}]]</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;[[#{common.reset}]]</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="monitor:apiJobLog:remove">
+                <i class="fa fa-remove"></i> [[#{common.delete}]]
+            </a>
+            <a class="btn btn-danger" onclick="$.operate.clean()" shiro:hasPermission="monitor:apiJobLog:clear">
+                <i class="fa fa-remove"></i> [[#{common.clear}]]
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="monitor:apiJobLog:export">
+                <i class="fa fa-download"></i> [[#{common.export}]]
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('monitor:apiJob:edit')}]];
+    var detailFlag = [[${@permission.hasPermi('monitor:apiJobLog:list')}]];
+    var removeFlag = [[${@permission.hasPermi('monitor:apiJob:remove')}]];
+    var statusDatas = [[${@dict.getType('sys_common_status')}]];
+    var alertStatusDatas = [[${@dict.getType('sys_normal_disable')}]];
+    var prefix = ctx + "monitor/apiJobLog";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            cleanUrl: prefix + "/clean",
+            detailUrl: prefix + "/detail/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: i18n('api.job.log'),
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID'
+                },
+                {
+                    field: 'startTime',
+                    title: i18n('sql.job.sql.log.date'),
+                    formatter: function (value, row, index) {
+                        return $.common.dateFormat(value, 'yyyy-MM-dd')
+                    },
+                    sortable: true
+                },
+                {
+                    field: 'apiId',
+                    title: i18n('sql.job.id')
+                },
+                {
+                    field: 'moniApi.chName',
+                    title: i18n('sql.job.name_zh'),
+                    visible: i18n('locale') !== 'en-US'
+                },
+                {
+                    field: 'moniApi.enName',
+                    title: i18n('sql.job.name_en'),
+                    visible: i18n('locale') === 'en-US'
+                },
+                {
+                    field: 'startTime',
+                    title: i18n('common.start.time'),
+                    formatter: function (value, row, index) {
+                        return $.common.dateFormat(value, 'HH:mm:ss')
+                    },
+                    sortable: true
+                },
+                {
+                    field: 'endTime',
+                    title: i18n('common.end.time'),
+                    formatter: function (value, row, index) {
+                        return $.common.dateFormat(value, 'HH:mm:ss')
+                    },
+                    sortable: true
+                },
+                {
+                    field: 'executeTime',
+                    title: i18n('sql.job.execution.time')
+                },
+                {
+                    field: 'operator',
+                    title: i18n('sql.job.log.operator')
+                },
+                {
+                    field: 'expectedCode',
+                    title: i18n('api.job.expected.code')
+                },
+                {
+                    field: 'executeResult',
+                    title: i18n('sql.job.execution.result'),
+                    formatter: function (value, row, index) {
+                        var result = row.executeResult
+                        if (!result) {
+                            result = 'NO RESULT'
+                        }
+                        return '<p><span class="label label-warning">' + result + '</span></p>'
+
+                    },
+                    sortable: true
+                },
+                {
+                    field: 'status',
+                    title: i18n('sql.job.execute.status'),
+                    formatter: function (value, row, index) {
+                        var status = $.table.selectDictLabel(statusDatas, value)
+                        if (value === '2') {
+                            var actions = [];
+                            actions.push(status);
+                            actions.push('&nbsp;&nbsp;<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>' + i18n('home.details') + '</a>');
+                            return actions.join('');
+                            // return '<p><span data-toggle="tooltip" data-placement="left" title="'+ row.exceptionLog +'">'+ status +'</span></p>'
+                        }
+                        return status;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

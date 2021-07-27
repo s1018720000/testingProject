@@ -122,6 +122,8 @@
             updateUrl: prefix + "/edit/{id}",
             removeUrl: prefix + "/remove",
             exportUrl: prefix + "/export",
+            sortName: "createTime",
+            sortOrder: "desc",
             modalName: i18n('sql.job.sql.task'),
             columns: [{
                 checkbox: true
@@ -132,7 +134,8 @@
                 },
                 {
                     field: 'asid',
-                    title: 'ASID'
+                    title: 'ASID',
+                    sortable: true
                 },
                 {
                     field: 'chName',
@@ -170,7 +173,7 @@
                     }
                 },
                 {
-                    visible: statusFlag == 'hidden' ? false : true,
+                    visible: statusFlag === 'hidden' ? false : true,
                     title: i18n('sql.job.status'),
                     align: 'center',
                     formatter: function (value, row, index) {
@@ -178,7 +181,7 @@
                     }
                 },
                 {
-                    visible: alertFlag == 'hidden' ? false : true,
+                    visible: alertFlag === 'hidden' ? false : true,
                     title: i18n('sql.job.alert'),
                     align: 'center',
                     formatter: function (value, row, index) {
@@ -199,7 +202,8 @@
                 },
                 {
                     field: 'createTime',
-                    title: i18n('common.create.time')
+                    title: i18n('common.create.time'),
+                    sortable: true
                 },
                 {
                     field: 'updateBy',
@@ -207,11 +211,13 @@
                 },
                 {
                     field: 'updateTime',
-                    title: i18n('common.update.time')
+                    title: i18n('common.update.time'),
+                    sortable: true
                 },
                 {
                     field: 'lastAlert',
-                    title: i18n('sql.job.last.alert')
+                    title: i18n('sql.job.last.alert'),
+                    sortable: true
                 },
                 {
                     title: i18n('gen.operating'),

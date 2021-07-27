@@ -226,7 +226,12 @@ public class MoniExportServiceImpl implements IMoniExportService {
         MoniExport tmpObj = selectMoniExportById(job.getId());
         // 参数
         JobDataMap dataMap = new JobDataMap();
-        dataMap.put("operator",ShiroUtils.getLoginName());
+        try {
+            dataMap.put("operator",ShiroUtils.getLoginName());
+        } catch (Exception e){
+            //关联导出时ShiroUtils.getLoginName()会异常，此处吞掉异常继续执行
+        }
+
         dataMap.put(ScheduleConstants.TASK_PROPERTIES, tmpObj);
         scheduler.triggerJob(ScheduleUtils.getJobKey(jobCode, tmpObj.getPlatform()), dataMap);
     }

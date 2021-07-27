@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+
+	<th:block th:include="include :: header('API检测定时任务详细')" />
+</head>
+<body class="white-bg">
+
+<div class="block" style="min-height:100%;" th:if="${name == 'apiJobLog'}">
+	<input id="id" name="id" type="hidden" th:field="*{jobLog.id}"/>
+	<div class="form-group">
+		<div class="form-control-static">
+			<pre style="overflow-y:auto;" th:text="${jobLog.exceptionLog}"></pre>
+		</div>
+	</div>
+</div>
+
+	<form class="form-horizontal m-t" id="jobForm" th:if="${name == 'apiJob'}">
+	    <div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.id}]]：</label>
+			<div class="form-control-static" th:text="${job.id}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">ASID：</label>
+			<div class="form-control-static" th:text="${job.asid}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Ticket Number：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(job.ticketNumber, '-')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.name_zh}]]：</label>
+			<div class="form-control-static" th:text="${job.chName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.name_en}]]：</label>
+			<div class="form-control-static" th:text="${job.enName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.status}]]：</label>
+			<div class="form-control-static" th:class="${job.status == '0' ? 'label label-primary' : 'label label-danger'}" th:text="${job.status} == '0' ? #{'正常'} : #{'停用'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.platform}]]：</label>
+			<div class="form-control-static" th:class="${job.platform == 'PF1' ? 'label label-success' : 'label label-primary'}" th:text="${job.platform == 'PF1' ? 'Platform 1.0' : 'Platform 5.0'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.cron.expression}]]：</label>
+			<div class="form-control-static" th:text="${job.cronExpression}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.next.run.time}]]：</label>
+			<div class="form-control-static" th:text="${#dates.format(job.nextValidTime, 'yyyy-MM-dd HH:mm:ss')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.alert}]]：</label>
+			<div class="form-control-static" th:class="${job.telegramAlert == '0' ? 'label label-primary' : 'label label-danger'}" th:text="${job.telegramAlert} == '0' ? #{'正常'} : #{'停用'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.info}]]：</label>
+			<div class="col-sm-9 form-control-static">
+				<pre th:text="${#strings.defaultString(job.telegramInfo, '-')}"></pre>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+			<div id="telegramConfig" class="form-control-static"  th:text="${#strings.defaultString(job.telegramConfig, '-')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.requester}]]：</label>
+			<div class="form-control-static" th:text="${job.requester}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.priority}]]：</label>
+			<div class="form-control-static" th:class="${job.priority == '1' ? 'label label-primary' : 'label label-danger'}" th:text="${job.priority} == '1' ? #{'不紧急'} : #{'紧急'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.action}]]：</label>
+			<div class="form-control-static" th:text="${job.actionItem}"></div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.descr}]]：</label>
+			<div class="col-sm-9 form-control-static">
+				<pre th:text="${#strings.defaultString(job.descr, '-')}"></pre>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">URL：</label>
+			<div class="form-control-static" th:text="${job.url}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{api.job.method}]]：</label>
+			<div class="form-control-static" th:text="${@dict.getLabel('api_job_method', job.method)}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{api.job.content.type}]]：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(job.contentType, '-')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{api.job.header}]]：</label>
+			<div class="form-control-static">
+				<pre th:text="${#strings.defaultString(job.header, '-')}"></pre>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{api.job.body}]]：</label>
+			<div class="form-control-static">
+				<pre th:text="${#strings.defaultString(job.body, '-')}"></pre>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{api.job.expected.code}]]：</label>
+			<div class="form-control-static" th:text="${job.expectedCode}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.last.alert}]]：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(#dates.format(job.lastAlert, 'yyyy-MM-dd HH:mm:ss'), '-')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{common.create.by}]]：</label>
+			<div class="form-control-static" th:text="${job.createBy}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{common.create.time}]]：</label>
+			<div class="form-control-static" th:text="${#dates.format(job.createTime, 'yyyy-MM-dd HH:mm:ss')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{common.update.by}]]：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(job.updateBy, '-')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{common.update.time}]]：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(#dates.format(job.updateTime, 'yyyy-MM-dd HH:mm:ss'), '-')}">
+			</div>
+		</div>
+	</form>
+	
+    </div>
+
+<th:block th:include="include :: footer" />
+</body>
+</html>

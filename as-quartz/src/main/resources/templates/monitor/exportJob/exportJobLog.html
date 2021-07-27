@@ -86,7 +86,8 @@
                 },
                 {
                     field: 'exportId',
-                    title: i18n('sql.job.id')
+                    title: i18n('sql.job.id'),
+                    sortable: true
                 },
                 {
                     field: 'moniExport.chName',
@@ -103,18 +104,21 @@
                     title: i18n('common.start.time'),
                     formatter:function (value, row, index){
                         return $.common.dateFormat(value,'HH:mm:ss')
-                    }
+                    },
+                    sortable: true
                 },
                 {
                     field: 'endTime',
                     title: i18n('common.end.time'),
                     formatter:function (value, row, index){
                         return $.common.dateFormat(value,'HH:mm:ss')
-                    }
+                    },
+                    sortable: true
                 },
                 {
                     field: 'executeTime',
-                    title: i18n('sql.job.execution.time')
+                    title: i18n('sql.job.execution.time'),
+                    sortable: true
                 },
                 {
                     field: 'operator',
@@ -125,11 +129,7 @@
                     title: i18n('export.job.file.name'),
                     formatter:function (value, row, index) {
                         var actions = [];
-                        var filePath = row.fileName;
-                        filePath = filePath.replaceAll('/', '\\');
-                        var pos = filePath.lastIndexOf('\\');
-                        var fileName = filePath.substr(pos+1);
-                        actions.push('<a href="' + prefix + '/download/' + fileName + '" class="btn btn-success btn-xs">' + fileName + '</a> ');
+                        actions.push('<a href="' + prefix + '/download/' + value + '" class="btn btn-success btn-xs">' + value + '</a> ');
                         return actions.join('');
                     }
                 },
@@ -147,10 +147,6 @@
             };
             $.table.init(options);
         });
-
-        String.prototype.replaceAll = function(s1, s2) {
-            return this.replace(new RegExp(s1, "gm"), s2);
-        }
     </script>
 </body>
 </html>

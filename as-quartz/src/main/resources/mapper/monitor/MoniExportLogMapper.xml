@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniExportLogListNoSuccess" resultMap="MoniExportLogResult">
         <include refid="selectMoniExportLogVo"/>
-        where MEL.STATUS != '0'
+        where MEL.STATUS != '0' and MEL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 2 HOUR)
     </select>
 
     <update id="cleanExportJobLog">

@@ -111,6 +111,9 @@ public class MoniExportController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(@Validated MoniExport moniExport) throws SchedulerException {
+        if (!CronUtils.isValid(moniExport.getCronExpression())) {
+            return AjaxResult.error("编辑任务'" + moniExport.getChName() + "'失败，Cron表达式不正确");
+        }
         //此处处理一下防止特殊符号被转义
         unescapeHtml4(moniExport);
         return toAjax(moniExportService.updateMoniExport(moniExport));
