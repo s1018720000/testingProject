@@ -42,4 +42,9 @@ public interface ISysJobService {
      * 发送邮件
      */
     public void sendEmail(Mail mail) throws MessagingException, UnsupportedEncodingException;
+
+    /**
+     * 根据Cron表达式获取任务最近 几次的执行时间
+     */
+    public String getCronSchdule(String cron, int count);
 }

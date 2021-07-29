@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class MoniApiController extends BaseController {
     @Log(title = "自动API检测任务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(MoniApi moniApi) throws SchedulerException {
+    public AjaxResult addSave(@Validated MoniApi moniApi) throws SchedulerException {
         if (!CronUtils.isValid(moniApi.getCronExpression())) {
             return AjaxResult.error("新增任务'" + moniApi.getChName() + "'失败，Cron表达式不正确");
         }
@@ -107,7 +108,7 @@ public class MoniApiController extends BaseController {
     @Log(title = "自动API检测任务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(MoniApi moniApi) throws SchedulerException {
+    public AjaxResult editSave(@Validated MoniApi moniApi) throws SchedulerException {
         if (!CronUtils.isValid(moniApi.getCronExpression())) {
             return AjaxResult.error("编辑任务'" + moniApi.getChName() + "'失败，Cron表达式不正确");
         }
@@ -190,5 +191,14 @@ public class MoniApiController extends BaseController {
     @ResponseBody
     public boolean checkCronExpressionIsValid(MoniApi job) {
         return sysJobService.checkCronExpressionIsValid(job.getCronExpression());
+    }
+
+    /**
+     * 根据Cron表达式获取任务最近 几次的执行时间
+     */
+    @PostMapping("/getCronSchdule")
+    @ResponseBody
+    public String getCronSchdule(MoniApi job) {
+        return sysJobService.getCronSchdule(job.getCronExpression(), 10);
     }
 }

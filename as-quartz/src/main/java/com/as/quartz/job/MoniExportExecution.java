@@ -105,7 +105,7 @@ public class MoniExportExecution extends AbstractQuartzJob {
     protected void after(JobExecutionContext context, Object job, Exception e) {
         if (e != null) {
             moniExportLog.setStatus(Constants.ERROR);
-            moniExportLog.setExceptionLog(ExceptionUtil.getExceptionMessage(e));
+            moniExportLog.setExceptionLog(ExceptionUtil.getExceptionMessage(e).replace("\"", "'"));
         }
     }
 

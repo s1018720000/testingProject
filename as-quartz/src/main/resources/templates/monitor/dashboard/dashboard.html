@@ -91,6 +91,7 @@
             initSqlJobTable();
             initExportJobTable()
             initApiJobTable()
+            initElasticJobTable()
         } else {
             refreshTable();
         }
@@ -101,8 +102,9 @@
         if (isSwitchOn()){
             var sqlJobRow = $('#bootstrap-table-sql').bootstrapTable('getOptions').totalRows
             var apiJobRow = $('#bootstrap-table-api').bootstrapTable('getOptions').totalRows
+            var elasticJobRow = $('#bootstrap-table-elastic').bootstrapTable('getOptions').totalRows
             var switchOnNum = $("table .fa-toggle-on").length
-            var totalRow = sqlJobRow + apiJobRow
+            var totalRow = sqlJobRow + apiJobRow + elasticJobRow
             if (totalRow && switchOnNum){
                 if (isPaused()){
                     play()
@@ -117,7 +119,7 @@
         $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
         $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
         $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-api']);
-        // $("#" + table.config['bootstrap-table-agent'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-agent']);
+        $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-elastic']);
     }
 
     function play(){
@@ -375,10 +377,81 @@
         $.table.init(options);
     }
 
+    function initElasticJobTable(){
+        var options = {
+            url: prefix + "/updateElasticJob",
+            id:'bootstrap-table-elastic',
+            pageSize: 100,
+            pageNumber: 1,
+            pageList: [100],
+            striped: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            headerStyle: headerStyle,
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: i18n('elastic.job'),
+            columns: [
+                [{
+                    title : i18n('elastic.job'),
+                    align : 'center',
+                    field: '',
+                    colspan : 6
+                }
+                ],
+                [{
+                    field: 'startTime',
+                    title: i18n('common.start.time'),
+                    align: 'center'
+                },
+                    {
+                        field: 'moniElastic.chName',
+                        title: i18n('sql.job.name_zh'),
+                        visible: i18n('locale') !== 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniElastic.enName',
+                        title: i18n('sql.job.name_en'),
+                        visible: i18n('locale') === 'en-US',
+                        align: 'center',
+                    },
+                    {
+                        field: 'moniElastic.platform',
+                        title: i18n('sql.job.platform'),
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(PLATFORMDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'status',
+                        title: i18n('sql.job.execute.status'),
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(statusDatas, value);
+                        },
+                        align: 'center',
+                    },
+                    {
+                        field: 'alertStatus',
+                        title: i18n('monitor.alert.switch'),
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return elasticJobAlertTools(row);
+                        },
+                    }
+                ]
+            ]
+        };
+        $.table.init(options);
+    }
+
 
     /* sql检测调度任务告警显示 */
     function sqlJobAlertTools(row) {
-        if (row.alertStatus == 1) {
+        if (row.alertStatus === "1") {
             return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="sqlJobAlertStart(\'' + row.id + '\')"></i> ';
         } else {
             return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="sqlJobAlertStop(\'' + row.id + '\')"></i> ';
@@ -401,7 +474,7 @@
 
     /* api检测调度任务告警显示 */
     function apiJobAlertTools(row) {
-        if (row.alertStatus == 1) {
+        if (row.alertStatus === "1") {
             return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="apiJobAlertStart(\'' + row.id + '\')"></i> ';
         } else {
             return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="apiJobAlertStop(\'' + row.id + '\')"></i> ';
@@ -419,6 +492,29 @@
     function apiJobAlertStart(jobId) {
         $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
             $.operate.post(prefix + "/startApiJobAlert", {"id": jobId, "alertStatus": 0});
+        })
+    }
+
+    /* elastic检测任务告警显示 */
+    function elasticJobAlertTools(row) {
+        if (row.alertStatus === "1") {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="elasticJobAlertStart(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="elasticJobAlertStop(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    /*elastic检测任务告警-停用 */
+    function elasticJobAlertStop(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
+            $.operate.post(prefix + "/stopElasticJobAlert", {"id": jobId, "alertStatus": 1});
+        })
+    }
+
+    /* elastic检测任务告警-启用 */
+    function elasticJobAlertStart(jobId) {
+        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
+            $.operate.post(prefix + "/startElasticJobAlert", {"id": jobId, "alertStatus": 0});
         })
     }
 

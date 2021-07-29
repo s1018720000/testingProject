@@ -36,6 +36,7 @@ mail:
   #使用 STARTTLS安全连接
   smtp.starttls.enable: true
 
+
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80

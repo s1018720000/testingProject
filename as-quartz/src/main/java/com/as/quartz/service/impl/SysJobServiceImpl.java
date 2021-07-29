@@ -1,13 +1,17 @@
 package com.as.quartz.service.impl;
 
+import com.as.common.utils.MessageUtils;
 import com.as.common.utils.StringUtils;
 import com.as.quartz.domain.MoniApi;
+import com.as.quartz.domain.MoniElastic;
 import com.as.quartz.domain.MoniExport;
 import com.as.quartz.domain.MoniJob;
 import com.as.quartz.job.MoniApiExecution;
+import com.as.quartz.job.MoniElasticExecution;
 import com.as.quartz.job.MoniExportExecution;
 import com.as.quartz.job.MoniJobExecution;
 import com.as.quartz.mapper.MoniApiMapper;
+import com.as.quartz.mapper.MoniElasticMapper;
 import com.as.quartz.mapper.MoniExportMapper;
 import com.as.quartz.mapper.MoniJobMapper;
 import com.as.quartz.service.ISysJobService;
@@ -18,6 +22,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -41,6 +46,7 @@ import java.util.Map;
  * @author kolin
  */
 @Service
+@DependsOn({"flyway", "flywayInitializer"})
 public class SysJobServiceImpl implements ISysJobService {
     @Autowired
     private Scheduler scheduler;
@@ -53,6 +59,9 @@ public class SysJobServiceImpl implements ISysJobService {
 
     @Autowired
     private MoniApiMapper moniApiMapper;
+
+    @Autowired
+    private MoniElasticMapper moniElasticMapper;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -113,6 +122,11 @@ public class SysJobServiceImpl implements ISysJobService {
         for (MoniApi api : apis) {
             MoniApiExecution moniApiExecution = MoniApiExecution.buildJob(api);
             ScheduleUtils.createScheduleJob(scheduler, moniApiExecution);
+        }
+        List<MoniElastic> elastics = moniElasticMapper.selectMoniElasticAll();
+        for (MoniElastic elastic : elastics) {
+            MoniElasticExecution moniElasticExecution = MoniElasticExecution.buildJob(elastic);
+            ScheduleUtils.createScheduleJob(scheduler, moniElasticExecution);
         }
         setjdbcTemplateMap();
     }
@@ -197,5 +211,16 @@ public class SysJobServiceImpl implements ISysJobService {
 
         //寄信
         javaMailSender.send(mailMessage);
+    }
+
+    @Override
+    public String getCronSchdule(String cron, int count) {
+        List<String> cronSchdule = CronUtils.getCronSchdule(cron, count);
+        StringBuilder times = new StringBuilder();
+        times.append(MessageUtils.message("job.view.recent.run.time")).append(":").append("\n");
+        for (String time : cronSchdule) {
+            times.append(time).append("\n");
+        }
+        return times.toString();
     }
 }

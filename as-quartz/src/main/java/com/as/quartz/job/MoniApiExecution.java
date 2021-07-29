@@ -65,10 +65,10 @@ public class MoniApiExecution extends AbstractQuartzJob {
 
             //发送告警
             if (Constants.SUCCESS.equals(moniApi.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram(moniApi, moniApiLog);
+                SendResponse sendResponse = sendTelegram();
                 if (!sendResponse.isOk()) {
                     moniApiLog.setStatus(Constants.ERROR);
-                    moniApiLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
+                    moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
                 } else {
                     //更新最后告警时间
                     moniApi.setLastAlert(DateUtils.getNowDate());
@@ -105,7 +105,8 @@ public class MoniApiExecution extends AbstractQuartzJob {
     protected void after(JobExecutionContext context, Object job, Exception e) {
         if (e != null) {
             moniApiLog.setStatus(Constants.ERROR);
-            moniApiLog.setExceptionLog(ExceptionUtil.getExceptionMessage(e));
+            moniApiLog.setAlertStatus(Constants.SUCCESS);
+            moniApiLog.setExceptionLog(ExceptionUtil.getExceptionMessage(e).replace("\"", "'"));
         }
     }
 
@@ -136,7 +137,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
     }
 
 
-    private SendResponse sendTelegram(MoniApi moniApi, MoniApiLog moniApiLog) throws Exception {
+    private SendResponse sendTelegram() throws Exception {
         String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniApi.getTelegramConfig());
         if (StringUtils.isEmpty(telegramConfig)) {
             //若是沒有设置telegram通知群组,则抛出例外
@@ -162,8 +163,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
 //        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
 //                new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
 //        sendPhoto.replyMarkup(inlineKeyboard);
-        SendResponse response = telegramBot.execute(sendMessage);
-        return response;
+        return telegramBot.execute(sendMessage);
     }
 
     /**

@@ -38,10 +38,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.jobName != null "> and (MA.CH_NAME like concat('%', #{params.jobName}, '%') or MA.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="apiId != null "> and MAL.API_ID = #{apiId}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
-                AND date_format(MAL.CREATE_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
+                AND date_format(MAL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
             </if>
             <if test="params.endStartTime != null and params.endStartTime != ''"><!-- 结束时间检索 -->
-                AND date_format(MAL.CREATE_TIME,'%y%m%d') &lt;= date_format(#{params.endStartTime},'%y%m%d')
+                AND date_format(MAL.START_TIME,'%y%m%d') &lt;= date_format(#{params.endStartTime},'%y%m%d')
             </if>
             <if test="status != null  and status != ''"> and MAL.STATUS = #{status}</if>
         </where>
@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="cleanApiJobLog">
             truncate table moni_api_log
-        </update>
+    </update>
 
     <select id="selectMoniApiLogListNoSuccess" resultMap="MoniApiLogResult">
         <include refid="selectMoniApiLogVo"/>

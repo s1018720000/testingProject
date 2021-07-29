@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('修改自动API检测任务')" />
+    <th:block th:include="include :: header('修改ElasticSearch任务')" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-apiJob-edit" th:object="${moniApi}">
+        <form class="form-horizontal m" id="form-elasticJob-edit" th:object="${moniElastic}">
             <h4 class="form-header h4">[[#{user.add.basic.information}]]</h4>
             <input name="id" th:field="*{id}" type="hidden">
             <div class="form-group">    
@@ -20,19 +20,19 @@
                     <input name="ticketNumber" th:field="*{ticketNumber}" class="form-control" type="text">
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.name_zh}]]：</label>
                 <div class="col-sm-8">
                     <input name="chName" th:field="*{chName}" class="form-control" type="text" required>
                 </div>
             </div>
-            <div class="form-group">    
+            <div class="form-group">
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.name_en}]]：</label>
                 <div class="col-sm-8">
                     <input name="enName" th:field="*{enName}" class="form-control" type="text" required>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.status}]]：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_job_status')}">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.platform}]]：</label>
                 <div class="col-sm-8">
                     <select name="platform" class="form-control m-b" th:with="type=${@dict.getType('ub8_platform_type')}" required>
@@ -49,7 +49,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.cron.expression}]]：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
@@ -62,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.alert}]]：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
@@ -74,19 +74,18 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label" th:title="#{sql.job.tg.info.info}"><i class="fa fa-question-circle-o"></i> [[#{sql.job.tg.info}]]：</label>
                 <div class="col-sm-8">
-                    <textarea name="telegramInfo" class="form-control" rows="5">[[*{telegramInfo}]]</textarea>
+                    <textarea name="telegramInfo" class="form-control"  rows="5">[[*{telegramInfo}]]</textarea>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
                 <div class="col-sm-8">
                     <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}">
-                        <option value="">--[[#{dict.data.select}]]--</option>
                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{telegramConfig}"></option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.requester}]]：</label>
                 <div class="col-sm-8">
                     <select name="requester" class="form-control m-b" th:with="type=${@dict.getType('job_requester_list')}" required>
@@ -94,7 +93,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.priority}]]：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('job_priority_list')}">
@@ -103,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.action}]]：</label>
                 <div class="col-sm-8">
                     <select name="actionItem" class="form-control m-b" th:with="type=${@dict.getType('job_call_who')}" required>
@@ -114,70 +113,54 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">[[#{sql.job.descr}]]：</label>
                 <div class="col-sm-8">
-                    <textarea name="descr" class="form-control" rows="5">[[*{descr}]]</textarea>
+                    <textarea name="descr" class="form-control"  rows="5">[[*{descr}]]</textarea>
                 </div>
             </div>
-            <h4 class="form-header h4">[[#{api.job.http.info}]]</h4>
+            <h4 class="form-header h4">[[#{elastic.job.info}]]</h4>
             <div class="form-group">    
-                <label class="col-sm-3 control-label is-required">URL：</label>
+                <label class="col-sm-3 control-label is-required">Index：</label>
                 <div class="col-sm-8">
-                    <div class="input-group m-b">
-                        <div class="input-group-btn">
-                            <select name="method" class="form-control m-b" th:with="type=${@dict.getType('api_job_method')}"
-                                    style="width:70px;padding:0px 10px;appearance:none;-moz-appearance:none;-webkit-appearance:none;
-                                    background:url(data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjE3MDBDMTIwOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjE3MDBDMTIxOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MTcwMEMxMUU4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MTcwMEMxMUY4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAAyAB4DAREAAhEBAxEB/8QAbgABAQEBAQEAAAAAAAAAAAAABAAHBgUIAQEBAAMAAAAAAAAAAAAAAAAAAwECBBAAAgEDAQYFBQAAAAAAAAAAAQIAAwQFETGyczUGByFhEhMjUTJyYxQRAQADAQEAAAAAAAAAAAAAAAABEQIDMf/aAAwDAQACEQMRAD8A+i8dy+24SbogIgUCgHx3L7bhJuiAiBQKAS0R3xVFEqGk7UFC1VAJUlAAwDArqPMQMA6h7j91MFmbvFXmW0rWrlfV/NagMu1XHxbGUgidEYzMOTXTUTTt+0Gf686juLnI5jImriLYe0lL2aCe7WI1+5Katoi+J0O0jzmnSIjxXlrU+tTklh8dy+24SbogZ93e7d3HUa2WRxVMHJ0nS3rDZ6qFRtAxP6mOv4k/SU57pHrzvx2/TmCs8DhbTFWg+G2QKX00LufF3PmzEmaTNyrnNRT0phkfHcvtuEm6ICIFAoB8dy+24SbogIgUCgHx3L7bhJuiAiBQKB//2Q0K)
-                                    no-repeat right center;background-color: #eee;background-size:20%;" required>
-                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{method}"></option>
-                                <!--                                fa fa-sort-desc-->
-                            </select>
-                        </div>
-                        <input name="url" th:field="*{url}" class="form-control" type="text" required>
-                    </div>
+                    <input name="index" th:field="*{index}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">[[#{elastic.job.query}]]：</label>
+                <div class="col-sm-8">
+                    <textarea name="query" class="form-control" rows="2" required>[[*{query}]]</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">[[#{api.job.content.type}]]：</label>
+                <label class="col-sm-3 control-label is-required">[[#{common.start.time}]]：</label>
                 <div class="col-sm-8">
-                    <select name="contentType" class="form-control m-b" th:with="type=${@dict.getType('api_job_content')}">
-                        <option value="">--[[#{dict.data.select}]]--</option>
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{contentType}"></option>
+                    <input name="timeFrom" th:field="*{timeFrom}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">[[#{common.end.time}]]：</label>
+                <div class="col-sm-8">
+                    <input name="timeTo" th:field="*{timeTo}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">[[#{elastic.job.auto.match}]]：</label>
+                <div class="col-sm-8">
+                    <select name="autoMatch" class="form-control m-b" th:with="type=${@dict.getType('job_auto_comparison')}" required>
+                        <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}" th:value="${dict.dictValue}" th:field="*{autoMatch}"></option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">[[#{api.job.body}]]：</label>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label" th:title="#{elastic.job.expected.result.info}"><i class="fa fa-question-circle-o"></i> [[#{elastic.job.expected.result}]]：</label>
                 <div class="col-sm-8">
-                    <textarea name="body" class="form-control" rows="5" placeholder="key1: value1&#13;&#10;key2: value2">[[*{body}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">[[#{api.job.header}]]：</label>
-                <div class="col-sm-8">
-                    <textarea name="header" class="form-control" rows="5" placeholder="User-Agent: Mozilla/5.0&#13;&#10;Cookie: key=value">[[*{header}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label is-required">[[#{api.job.expected.code}]]：</label>
-                <div class="col-sm-8">
-                    <input name="expectedCode" th:field="*{expectedCode}" class="form-control" type="text" placeholder="Ex: 200" required/>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-4 col-sm-4">
-                    <button id="testBtn" type="button" class="btn btn-block btn-outline btn-primary"
-                            th:data-loading-text="'<i class=\'fa fa-hourglass-2\'></i> '+#{sql.job.script.test.loading}"
-                            th:data-error-text="'<i class=\'fa fa-exclamation-circle\'></i> '+#{home.server.error}"
-                            th:data-success-text="'<i class=\'fa fa-check-circle\'></i> '+#{sql.job.script.test.success}+' <i class=\'fa fa-thumbs-o-up\'></i>'"
-                            th:data-failure-text="'<i class=\'fa fa-times-circle\'></i> '+#{sql.job.script.test.failure}+' <i class=\'fa fa-frown-o\'></i>'"
-                            autocomplete="off"><i class="fa fa-bug"></i> [[#{sql.job.script.test}]]</button>&nbsp;
+                    <input name="expectedResult" th:field="*{expectedResult}" class="form-control" type="text"  placeholder="Ex: 1">
                 </div>
             </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var prefix = ctx + "monitor/apiJob";
-        $("#form-apiJob-edit").validate({
+        var prefix = ctx + "monitor/elasticJob";
+        $("#form-elasticJob-edit").validate({
             onkeyup: false,
             rules:{
                 cronExpression:{
@@ -195,7 +178,7 @@
                         }
                     }
                 },
-                expectedCode:{
+                expectedResult:{
                     digits: true
                 }
             },
@@ -209,66 +192,9 @@
 
         function submitHandler() {
             if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-apiJob-edit').serialize());
+                $.operate.save(prefix + "/edit", $('#form-elasticJob-edit').serialize());
             }
         }
-
-        function testStart(){
-            $('#testBtn').button('loading')
-            $('#testBtn').removeClass('btn-danger')
-            $('#testBtn').removeClass('btn-info')
-            $('#testBtn').addClass('btn-primary')
-            $('#testBtn').css('color','white')
-        }
-
-        function testSuccess(){
-            $('#testBtn').removeClass('btn-primary')
-            $('#testBtn').removeClass('btn-danger')
-            $('#testBtn').addClass('btn-info')
-            $('#testBtn').removeAttr('style')
-            $('#testBtn').button('success')
-        }
-
-        function testFailure(){
-            $('#testBtn').removeClass('btn-primary')
-            $('#testBtn').removeClass('btn-info')
-            $('#testBtn').addClass('btn-danger')
-            $('#testBtn').removeAttr('style')
-            $('#testBtn').button('failure')
-        }
-
-        function testError(){
-            $('#testBtn').removeClass('btn-primary')
-            $('#testBtn').removeClass('btn-info')
-            $('#testBtn').addClass('btn-danger')
-            $('#testBtn').removeAttr('style')
-            $('#testBtn').button('error')
-        }
-
-        $(document).ready(function(){
-            $('#testBtn').on('click',function(){
-                if ($.validate.form()) {
-                    testStart()
-                    $.ajax({
-                        type:"POST",
-                        url:prefix + "/test",
-                        data : $.common.formToJSON("form-apiJob-edit"),
-                        error : function(){
-                            testError()
-                        },
-                        success : function(data) {
-                            if(data.code === 0){
-                                testSuccess()
-                            } else {
-                                testFailure()
-                                $.modal.alertError(data.msg)
-                            }
-                        }
-                    });
-                }
-            });
-
-        });
 
         $(function (){
             var cronExpression = $("[name='cronExpression']").val();
@@ -287,7 +213,7 @@
 
         $(document).ready(function(){
             $('#cronExpression').blur(function(){
-                if ($("#form-apiJob-edit").validate().element($("#cronExpression"))) {
+                if ($("#form-elasticJob-edit").validate().element($("#cronExpression"))) {
                     var cronExpression = $("[name='cronExpression']").val();
                     $.ajax({
                         type:"POST",

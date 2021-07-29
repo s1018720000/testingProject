@@ -90,7 +90,7 @@ public class MoniApiLogController extends BaseController {
      * @param mmap
      * @return
      */
-    @RequiresPermissions("monitor:apiJobLog:list")
+    @RequiresPermissions("monitor:apiJobLog:detail")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long id, ModelMap mmap) {
         mmap.put("name", "apiJobLog");

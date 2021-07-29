@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.quartz.mapper.PF2DrawCompareMapper">
+
+    <sql id="selectPF2DrawNumberVo">
+        select WINNING_NUMBER as winningNumber
+        from core.LGS_DRAW_NUMBER_RESULT
+    </sql>
+
+    <select id="selectPF2DrawNumber" resultType="String">
+        <include refid="selectPF2DrawNumberVo"/>
+        where GAME_CODE = #{arg0} and NUMERO = #{arg1}
+    </select>
+
+    <select id="selectPF2DrawNumberCount" resultType="Integer">
+       select count(1) from core.LGS_DRAW_NUMBER_RESULT where GAME_CODE = #{arg0} and NUMERO = #{arg1} and WINNING_NUMBER = #{arg2}
+    </select>
+
+</mapper>

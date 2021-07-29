@@ -30,7 +30,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/monitor/sqlJob")
 public class MoniJobController extends BaseController {
-    private String prefix = "monitor/sqlJob" ;
+    private String prefix = "monitor/sqlJob";
 
     @Autowired
     private IMoniJobService moniJobService;
@@ -41,7 +41,7 @@ public class MoniJobController extends BaseController {
     @RequiresPermissions("monitor:sqlJob:view")
     @GetMapping()
     public String sqlJob() {
-        return prefix + "/sqlJob" ;
+        return prefix + "/sqlJob";
     }
 
     /**
@@ -60,7 +60,7 @@ public class MoniJobController extends BaseController {
      * 导出SQL检测任务列表
      */
     @RequiresPermissions("monitor:sqlJob:export")
-    @Log(title = "SQL检测任务" , businessType = BusinessType.EXPORT)
+    @Log(title = "SQL检测任务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(MoniJob moniJob) {
@@ -74,14 +74,14 @@ public class MoniJobController extends BaseController {
      */
     @GetMapping("/add")
     public String add() {
-        return prefix + "/add" ;
+        return prefix + "/add";
     }
 
     /**
      * 新增保存SQL检测任务
      */
     @RequiresPermissions("monitor:sqlJob:add")
-    @Log(title = "SQL检测任务" , businessType = BusinessType.INSERT)
+    @Log(title = "SQL检测任务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(@Validated MoniJob moniJob) throws SchedulerException {
@@ -99,15 +99,15 @@ public class MoniJobController extends BaseController {
     @GetMapping("/edit/{ID}")
     public String edit(@PathVariable("ID") Long ID, ModelMap mmap) {
         MoniJob moniJob = moniJobService.selectMoniJobById(ID);
-        mmap.put("moniJob" , moniJob);
-        return prefix + "/edit" ;
+        mmap.put("moniJob", moniJob);
+        return prefix + "/edit";
     }
 
     /**
      * 修改保存SQL检测任务
      */
     @RequiresPermissions("monitor:sqlJob:edit")
-    @Log(title = "SQL检测任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "SQL检测任务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(@Validated MoniJob moniJob) throws SchedulerException {
@@ -123,7 +123,7 @@ public class MoniJobController extends BaseController {
      * 删除SQL检测任务
      */
     @RequiresPermissions("monitor:sqlJob:remove")
-    @Log(title = "SQL检测任务" , businessType = BusinessType.DELETE)
+    @Log(title = "SQL检测任务", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) throws SchedulerException {
@@ -134,15 +134,15 @@ public class MoniJobController extends BaseController {
     @RequiresPermissions("monitor:sqlJob:detail")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long id, ModelMap mmap) {
-        mmap.put("name" , "sqlJob");
-        mmap.put("job" , moniJobService.selectMoniJobById(id));
-        return prefix + "/detail" ;
+        mmap.put("name", "sqlJob");
+        mmap.put("job", moniJobService.selectMoniJobById(id));
+        return prefix + "/detail";
     }
 
     /**
      * 任务调度状态修改
      */
-    @Log(title = "SQL检测任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "SQL检测任务", businessType = BusinessType.UPDATE)
     @RequiresPermissions("monitor:sqlJob:changeStatus")
     @PostMapping("/changeStatus")
     @ResponseBody
@@ -155,7 +155,7 @@ public class MoniJobController extends BaseController {
     /**
      * 任务调度告警修改
      */
-    @Log(title = "SQL检测任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "SQL检测任务", businessType = BusinessType.UPDATE)
     @RequiresPermissions("monitor:sqlJob:changeAlert")
     @PostMapping("/changeAlert")
     @ResponseBody
@@ -166,7 +166,7 @@ public class MoniJobController extends BaseController {
     /**
      * 任务调度立即执行一次
      */
-    @Log(title = "SQL检测任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "SQL检测任务", businessType = BusinessType.UPDATE)
     @RequiresPermissions("monitor:sqlJob:runOnce")
     @PostMapping("/run")
     @ResponseBody
@@ -192,6 +192,15 @@ public class MoniJobController extends BaseController {
     @ResponseBody
     public boolean checkCronExpressionIsValid(MoniJob job) {
         return sysJobService.checkCronExpressionIsValid(job.getCronExpression());
+    }
+
+    /**
+     * 根据Cron表达式获取任务最近 几次的执行时间
+     */
+    @PostMapping("/getCronSchdule")
+    @ResponseBody
+    public String getCronSchdule(MoniJob job) {
+        return sysJobService.getCronSchdule(job.getCronExpression(), 10);
     }
 
     /**

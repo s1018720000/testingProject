@@ -24,7 +24,7 @@
                             </li>
                             <li>
                                 <label>[[#{sql.job.status}]]：</label>
-                                <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                <select name="status" th:with="type=${@dict.getType('sys_job_status')}">
                                     <option value="">[[#{user.list.all}]]</option>
                                     <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}" th:value="${dict.dictValue}"></option>
                                 </select>
@@ -95,8 +95,7 @@
         var alertFlag = [[${@permission.hasPermi('monitor:apiJob:changeAlert')}]];
         var runFlag = [[${@permission.hasPermi('monitor:apiJob:runOnce')}]];
         var detailFlag = [[${@permission.hasPermi('monitor:apiJob:detail')}]];
-        var logFlag = [[${@permission.hasPermi('monitor:apiJobLog:view')}]];
-        var statusDatas = [[${@dict.getType('sys_normal_disable')}]];
+        var logFlag = [[${@permission.hasPermi('monitor:apiJobLog:detail')}]];
         var platformDatas = [[${@dict.getType('ub8_platform_type')}]];
         var methodDatas = [[${@dict.getType('api_job_method')}]];
         var contentTypeDatas = [[${@dict.getType('api_job_content')}]];
@@ -123,7 +122,7 @@
                 },
                 {
                     field: 'id',
-                    title: 'ID',
+                    title: 'ID'
                 },
                 {
                     field: 'asid',

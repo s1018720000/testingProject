@@ -30,7 +30,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/monitor/exportJob")
 public class MoniExportController extends BaseController {
-    private String prefix = "monitor/exportJob" ;
+    private String prefix = "monitor/exportJob";
 
     @Autowired
     private IMoniExportService moniExportService;
@@ -41,7 +41,7 @@ public class MoniExportController extends BaseController {
     @RequiresPermissions("monitor:exportJob:view")
     @GetMapping()
     public String exportJob() {
-        return prefix + "/exportJob" ;
+        return prefix + "/exportJob";
     }
 
     /**
@@ -60,7 +60,7 @@ public class MoniExportController extends BaseController {
      * 导出自动报表任务列表
      */
     @RequiresPermissions("monitor:exportJob:export")
-    @Log(title = "自动报表任务" , businessType = BusinessType.EXPORT)
+    @Log(title = "自动报表任务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(MoniExport moniExport) {
@@ -74,14 +74,14 @@ public class MoniExportController extends BaseController {
      */
     @GetMapping("/add")
     public String add() {
-        return prefix + "/add" ;
+        return prefix + "/add";
     }
 
     /**
      * 新增保存自动报表任务
      */
     @RequiresPermissions("monitor:exportJob:add")
-    @Log(title = "自动报表任务" , businessType = BusinessType.INSERT)
+    @Log(title = "自动报表任务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(@Validated MoniExport moniExport) throws SchedulerException {
@@ -99,15 +99,15 @@ public class MoniExportController extends BaseController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap) {
         MoniExport moniExport = moniExportService.selectMoniExportById(id);
-        mmap.put("moniExport" , moniExport);
-        return prefix + "/edit" ;
+        mmap.put("moniExport", moniExport);
+        return prefix + "/edit";
     }
 
     /**
      * 修改保存自动报表任务
      */
     @RequiresPermissions("monitor:exportJob:edit")
-    @Log(title = "自动报表任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "自动报表任务", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(@Validated MoniExport moniExport) throws SchedulerException {
@@ -123,7 +123,7 @@ public class MoniExportController extends BaseController {
      * 删除自动报表任务
      */
     @RequiresPermissions("monitor:exportJob:remove")
-    @Log(title = "自动报表任务" , businessType = BusinessType.DELETE)
+    @Log(title = "自动报表任务", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) throws SchedulerException {
@@ -134,7 +134,7 @@ public class MoniExportController extends BaseController {
     /**
      * 任务调度状态修改
      */
-    @Log(title = "自动报表任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "自动报表任务", businessType = BusinessType.UPDATE)
     @RequiresPermissions("monitor:exportJob:changeStatus")
     @PostMapping("/changeStatus")
     @ResponseBody
@@ -146,6 +146,7 @@ public class MoniExportController extends BaseController {
 
     /**
      * 任务详情
+     *
      * @param id
      * @param mmap
      * @return
@@ -153,14 +154,14 @@ public class MoniExportController extends BaseController {
     @RequiresPermissions("monitor:exportJob:detail")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long id, ModelMap mmap) {
-        mmap.put("job" , moniExportService.selectMoniExportById(id));
-        return prefix + "/detail" ;
+        mmap.put("job", moniExportService.selectMoniExportById(id));
+        return prefix + "/detail";
     }
 
     /**
      * 任务调度立即执行一次
      */
-    @Log(title = "自动报表任务" , businessType = BusinessType.UPDATE)
+    @Log(title = "自动报表任务", businessType = BusinessType.UPDATE)
     @RequiresPermissions("monitor:exportJob:runOnce")
     @PostMapping("/run")
     @ResponseBody
@@ -189,6 +190,15 @@ public class MoniExportController extends BaseController {
     }
 
     /**
+     * 根据Cron表达式获取任务最近 几次的执行时间
+     */
+    @PostMapping("/getCronSchdule")
+    @ResponseBody
+    public String getCronSchdule(MoniExport job) {
+        return sysJobService.getCronSchdule(job.getCronExpression(), 10);
+    }
+
+    /**
      * 处理一下获取的数据，防止特殊符号被转义
      *
      * @param moniExport
@@ -198,4 +208,5 @@ public class MoniExportController extends BaseController {
         moniExport.setChName(StringEscapeUtils.unescapeHtml4(moniExport.getChName()));
         moniExport.setEnName(StringEscapeUtils.unescapeHtml4(moniExport.getEnName()));
     }
+
 }

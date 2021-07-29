@@ -110,3 +110,9 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+
+elastic:
+    #pf1 url
+    pf1: kibana2.pf1prod.com
+    #pf2 url
+    pf2: log-kafka1.pf2prod.com

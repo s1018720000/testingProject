@@ -6,9 +6,11 @@ import com.as.common.core.domain.AjaxResult;
 import com.as.common.core.page.TableDataInfo;
 import com.as.common.enums.BusinessType;
 import com.as.quartz.domain.MoniApiLog;
+import com.as.quartz.domain.MoniElasticLog;
 import com.as.quartz.domain.MoniExportLog;
 import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.service.IMoniApiLogService;
+import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniExportLogService;
 import com.as.quartz.service.IMoniJobLogService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -40,6 +42,9 @@ public class DashboardController extends BaseController {
 
     @Autowired
     private IMoniApiLogService moniApiLogService;
+
+    @Autowired
+    private IMoniElasticLogService moniElasticLogService;
 
     @RequiresPermissions("monitor:dashboard:view")
     @GetMapping()
@@ -92,7 +97,24 @@ public class DashboardController extends BaseController {
     @ResponseBody
     public TableDataInfo updateElasticJob() {
         startPage();
-        return getDataTable(null);
+        List<MoniElasticLog> list = moniElasticLogService.selectMoniElasticLogListNoSuccess();
+        return getDataTable(list);
+    }
+
+    @Log(title = "仪表盘", businessType = BusinessType.UPDATE)
+    @PostMapping("/stopElasticJobAlert")
+    @ResponseBody
+    public AjaxResult stopElasticJobAlert(MoniElasticLog moniElasticLog) {
+        moniElasticLogService.updateMoniElasticLog(moniElasticLog);
+        return success();
+    }
+
+    @Log(title = "仪表盘", businessType = BusinessType.UPDATE)
+    @PostMapping("/startElasticJobAlert")
+    @ResponseBody
+    public AjaxResult startElasticJobAlert(MoniElasticLog moniElasticLog) {
+        moniElasticLogService.updateMoniElasticLog(moniElasticLog);
+        return success();
     }
 
     /**

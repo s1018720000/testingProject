@@ -128,9 +128,11 @@
                     field: 'fileName',
                     title: i18n('export.job.file.name'),
                     formatter:function (value, row, index) {
-                        var actions = [];
-                        actions.push('<a href="' + prefix + '/download/' + value + '" class="btn btn-success btn-xs">' + value + '</a> ');
-                        return actions.join('');
+                        if(value){
+                            var actions = [];
+                            actions.push('<a href="' + prefix + '/download/' + value + '" class="btn btn-success btn-xs">' + value + '</a> ');
+                            return actions.join('');
+                        }
                     }
                 },
                 {

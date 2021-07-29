@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-	<th:block th:include="include :: header('sql检测定时任务详细')" />
+
+	<th:block th:include="include :: header('API检测定时任务详细')" />
 </head>
 <body class="white-bg">
 	<form class="form-horizontal m-t" id="jobForm">
@@ -36,11 +37,6 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">JDBC：</label>
-			<div class="form-control-static" th:text="${job.jdbc}">
-			</div>
-		</div>
-		<div class="form-group">
 			<label class="col-sm-3 control-label">[[#{sql.job.platform}]]：</label>
 			<div class="form-control-static" th:class="${job.platform == 'PF1' ? 'label label-success' : 'label label-primary'}" th:text="${job.platform == 'PF1' ? 'Platform 1.0' : 'Platform 5.0'}">
 			</div>
@@ -56,45 +52,80 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.alert}]]：</label>
+			<div class="form-control-static" th:class="${job.telegramAlert == '0' ? 'label label-primary' : 'label label-danger'}" th:text="${job.telegramAlert} == '0' ? #{'正常'} : #{'停用'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.info}]]：</label>
+			<div class="col-sm-9 form-control-static">
+				<pre th:text="${#strings.defaultString(job.telegramInfo, '-')}"></pre>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+			<div id="telegramConfig" class="form-control-static"  th:text="${#strings.defaultString(job.telegramConfig, '-')}">
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-3 control-label">[[#{sql.job.requester}]]：</label>
 			<div class="form-control-static" th:text="${job.requester}">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{sql.job.script}]]：</label>
+			<label class="col-sm-3 control-label">[[#{sql.job.priority}]]：</label>
+			<div class="form-control-static" th:class="${job.priority == '1' ? 'label label-primary' : 'label label-danger'}" th:text="${job.priority} == '1' ? #{'不紧急'} : #{'紧急'}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.action}]]：</label>
+			<div class="form-control-static" th:text="${job.actionItem}"></div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.descr}]]：</label>
 			<div class="col-sm-9 form-control-static">
-				<pre  th:text="${job.script}"></pre>
+				<pre th:text="${#strings.defaultString(job.descr, '-')}"></pre>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.email.to}]]：</label>
-			<div class="form-control-static" th:text="${job.mailTo}">
+			<label class="col-sm-3 control-label">Index：</label>
+			<div class="form-control-static" th:text="${job.index}">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.email.cc}]]：</label>
-			<div class="form-control-static" th:text="${#strings.defaultString(job.mailCc, '-')}">
+			<label class="col-sm-3 control-label">[[#{elastic.job.query}]]：</label>
+			<div class="form-control-static" th:text="${job.query}">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.email.bcc}]]：</label>
-			<div class="form-control-static" th:text="${#strings.defaultString(job.mailBcc, '-')}">
+			<label class="col-sm-3 control-label">[[#{common.start.time}]]：</label>
+			<div class="form-control-static" th:text="${job.timeFrom}">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.email.subject}]]：</label>
-			<div class="form-control-static" th:text="${job.mailSubject}">
+			<label class="col-sm-3 control-label">[[#{common.end.time}]]：</label>
+			<div class="form-control-static" th:text="${job.timeTo}">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.email.content}]]：</label>
+			<label class="col-sm-3 control-label">[[#{elastic.job.auto.match}]]：</label>
+			<div class="form-control-static" th:if="${job.autoMatch == '0'}">[[#{不比对}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '1'}">[[#{等于}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '2'}">[[#{不等于}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '3'}">[[#{大于}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '4'}">[[#{小于}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '5'}">[[#{无资料}]]</div>
+			<div class="form-control-static" th:if="${job.autoMatch == '6'}">[[#{有资料}]]</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{elastic.job.expected.result}]]：</label>
 			<div class="form-control-static">
-				<pre th:text="${#strings.defaultString(job.mailContent, '-')}"></pre>
+				<pre th:text="${#strings.defaultString(job.expectedResult, '-')}"></pre>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">[[#{export.job.last.export}]]：</label>
-			<div class="form-control-static" th:text="${#strings.defaultString(#dates.format(job.lastExport, 'yyyy-MM-dd HH:mm:ss'), '-')}">
+			<label class="col-sm-3 control-label">[[#{sql.job.last.alert}]]：</label>
+			<div class="form-control-static" th:text="${#strings.defaultString(#dates.format(job.lastAlert, 'yyyy-MM-dd HH:mm:ss'), '-')}">
 			</div>
 		</div>
 		<div class="form-group">

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.quartz.mapper.PF1DrawCompareMapper">
+
+    <sql id="selectPF1DrawNumberVo">
+        select WIN_NO as winningNumber
+        from lott_new_a3d1.LOTT_MANAUL_TEMP
+    </sql>
+    
+    <select id="selectPF1DrawNumber" resultType="String">
+        <include refid="selectPF1DrawNumberVo"/>
+        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{arg0} ) and NUMERO = #{arg1}
+    </select>
+
+    <select id="selectPF1DrawNumberCount" resultType="Integer">
+        select count(1) from lott_new_a3d1.LOTT_MANAUL_TEMP
+        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{arg0} ) and NUMERO = #{arg1} and WIN_NO = #{arg2}
+    </select>
+
+</mapper>

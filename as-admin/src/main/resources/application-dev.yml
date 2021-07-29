@@ -110,3 +110,10 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+
+
+elastic:
+    #pf1 url
+    pf1: 172.26.101.48
+    #pf2 url
+    pf2: 172.26.113.95

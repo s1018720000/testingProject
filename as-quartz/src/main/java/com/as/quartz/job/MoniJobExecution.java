@@ -78,9 +78,10 @@ public class MoniJobExecution extends AbstractQuartzJob {
 //        if (resultIsExist(exeResult, moniJob.getId())) {
         //没有重复发生的LOG
         if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("No need match");
             moniJobLog.setStatus(Constants.SUCCESS);
             moniJobLog.setAlertStatus(Constants.FAIL);
-        } else if (doMatch(rowSet, moniJob)) {
+        } else if (doMatch(rowSet)) {
             moniJobLog.setStatus(Constants.SUCCESS);
             moniJobLog.setAlertStatus(Constants.FAIL);
         } else {
@@ -92,7 +93,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
             //发送告警
             if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram(moniJob, moniJobLog);
+                SendResponse sendResponse = sendTelegram();
                 if (!sendResponse.isOk()) {
                     moniJobLog.setStatus(Constants.ERROR);
                     moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
@@ -251,7 +252,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
      *
      * @throws Exception
      */
-    private boolean doMatch(SqlRowSet rowSet, MoniJob moniJob) throws Exception {
+    private boolean doMatch(SqlRowSet rowSet) throws Exception {
 
         String autoMatch = moniJob.getAutoMatch();
         String[] expected = moniJob.getExpectedResult().split("@");
@@ -356,18 +357,23 @@ public class MoniJobExecution extends AbstractQuartzJob {
      *
      * @param relExport
      */
-    private void doExport(String relExport) throws SchedulerException {
+    private void doExport(String relExport) throws Exception {
         if (StringUtils.isNotEmpty(relExport)) {
             IMoniExportService moniExportService = SpringUtils.getBean(IMoniExportService.class);
             String[] ids = relExport.split(",");
             for (String id : ids) {
                 MoniExport moniExport = moniExportService.selectMoniExportById(Long.parseLong(id));
-                moniExportService.run(moniExport);
+                if (StringUtils.isNotNull(moniExport)) {
+                    moniExportService.run(moniExport);
+                } else {
+                    throw new Exception("The related export job does not exist");
+                }
+
             }
         }
     }
 
-    private SendResponse sendTelegram(MoniJob moniJob, MoniJobLog moniJobLog) throws Exception {
+    private SendResponse sendTelegram() throws Exception {
         String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniJob.getTelegramConfig());
         if (StringUtils.isEmpty(telegramConfig)) {
             //若是沒有设置telegram通知群组,则抛出例外
@@ -396,8 +402,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
         sendPhoto.replyMarkup(inlineKeyboard);
-        SendResponse response = telegramBot.execute(sendPhoto);
-        return response;
+        return telegramBot.execute(sendPhoto);
     }
 
     private String createImg(MoniJob moniJob, MoniJobLog moniJobLog) {
