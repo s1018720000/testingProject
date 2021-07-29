@@ -22,7 +22,7 @@
 							<label class="col-sm-4 control-label">[[#{db.query.data.source}]]：</label>
 							<div class="col-sm-2">
 								<select name="datasource" class="form-control m-b" th:with="type=${@dict.getType('pf1_data_base_source')}">
-									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'} ? true : false"></option>
 								</select>
 							</div>
 							<div class="col-sm-6">
