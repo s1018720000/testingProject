@@ -46,7 +46,7 @@ import java.util.Map;
  * @author kolin
  */
 @Service
-@DependsOn({"flyway", "flywayInitializer"})
+@DependsOn("flywayConfig")
 public class SysJobServiceImpl implements ISysJobService {
     @Autowired
     private Scheduler scheduler;

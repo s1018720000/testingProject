@@ -35,6 +35,7 @@ import com.as.framework.shiro.web.filter.sync.SyncOnlineSessionFilter;
 import com.as.framework.shiro.web.session.OnlineWebSessionManager;
 import com.as.framework.shiro.web.session.SpringSessionValidationScheduler;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * 权限配置加载

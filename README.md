@@ -18,9 +18,6 @@ Open gradle file as a project
 install mysql >= 5.7 (5.7.34.0)  
 tips：mysql 5.6 does not support flyway, must install version 5.7 and above  
 create db name is monitor  
-Run the script in the `sql` folder:  
-run as_init.sql  
-run quartz.sql  
 Modify it to your own database configuration in the `application-dev.yml` file  
 run `MainApplication.java` to start the project  
 

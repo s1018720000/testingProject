@@ -3,6 +3,7 @@ package com.as.system.service.impl;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import com.as.common.constant.Constants;
 import com.as.common.constant.UserConstants;
@@ -20,6 +21,7 @@ import com.as.system.service.ISysConfigService;
  * @author kolin
  */
 @Service
+@DependsOn("flywayConfig")
 public class SysConfigServiceImpl implements ISysConfigService
 {
     @Autowired
