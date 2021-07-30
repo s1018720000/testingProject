@@ -29,12 +29,12 @@ public class PF2QueryController extends BaseController {
     @Autowired
     private IDBQueryService queryService;
 
-    private String prefix = "/query/pf2";
+    private String prefix = "query";
 
     @RequiresPermissions("query:pf2:view")
     @GetMapping()
     public String build() {
-        return prefix + "/query";
+        return prefix + "/pf2";
     }
 
     @RequiresPermissions("query:pf2:query")

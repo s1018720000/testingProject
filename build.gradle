@@ -1,7 +1,17 @@
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven'
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.5.3' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE' apply false
+}
 
+subprojects {
+    group 'com.as'
+    version '1.0.0-SNAPSHOT'
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
     sourceCompatibility = targetJavaVersion
     targetCompatibility = targetJavaVersion
 
@@ -100,15 +110,14 @@ subprojects {
     }
 }
 
-
 allprojects {
 //    apply plugin: 'org.springframework.boot'
 //    apply plugin: 'io.spring.dependency-management'
 
     repositories {
         mavenLocal()
-        mavenCentral()
         maven { url "http://maven.aliyun.com/nexus/content/groups/public"}
+        mavenCentral()
     }
     defaultTasks 'clean', 'build', 'assemble'
 }

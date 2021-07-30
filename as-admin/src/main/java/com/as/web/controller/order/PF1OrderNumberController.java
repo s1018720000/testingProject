@@ -26,7 +26,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/order/pf1")
 public class PF1OrderNumberController extends BaseController {
-    private String prefix = "order/pf1";
+    private String prefix = "order";
 
     @Autowired
     private IPF1OrderNumberService pf1OrderNumberService;

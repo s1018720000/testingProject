@@ -1,3 +1,5 @@
+jar.enabled = true
+bootJar.enabled = false
 dependencies {
     compile project(':as-system')
     implementation "org.springframework.boot:spring-boot-starter-web"

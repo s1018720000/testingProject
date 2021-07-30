@@ -29,12 +29,12 @@ public class ASQueryController extends BaseController {
     @Autowired
     private IDBQueryService queryService;
 
-    private String prefix = "/query/as";
+    private String prefix = "query";
 
     @RequiresPermissions("query:as:view")
     @GetMapping()
     public String build() {
-        return prefix + "/query";
+        return prefix + "/as";
     }
 
     @RequiresPermissions("query:as:query")
