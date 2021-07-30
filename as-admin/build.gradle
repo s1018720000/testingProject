@@ -1,3 +1,14 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group 'as.portal'
+version '1.0.0-SNAPSHOT'
+
+buildDir '../ASPortal/build/'
+
 dependencies {
     compile project(':as-framework')
     compile project(':as-quartz')
