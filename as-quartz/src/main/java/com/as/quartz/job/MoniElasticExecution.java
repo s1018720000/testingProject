@@ -1,5 +1,6 @@
 package com.as.quartz.job;
 
+import com.as.common.config.ASConfig;
 import com.as.common.constant.Constants;
 import com.as.common.constant.DictTypeConstants;
 import com.as.common.constant.ScheduleConstants;
@@ -14,6 +15,8 @@ import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -24,9 +27,12 @@ import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * SQL检测任务执行类（禁止并发执行）
@@ -42,6 +48,8 @@ public class MoniElasticExecution extends AbstractQuartzJob {
      * 创建任务名时使用的前缀，如ELASTIC-JOB-1
      */
     private static final String JOB_CODE = "ELASTIC-JOB";
+
+    private static final String JOB_DETAIL_URL = "/monitor/elasticJob/detail/";
 
     private final MoniElasticLog moniElasticLog = new MoniElasticLog();
 
@@ -76,13 +84,35 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             } else {
                 moniElasticLog.setStatus(Constants.FAIL);
                 moniElasticLog.setAlertStatus(Constants.SUCCESS);
-                sendAlert();
+                if (resultIsExist(result, moniElastic.getId())) {
+                    //没有重复发生的LOG才发送TG告警，避免频繁发送
+                    sendAlert();
+                }
             }
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
             moniElasticLog.setAlertStatus(Constants.FAIL);
         }
 
+    }
+
+    /**
+     * 检测是否存在相同结果日志
+     *
+     * @param result
+     * @param jobId
+     * @return
+     */
+    private boolean resultIsExist(String result, Long jobId) {
+        try {
+            DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
+            String sql = "SELECT COUNT(*) FROM MONI_ELASTIC_LOG WHERE EXECUTE_RESULT = ? AND ELASTIC_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+            JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
+            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{result, jobId}, Integer.class);
+            return row == 0;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     private void doCompare(Map<String, String> compareResult) throws Exception {
@@ -93,7 +123,10 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             moniElasticLog.setExecuteResult(result);
             moniElasticLog.setStatus(Constants.FAIL);
             moniElasticLog.setAlertStatus(Constants.SUCCESS);
-            sendAlert();
+            if (resultIsExist(result, moniElastic.getId())) {
+                //没有重复发生的LOG才发送TG告警，避免频繁发送
+                sendAlert();
+            }
         } else {
             result = "find 0 hits";
             moniElasticLog.setExecuteResult(result);
@@ -237,21 +270,26 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             //若是数量不等于2，则配置错误
             throw new Exception("telegram group Configuration error, please check");
         }
+        String bot = tgData[0];
+        String chatId = tgData[1];
+        if (!"prod".equals(SpringUtils.getActiveProfile())) {
+            chatId = "-532553117";
+        }
         String telegramInfo = moniElastic.getTelegramInfo();
         telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniElasticLog.getElasticId()))
                 .replace("{asid}", moniElastic.getAsid())
-                .replace("{priority}", moniElastic.getPriority() == "1" ? "NU" : "URG")
+                .replace("{priority}", "1".equals(moniElastic.getPriority()) ? "NU" : "URG")
                 .replace("{zh_name}", moniElastic.getChName())
                 .replace("{en_name}", moniElastic.getEnName())
                 .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniElastic.getPlatform()))
                 .replace("{descr}", moniElastic.getDescr())
-                .replace("{result}", moniElasticLog.getExecuteResult().replace(";", ""));
-        TelegramBot telegramBot = new TelegramBot(tgData[0]);
-
-        SendMessage sendMessage = new SendMessage(tgData[1], telegramInfo).parseMode(ParseMode.Markdown);
-//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
-//        sendPhoto.replyMarkup(inlineKeyboard);
+                .replace("{result}", moniElasticLog.getExecuteResult().replace(";", ""))
+                .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        TelegramBot telegramBot = new TelegramBot(bot);
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniElastic.getId()))));
+        sendMessage.replyMarkup(inlineKeyboard);
         return telegramBot.execute(sendMessage);
     }
 

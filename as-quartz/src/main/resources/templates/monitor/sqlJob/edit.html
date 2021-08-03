@@ -69,9 +69,12 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label" th:title="#{sql.job.export.info}"><i class="fa fa-question-circle-o"></i> [[#{sql.job.related.export}]]：</label>
+                <label class="col-sm-3 control-label">[[#{sql.job.related.export}]]：</label>
                 <div class="col-sm-8">
-                    <input name="relExport" th:field="*{relExport}" class="form-control" type="text">
+                    <div class="input-group">
+                        <input name="relExport" onclick="selectExport()" id="relExport" readonly="true" class="form-control" th:field="*{relExport}" type="text">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -176,8 +179,8 @@
             jsonValue: 'dictValue',
             jsonName: 'dictLabel',
             data: [
-                {'dictValue': 'PF1', 'dictLabel': 'Platform 1.0', 's': PF1JDBCDatas},
-                {'dictValue': 'PF2', 'dictLabel': 'Platform 5.0', 's': PF2JDBCDatas},
+                {'dictValue': '1.0', 'dictLabel': 'Platform 1.0', 's': PF1JDBCDatas},
+                {'dictValue': '2.0', 'dictLabel': 'Platform 5.0', 's': PF2JDBCDatas},
                 {'dictValue': 'AS', 'dictLabel': 'Platform AS', 's': ASJDBCDatas},
             ]
         });
@@ -313,6 +316,25 @@
                 }
             });
         });
+
+        function selectExport(){
+            var options = {
+                title: i18n('sql.job.select.export'),
+                url: ctx + "monitor/exportJob/getSelectTable",
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var rows = layero.find("iframe")[0].contentWindow.getSelections();
+            if (rows.length === 0) {
+                $.modal.alertWarning(i18n('home.select.one'));
+                return;
+            }
+            $('#relExport').val(rows.join())
+            layer.close(index);
+        }
     </script>
 </body>
 </html>

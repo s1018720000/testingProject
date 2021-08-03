@@ -8,6 +8,11 @@ as:
     # 项目域名(仅在telegram推送告警时使用，别无他用)
     asDomain: http://127.0.0.1
 
+elastic:
+    #pf1 url
+    pf1: 172.26.101.48
+    #pf2 url
+    pf2: 172.26.113.95
 
 # 数据源配置
 spring:
@@ -121,10 +126,3 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
-
-
-elastic:
-    #pf1 url
-    pf1: 172.26.101.48
-    #pf2 url
-    pf2: 172.26.113.95

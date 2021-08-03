@@ -1,0 +1,8 @@
+
+ALTER TABLE moni_api MODIFY asid VARCHAR(256);
+
+ALTER TABLE moni_elastic MODIFY asid VARCHAR(256);
+
+ALTER TABLE moni_job MODIFY asid VARCHAR(256);
+
+ALTER TABLE moni_export MODIFY asid VARCHAR(256);

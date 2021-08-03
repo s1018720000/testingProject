@@ -1,0 +1,1 @@
+insert into sys_dict_data values(278, 6,  'AS_TG_PUSH_TEST',     '6',       'telegram_notice_group',   '',   '',  'N', '0', 'admin', sysdate(), '', null, '1937111623:AAHDVpT1bezDDJ_Lf7HmyYCRd8mZeSlHCwM;-532553117');

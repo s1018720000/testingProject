@@ -57,6 +57,14 @@ public class MoniExportController extends BaseController {
     }
 
     /**
+     * 获取选择表格
+     */
+    @GetMapping("/getSelectTable")
+    public String getSelectTable() {
+        return prefix + "/selectTable";
+    }
+
+    /**
      * 导出自动报表任务列表
      */
     @RequiresPermissions("monitor:exportJob:export")

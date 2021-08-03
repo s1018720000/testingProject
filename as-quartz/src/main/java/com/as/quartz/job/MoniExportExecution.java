@@ -60,13 +60,23 @@ public class MoniExportExecution extends AbstractQuartzJob {
         moniExportLog.setFileName(file.getName());
 
         Mail mail = new Mail();
-        mail.setTo(moniExport.getMailTo().split(";"));
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(moniExport.getMailCc())) {
-            mail.setCc(moniExport.getMailCc().split(";"));
+        if ("prod".equals(SpringUtils.getActiveProfile())) {
+            mail.setTo(moniExport.getMailTo().split(";"));
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(moniExport.getMailCc())) {
+                mail.setCc(moniExport.getMailCc().split(";"));
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(moniExport.getMailBcc())) {
+                mail.setBcc(moniExport.getMailBcc().split(";"));
+            }
+        } else {
+            String[] testMail = new String[2];
+            testMail[0] = "c98fb80a.my-cpg.com@apac.teams.ms";
+            testMail[1] = "kolin.z@my-cpg.com";
+            mail.setTo(testMail);
+            mail.setCc(null);
+            mail.setBcc(null);
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(moniExport.getMailBcc())) {
-            mail.setBcc(moniExport.getMailBcc().split(";"));
-        }
+
 
         //发送邮件
         mail.setSubject("[Export Data] " + moniExport.getMailSubject());

@@ -28,7 +28,6 @@ import gui.ava.html.image.generator.HtmlImageGenerator;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
-import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,7 +54,8 @@ public class MoniJobExecution extends AbstractQuartzJob {
      */
     private static final String JOB_CODE = "SQL-JOB";
 
-    private static final String DETAIL_URL = "/monitor/sqlJobLog/detail/";
+    private static final String LOG_DETAIL_URL = "/monitor/sqlJobLog/detail/";
+    private static final String JOB_DETAIL_URL = "/monitor/sqlJob/detail/";
 
     private final MoniJobLog moniJobLog = new MoniJobLog();
 
@@ -75,8 +75,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
         String exeResult = getResultTable(rowSet);
         log.info("执行结果:{}", exeResult);
         moniJobLog.setExecuteResult(exeResult);
-//        if (resultIsExist(exeResult, moniJob.getId())) {
-        //没有重复发生的LOG
         if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
             moniJobLog.setExpectedResult("No need match");
             moniJobLog.setStatus(Constants.SUCCESS);
@@ -88,26 +86,23 @@ public class MoniJobExecution extends AbstractQuartzJob {
             moniJobLog.setStatus(Constants.FAIL);
             moniJobLog.setAlertStatus(Constants.SUCCESS);
 
-            //关联导出
-            doExport(moniJob.getRelExport());
-
-            //发送告警
-            if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram();
-                if (!sendResponse.isOk()) {
-                    moniJobLog.setStatus(Constants.ERROR);
-                    moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
-                } else {
-                    //更新最后告警时间
-                    moniJob.setLastAlert(DateUtils.getNowDate());
-                    SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+            if (resultIsExist(exeResult, moniJob.getId())) {
+                //没有重复发生的LOG才发送TG告警，避免频繁发送
+                //发送告警
+                if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
+                    SendResponse sendResponse = sendTelegram();
+                    if (!sendResponse.isOk()) {
+                        moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
+                    } else {
+                        //更新最后告警时间
+                        moniJob.setLastAlert(DateUtils.getNowDate());
+                        SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+                    }
                 }
+                //关联导出
+                doExport(moniJob.getRelExport());
             }
         }
-//        } else {
-//            moniJobLog.setStatus(Constants.FAIL);
-//            moniJobLog.setAlertStatus(Constants.FAIL);
-//        }
     }
 
     /**
@@ -286,7 +281,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
             expectedDouble = Double.valueOf(expected[0]);
             do {
                 resultDouble = Double.valueOf(Objects.requireNonNull(rowSet.getString(fields[0])));
-                if (resultDouble.compareTo(expectedDouble) != 1) {
+                if (resultDouble.compareTo(expectedDouble) < 0) {
                     return false;
                 }
             } while (rowSet.next());
@@ -299,7 +294,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
             expectedDouble = Double.valueOf(expected[0]);
             do {
                 resultDouble = Double.valueOf(Objects.requireNonNull(rowSet.getString(fields[0])));
-                if (resultDouble.compareTo(expectedDouble) != -1) {
+                if (resultDouble.compareTo(expectedDouble) > 0) {
                     return false;
                 }
             }
@@ -384,23 +379,30 @@ public class MoniJobExecution extends AbstractQuartzJob {
             //若是数量不等于2，则配置错误
             throw new Exception("telegram group Configuration error, please check");
         }
+        String bot = tgData[0];
+        String chatId = tgData[1];
+        if (!"prod".equals(SpringUtils.getActiveProfile())){
+            chatId = "-532553117";
+        }
         String telegramInfo = moniJob.getTelegramInfo();
         telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniJobLog.getJobId()))
                 .replace("{asid}", moniJob.getAsid())
-                .replace("{priority}", moniJob.getPriority() == "1" ? "NU" : "URG")
+                .replace("{priority}", "1".equals(moniJob.getPriority()) ? "NU" : "URG")
                 .replace("{zh_name}", moniJob.getChName())
                 .replace("{en_name}", moniJob.getEnName())
                 .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniJob.getPlatform()))
                 .replace("{descr}", moniJob.getDescr())
-                .replace("{result}", "Execution Results do not match expected result");
-        TelegramBot telegramBot = new TelegramBot(tgData[0]);
+                .replace("{result}", "Execution Results do not match expected result")
+                .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        TelegramBot telegramBot = new TelegramBot(bot);
 
 //        SendMessage request = new SendMessage(tgData[1], telegramInfo).parseMode(ParseMode.Markdown);
         String imgPath = createImg(moniJob, moniJobLog);
-        SendPhoto sendPhoto = new SendPhoto(tgData[1], new File(imgPath));
+        SendPhoto sendPhoto = new SendPhoto(chatId, new File(imgPath));
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
+                new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
         sendPhoto.replyMarkup(inlineKeyboard);
         return telegramBot.execute(sendPhoto);
     }

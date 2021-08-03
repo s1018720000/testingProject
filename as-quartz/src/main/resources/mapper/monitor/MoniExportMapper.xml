@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectMoniExportVo"/>
         <where>
             <if test="id != null  and id != ''"> and ID = #{id}</if>
-            <if test="asid != null  and asid != ''"> and ASID = #{asid}</if>
+            <if test="asid != null  and asid != ''"> and ASID like concat('%', #{asid}, '%')</if>
             <if test="ticketNumber != null  and ticketNumber != ''"> and TICKET_NUMBER = #{ticketNumber}</if>
             <if test="chName != null  and chName != ''"> and (CH_NAME like concat('%', #{chName}, '%') or EN_NAME like concat('%', #{chName}, '%'))</if>
             <if test="status != null  and status != ''"> and STATUS = #{status}</if>

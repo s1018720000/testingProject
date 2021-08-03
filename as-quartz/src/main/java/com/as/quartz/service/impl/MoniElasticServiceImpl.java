@@ -284,9 +284,9 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
     @Override
     public SearchResponse doElasticSearch(MoniElastic moniElastic) throws IOException {
         SearchResponse searchResponse = null;
-        if ("PF2".equals(moniElastic.getPlatform())) {
+        if ("5.0".equals(moniElastic.getPlatform())) {
             searchResponse = doPF2(moniElastic);
-        } else if ("PF1".equals(moniElastic.getPlatform())) {
+        } else if ("1.0".equals(moniElastic.getPlatform())) {
             searchResponse = doPF1(moniElastic);
         }
         return searchResponse;

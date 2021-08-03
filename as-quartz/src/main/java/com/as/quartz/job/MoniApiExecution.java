@@ -1,5 +1,6 @@
 package com.as.quartz.job;
 
+import com.as.common.config.ASConfig;
 import com.as.common.constant.Constants;
 import com.as.common.constant.DictTypeConstants;
 import com.as.common.utils.DateUtils;
@@ -13,6 +14,8 @@ import com.as.quartz.service.IMoniApiLogService;
 import com.as.quartz.service.IMoniApiService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -22,8 +25,11 @@ import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * SQL检测任务执行类（禁止并发执行）
@@ -40,6 +46,8 @@ public class MoniApiExecution extends AbstractQuartzJob {
      */
     private static final String JOB_CODE = "API-JOB";
 
+    private static final String JOB_DETAIL_URL = "/monitor/apiJob/detail/";
+
     private final MoniApiLog moniApiLog = new MoniApiLog();
 
     private MoniApi moniApi = new MoniApi();
@@ -55,24 +63,28 @@ public class MoniApiExecution extends AbstractQuartzJob {
     protected void doExecute(JobExecutionContext context, Object job) throws Exception {
         ResponseEntity<String> response = SpringUtils.getBean(IMoniApiService.class).doUrlCheck(moniApi);
         //保存执行结果
-        moniApiLog.setExecuteResult(response.getStatusCode().toString());
-        if (response.getStatusCodeValue() == Integer.parseInt(moniApi.getExpectedCode())) {
+        String result = response.getStatusCode().toString();
+        moniApiLog.setExecuteResult(result);
+        if (doMatch(response.getStatusCodeValue())) {
             moniApiLog.setStatus(Constants.SUCCESS);
             moniApiLog.setAlertStatus(Constants.FAIL);
         } else {
             moniApiLog.setStatus(Constants.FAIL);
             moniApiLog.setAlertStatus(Constants.SUCCESS);
 
-            //发送告警
-            if (Constants.SUCCESS.equals(moniApi.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram();
-                if (!sendResponse.isOk()) {
-                    moniApiLog.setStatus(Constants.ERROR);
-                    moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
-                } else {
-                    //更新最后告警时间
-                    moniApi.setLastAlert(DateUtils.getNowDate());
-                    SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
+            if (resultIsExist(result, moniApi.getId())) {
+                //没有重复发生的LOG才发送TG告警，避免频繁发送
+                //发送告警
+                if (Constants.SUCCESS.equals(moniApi.getTelegramAlert())) {
+                    SendResponse sendResponse = sendTelegram();
+                    if (!sendResponse.isOk()) {
+                        moniApiLog.setStatus(Constants.ERROR);
+                        moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
+                    } else {
+                        //更新最后告警时间
+                        moniApi.setLastAlert(DateUtils.getNowDate());
+                        SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
+                    }
                 }
             }
         }
@@ -136,6 +148,41 @@ public class MoniApiExecution extends AbstractQuartzJob {
                 DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, moniApiLog.getEndTime()), runTime, Constants.SUCCESS.equals(moniApiLog.getStatus()) ? "Success" : "failed");
     }
 
+    /**
+     * 比对获取结果与预期结果
+     *
+     * @throws Exception
+     */
+    private boolean doMatch(Integer statusCode) throws Exception {
+        String expectedCode = moniApi.getExpectedCode();
+        String[] expectedCodes = expectedCode.split(";");
+        for (String code : expectedCodes) {
+            if (statusCode == Integer.parseInt(code)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检测是否存在相同结果日志
+     *
+     * @param result
+     * @param jobId
+     * @return
+     */
+    private boolean resultIsExist(String result, Long jobId) {
+        try {
+            DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
+            String sql = "SELECT COUNT(*) FROM MONI_API_LOG WHERE EXECUTE_RESULT = ? AND API_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+            JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
+            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{result, jobId}, Integer.class);
+            return row == 0;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
 
     private SendResponse sendTelegram() throws Exception {
         String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniApi.getTelegramConfig());
@@ -148,21 +195,28 @@ public class MoniApiExecution extends AbstractQuartzJob {
             //若是数量不等于2，则配置错误
             throw new Exception("telegram group Configuration error, please check");
         }
+        String bot = tgData[0];
+        String chatId = tgData[1];
+        if (!"prod".equals(SpringUtils.getActiveProfile())) {
+            chatId = "-532553117";
+        }
         String telegramInfo = moniApi.getTelegramInfo();
         telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniApiLog.getApiId()))
                 .replace("{asid}", moniApi.getAsid())
-                .replace("{priority}", moniApi.getPriority() == "1" ? "NU" : "URG")
+                .replace("{priority}", "1".equals(moniApi.getPriority()) ? "NU" : "URG")
                 .replace("{zh_name}", moniApi.getChName())
                 .replace("{en_name}", moniApi.getEnName())
                 .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniApi.getPlatform()))
                 .replace("{descr}", moniApi.getDescr())
-                .replace("{result}", moniApiLog.getExecuteResult());
-        TelegramBot telegramBot = new TelegramBot(tgData[0]);
+                .replace("{url}", moniApi.getUrl())
+                .replace("{result}", moniApiLog.getExecuteResult())
+                .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        TelegramBot telegramBot = new TelegramBot(bot);
 
-        SendMessage sendMessage = new SendMessage(tgData[1], telegramInfo).parseMode(ParseMode.Markdown);
-//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("View log details in webpage").url(ASConfig.getAsDomain().concat(DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
-//        sendPhoto.replyMarkup(inlineKeyboard);
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniApi.getId()))));
+        sendMessage.replyMarkup(inlineKeyboard);
         return telegramBot.execute(sendMessage);
     }
 

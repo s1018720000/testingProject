@@ -44,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null  and status != ''"> and STATUS = #{status}</if>
             <if test="platform != null  and platform != ''"> and PLATFORM = #{platform}</if>
             <if test="telegramAlert != null  and telegramAlert != ''"> and TELEGRAM_ALERT = #{telegramAlert}</if>
-            <if test="asid != null  and asid != ''"> and ASID = #{asid}</if>
+            <if test="asid != null  and asid != ''"> and ASID like concat('%', #{asid}, '%')</if>
             <if test="actionItem != null  and actionItem != ''"> and ACTION_ITEM = #{actionItem}</if>
             <if test="params.beginCreateTime != null and params.beginCreateTime != ''"><!-- 开始时间检索 -->
                 AND date_format(CREATE_TIME,'%y%m%d') &gt;= date_format(#{params.beginCreateTime},'%y%m%d')
