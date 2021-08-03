@@ -39,8 +39,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniElasticList" parameterType="MoniElastic" resultMap="MoniElasticResult">
         <include refid="selectMoniElasticVo"/>
-        <where>  
-            <if test="id != null "> and ID = #{id}</if>
+        <where>
+            <if test="params.ids != null  and params.ids.length > 0">
+                and ID in
+                <foreach collection="params.ids" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="asid != null  and asid != ''"> and ASID like concat('%', #{asid}, '%')</if>
             <if test="chName != null  and chName != ''"> and CH_NAME like concat('%', #{chName}, '%')</if>
             <if test="status != null  and status != ''"> and STATUS = #{status}</if>

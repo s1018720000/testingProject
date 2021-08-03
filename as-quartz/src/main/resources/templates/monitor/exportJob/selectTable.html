@@ -6,32 +6,21 @@
 <body class="gray-bg">
      <div class="container-div">
         <div class="row">
-            <div class="col-sm-12 search-collapse">
+            <div class="col-sm-12 search-collapse" style="display: none;">
                 <form id="formId">
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>[[#{sql.job.id}]]：</label>
-                                <input type="text" name="id"/>
+                                <label th:title="#{common.support.batch}"><i class="fa fa-question-circle-o"></i> [[#{sql.job.id}]]：</label>
+                                <input type="text" name="params[ids]"/>
                             </li>
                             <li>
                                 <label>ASID：</label>
                                 <input type="text" name="asid"/>
                             </li>
                             <li>
-                                <label>Ticket：</label>
-                                <input type="text" name="ticketNumber"/>
-                            </li>
-                            <li>
                                 <label>[[#{sql.job.name}]]：</label>
                                 <input type="text" name="chName"/>
-                            </li>
-                            <li>
-                                <label>[[#{sql.job.status}]]：</label>
-                                <select name="status" th:with="type=${@dict.getType('sys_job_status')}">
-                                    <option value="">[[#{user.list.all}]]</option>
-                                    <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}" th:value="${dict.dictValue}"></option>
-                                </select>
                             </li>
                             <li>
                                 <label>[[#{sql.job.platform}]]：</label>
@@ -73,7 +62,7 @@
                 rememberSelected: true,
                 showToggle: false,
                 showRefresh: false,
-                modalName: i18n('export.job'),
+                showColumns: false,
                 columns: [{
                     field: 'state',
                     checkbox: true
@@ -85,11 +74,6 @@
                 {
                     field: 'asid',
                     title: 'ASID',
-                    sortable: true
-                },
-                {
-                    field: 'ticketNumber',
-                    title: 'Ticket Number',
                     sortable: true
                 },
                 {
@@ -108,17 +92,6 @@
                     formatter: function(value, row, index) {
                         return $.table.selectDictLabel(platformDatas, value);
                     }
-                },
-                {
-                    field: 'status',
-                    title: i18n('sql.job.status'),
-                    formatter: function(value, row, index) {
-                        return $.table.selectDictLabel(statusDatas, value);
-                    }
-                },
-                {
-                    field: 'createBy',
-                    title: i18n('common.create.by')
                 },
                 {
                     field: 'createTime',

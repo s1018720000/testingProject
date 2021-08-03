@@ -90,6 +90,8 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
      */
     @Override
     public List<MoniElastic> selectMoniElasticList(MoniElastic moniElastic) {
+        Long[] jobIds = Convert.toLongArray((String) moniElastic.getParams().get("ids"));
+        moniElastic.getParams().put("ids", jobIds);
         return moniElasticMapper.selectMoniElasticList(moniElastic);
     }
 

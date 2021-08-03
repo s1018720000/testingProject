@@ -53,6 +53,8 @@ public class MoniExportServiceImpl implements IMoniExportService {
      */
     @Override
     public List<MoniExport> selectMoniExportList(MoniExport moniExport) {
+        Long[] jobIds = Convert.toLongArray((String) moniExport.getParams().get("ids"));
+        moniExport.getParams().put("ids", jobIds);
         return moniExportMapper.selectMoniExportList(moniExport);
     }
 

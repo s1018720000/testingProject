@@ -62,6 +62,8 @@ public class MoniApiServiceImpl implements IMoniApiService {
      */
     @Override
     public List<MoniApi> selectMoniApiList(MoniApi moniApi) {
+        Long[] jobIds = Convert.toLongArray((String) moniApi.getParams().get("ids"));
+        moniApi.getParams().put("ids", jobIds);
         return moniApiMapper.selectMoniApiList(moniApi);
     }
 

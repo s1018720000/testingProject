@@ -53,6 +53,8 @@ public class MoniJobServiceImpl implements IMoniJobService {
      */
     @Override
     public List<MoniJob> selectMoniJobList(MoniJob moniJob) {
+        Long[] jobIds = Convert.toLongArray((String) moniJob.getParams().get("ids"));
+        moniJob.getParams().put("ids", jobIds);
         return moniJobMapper.selectMoniJobList(moniJob);
     }
 
