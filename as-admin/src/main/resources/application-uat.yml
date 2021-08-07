@@ -4,9 +4,9 @@ as:
     demoEnabled: false
     # 文件路径 示例（ Windows配置D:/as/uploadPath，Linux配置 /home/as/uploadPath）
     #所有文件都会保存在里面(telegram photo、export excel等)，路径不存在会自动创建，不需要手工创建
-    profile: /home/as/uploadPath
+    profile: /usr/local/backend/uploadPath
     # 项目域名(仅在telegram推送告警时使用，别无他用)
-    asDomain: http://127.0.0.1
+    asDomain: http://asmonitor.e3xm.com
 
 elastic:
     #pf1 url
