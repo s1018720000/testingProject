@@ -11,11 +11,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPF2DrawNumber" resultType="String">
         <include refid="selectPF2DrawNumberVo"/>
-        where GAME_CODE = #{arg0} and NUMERO = #{arg1}
+        where GAME_CODE = #{gameCode} and NUMERO = #{numero}
     </select>
 
     <select id="selectPF2DrawNumberCount" resultType="Integer">
-       select count(1) from core.LGS_DRAW_NUMBER_RESULT where GAME_CODE = #{arg0} and NUMERO = #{arg1} and WINNING_NUMBER = #{arg2}
+       select count(1) from core.LGS_DRAW_NUMBER_RESULT where GAME_CODE = #{gameCode} and NUMERO = #{numero} and WINNING_NUMBER = #{winNo}
     </select>
 
 </mapper>

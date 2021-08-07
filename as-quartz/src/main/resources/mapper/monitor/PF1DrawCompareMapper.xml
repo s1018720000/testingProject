@@ -11,12 +11,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectPF1DrawNumber" resultType="String">
         <include refid="selectPF1DrawNumberVo"/>
-        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{arg0} ) and NUMERO = #{arg1}
+        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{gameCode} ) and NUMERO = #{numero}
     </select>
 
     <select id="selectPF1DrawNumberCount" resultType="Integer">
         select count(1) from lott_new_a3d1.LOTT_MANAUL_TEMP
-        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{arg0} ) and NUMERO = #{arg1} and WIN_NO = #{arg2}
+        where SORTID in (select group_value from lott_new_a3d1.lott_group_series where param_one = #{gameCode} ) and NUMERO = #{numero} and WIN_NO = #{winNo}
     </select>
 
 </mapper>

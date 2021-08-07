@@ -368,7 +368,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 Integer count = pf1DrawCompareMapper.selectPF1DrawNumberCount(gameCode, numero, winNo);
                 if (count != 1) {
                     String winNumber = pf1DrawCompareMapper.selectPF1DrawNumber(gameCode, numero);
-                    result.append(String.format("========================== \n GameCode : %s \n LOG-WinningNumber : %s \n DB-WinningNumber : %s \n Numero : %s \n",
+                    result.append(String.format("========================== \nGameCode : %s \nLOG-WinningNumber : %s \nDB-WinningNumber : %s \nNumero : %s \n",
                             gameCode, winNo, winNumber, numero));
                     index++;
                 } else {
@@ -411,7 +411,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 int count = pf2DrawCompareMapper.selectPF2DrawNumberCount(gameCode, numero, winNo);
                 if (count != 1) {
                     String winNumber = pf2DrawCompareMapper.selectPF2DrawNumber(gameCode, numero);
-                    result.append(String.format("========================== \n GameCode : %s \nLOG-WinningNumber : %s \nDB-WinningNumber : %s \nNumero : %s \n", gameCode, winNo, winNumber, numero));
+                    result.append(String.format("========================== \nGameCode : %s \nLOG-WinningNumber : %s \nDB-WinningNumber : %s \nNumero : %s \n", gameCode, winNo, winNumber, numero));
                     index++;
                 } else {
                     logger.info("[PF2] Query parameters are : " + gameCode + ", " + numero + ", " + winNo + ", Result is OK: " + count);

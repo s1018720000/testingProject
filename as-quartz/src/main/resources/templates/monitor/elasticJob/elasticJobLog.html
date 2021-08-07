@@ -47,13 +47,13 @@
 
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
-               shiro:hasPermission="monitor:elasticJob:remove">
+               shiro:hasPermission="monitor:elasticJobLog:remove">
                 <i class="fa fa-remove"></i> [[#{common.delete}]]
             </a>
-            <a class="btn btn-danger" onclick="$.operate.clean()" shiro:hasPermission="monitor:elasticJob:clear">
+            <a class="btn btn-danger" onclick="$.operate.clean()" shiro:hasPermission="monitor:elasticJobLog:clear">
                 <i class="fa fa-remove"></i> [[#{common.clear}]]
             </a>
-            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="monitor:elasticJob:export">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="monitor:elasticJobLog:export">
                 <i class="fa fa-download"></i> [[#{common.export}]]
             </a>
         </div>
