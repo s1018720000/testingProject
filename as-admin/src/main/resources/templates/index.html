@@ -55,7 +55,7 @@
                     	<span class="nav-label" th:text="${locale == 'zh_CN'} ? ${menu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(menu.menuNameTw)} ? ${menu.menuName} : ${menu.menuNameTw}) : (${#strings.isEmpty(menu.menuNameUs)} ? ${menu.menuName} : ${menu.menuNameUs}))">一级菜单</span>
                     	<span th:class="${#strings.isEmpty(menu.url) || menu.url == '#'} ? |fa arrow|"></span>
                 	</a>
-                    <ul class="nav nav-second-level collapse">
+                    <ul th:if="${menu.menuId != 8}" class="nav nav-second-level collapse">
 						<li th:each="cmenu : ${menu.children}">
 							<a th:if="${#lists.isEmpty(cmenu.children)}" th:class="${#strings.isEmpty(cmenu.target)} ? |menuItem| : ${cmenu.target}" th:utext="${locale == 'zh_CN'} ? ${cmenu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(cmenu.menuNameTw)} ? ${cmenu.menuName} : ${cmenu.menuNameTw}) : (${#strings.isEmpty(cmenu.menuNameUs)} ? ${cmenu.menuName} : ${cmenu.menuNameUs}))" th:href="@{${cmenu.url}}" th:data-refresh="${cmenu.isRefresh == '0'}">二级菜单</a>
 							<a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">[[${locale == 'zh_CN'} ? ${cmenu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(cmenu.menuNameTw)} ? ${cmenu.menuName} : ${cmenu.menuNameTw}) : (${#strings.isEmpty(cmenu.menuNameUs)} ? ${cmenu.menuName} : ${cmenu.menuNameUs}))]]<span class="fa arrow"></span></a>

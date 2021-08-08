@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('导航书签')" />
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel-body">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-primary" th:each="menu : ${menus}">
+                            <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" th:href="'#collapse_' + ${menu.menuId}" style="cursor:pointer">
+                                <h5 class="panel-title">
+                                    <i class="fa fa-bookmark"></i> [[${locale == 'zh_CN'} ? ${menu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(menu.menuNameTw)} ? ${menu.menuName} : ${menu.menuNameTw}) : (${#strings.isEmpty(menu.menuNameUs)} ? ${menu.menuName} : ${menu.menuNameUs}))]]
+                                </h5>
+                            </div>
+                            <div th:id="'collapse_' + ${menu.menuId}" th:class="${menu.menuId == 123} ? 'panel-collapse collapse in' : 'panel-collapse collapse'"  th:if="${not #lists.isEmpty(menu.children)}">
+                                <div class="panel-body">
+                                    <ul class="tag-list row">
+                                        <li th:each="cmenu : ${menu.children}" style="min-width: 166px;">
+                                            <a th:if="${#lists.isEmpty(cmenu.children)}" th:href="${cmenu.url}"
+                                               class="btn btn-success btn-outline btn-sm btn-rounded" target="_blank"
+                                               data-toggle="tooltip" data-placement="bottom" th:title="${cmenu.url}">
+                                                <i th:class="${cmenu.icon} + ' pull-left'"></i> [[${locale == 'zh_CN'} ? ${cmenu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(cmenu.menuNameTw)} ? ${cmenu.menuName} : ${cmenu.menuNameTw}) : (${#strings.isEmpty(cmenu.menuNameUs)} ? ${cmenu.menuName} : ${cmenu.menuNameUs}))]]
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                    <div th:each="cmenu : ${menu.children}">
+                                        <ul class="row" th:if="${not #lists.isEmpty(cmenu.children)}">
+                                            <li>
+                                                <span class="label label-danger">
+                                                    <i th:class="${cmenu.icon}"></i> [[${locale == 'zh_CN'} ? ${cmenu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(cmenu.menuNameTw)} ? ${cmenu.menuName} : ${cmenu.menuNameTw}) : (${#strings.isEmpty(cmenu.menuNameUs)} ? ${cmenu.menuName} : ${cmenu.menuNameUs}))]]
+                                                </span>
+                                            </li>
+                                        </ul>
+                                        <ul class="tag-list row" th:if="${not #lists.isEmpty(cmenu.children)}">
+                                            <li th:each="emenu : ${cmenu.children}" style="min-width: 166px;">
+                                                <a th:if="${#lists.isEmpty(emenu.children)}" th:href="${emenu.url}"
+                                                   class="btn btn-success btn-outline btn-sm btn-rounded" target="_blank"
+                                                   data-toggle="tooltip" data-placement="bottom" th:title="${emenu.url}">
+                                                    <i th:class="${emenu.icon}  + ' pull-left'"></i> [[${locale == 'zh_CN'} ? ${emenu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(emenu.menuNameTw)} ? ${emenu.menuName} : ${emenu.menuNameTw}) : (${#strings.isEmpty(emenu.menuNameUs)} ? ${emenu.menuName} : ${emenu.menuNameUs}))]]
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+</body>
+</html>
