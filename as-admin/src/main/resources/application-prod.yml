@@ -36,9 +36,9 @@ spring:
         druid:
             # AS Portal mysql prod
             master:
-                url: jdbc:mysql://localhost:3306/monitor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://localhost:3306/asmonitor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: asmysqladmin
-                password: 1q2w3e4r5t
+                password: phVW!fXMR6eo
                 driverClassName: com.mysql.cj.jdbc.Driver
             # pf1 lottery prod
             pf1:
