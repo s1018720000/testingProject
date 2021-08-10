@@ -84,10 +84,10 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             } else {
                 moniElasticLog.setStatus(Constants.FAIL);
                 moniElasticLog.setAlertStatus(Constants.SUCCESS);
-                if (resultIsExist(result, moniElastic.getId())) {
-                    //没有重复发生的LOG才发送TG告警，避免频繁发送
-                    sendAlert();
-                }
+//                if (resultIsExist(result, moniElastic.getId())) {
+                //没有重复发生的LOG才发送TG告警，避免频繁发送
+                sendAlert();
+//                }
             }
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
@@ -123,10 +123,10 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             moniElasticLog.setExecuteResult(result);
             moniElasticLog.setStatus(Constants.FAIL);
             moniElasticLog.setAlertStatus(Constants.SUCCESS);
-            if (resultIsExist(result, moniElastic.getId())) {
-                //没有重复发生的LOG才发送TG告警，避免频繁发送
-                sendAlert();
-            }
+//            if (resultIsExist(result, moniElastic.getId())) {
+            //没有重复发生的LOG才发送TG告警，避免频繁发送
+            sendAlert();
+//            }
         } else {
             result = "find 0 hits";
             moniElasticLog.setExecuteResult(result);
