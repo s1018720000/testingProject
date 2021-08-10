@@ -1,0 +1,1 @@
+delete from sys_menu where menu_id = 123;
