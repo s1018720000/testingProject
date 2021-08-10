@@ -5,6 +5,9 @@ INSERT INTO moni_elastic (asid,TICKET_NUMBER,EN_NAME,CH_NAME,STATUS,PLATFORM,CRO
 *{asid}/{priority}*
 *{en_name}/{zh_name}*
 
+` PF2 Draw Number Compare Failed
+ The Winning Number was not found in DB`
+
 ` {result}`
 
 ` {descr}`','4','AS','0','CAL2','[L1] please call L2 and Jason if manual check was abnormal
@@ -13,6 +16,9 @@ INSERT INTO moni_elastic (asid,TICKET_NUMBER,EN_NAME,CH_NAME,STATUS,PLATFORM,CRO
 ('URG-CAL2-ELM-2','','PF1 Draw Number Compare','PF1开奖号码比对','0','1.0','0 0/5 * * * ?','0','*LOG Monitor ID({id})/{platform}/{env}*
 *{asid}/{priority}*
 *{en_name}/{zh_name}*
+
+` PF1 Draw Number Compare Failed
+ The Winning Number was not found in DB`
 
 ` {result}`
 
