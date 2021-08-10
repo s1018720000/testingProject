@@ -1,3 +1,20 @@
+-- ----------------------------
+-- 1、存储每一个已配置的 jobDetail 的详细信息
+-- ----------------------------
+drop table if exists QRTZ_JOB_DETAILS;
+create table QRTZ_JOB_DETAILS (
+    sched_name           varchar(120)    not null,
+    job_name             varchar(200)    not null,
+    job_group            varchar(200)    not null,
+    description          varchar(250)    null,
+    job_class_name       varchar(250)    not null,
+    is_durable           varchar(1)      not null,
+    is_nonconcurrent     varchar(1)      not null,
+    is_update_data       varchar(1)      not null,
+    requests_recovery    varchar(1)      not null,
+    job_data             blob            null,
+    primary key (sched_name,job_name,job_group)
+) engine=innodb;
 
 -- ----------------------------
 -- 2、 存储已配置的 Trigger 的信息
@@ -148,24 +165,6 @@ create table QRTZ_SIMPROP_TRIGGERS (
     bool_prop_2          varchar(1)      null,
     primary key (sched_name,trigger_name,trigger_group),
     foreign key (sched_name,trigger_name,trigger_group) references QRTZ_TRIGGERS(sched_name,trigger_name,trigger_group)
-) engine=innodb;
-
--- ----------------------------
--- 1、存储每一个已配置的 jobDetail 的详细信息
--- ----------------------------
-drop table if exists QRTZ_JOB_DETAILS;
-create table QRTZ_JOB_DETAILS (
-    sched_name           varchar(120)    not null,
-    job_name             varchar(200)    not null,
-    job_group            varchar(200)    not null,
-    description          varchar(250)    null,
-    job_class_name       varchar(250)    not null,
-    is_durable           varchar(1)      not null,
-    is_nonconcurrent     varchar(1)      not null,
-    is_update_data       varchar(1)      not null,
-    requests_recovery    varchar(1)      not null,
-    job_data             blob            null,
-    primary key (sched_name,job_name,job_group)
 ) engine=innodb;
 
 commit;
