@@ -408,7 +408,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private String createImg(MoniJob moniJob, MoniJobLog moniJobLog) {
-        String htmlContent = HtmlTemplateUtil.getHtmlContent("/sqlJob.html.vm");
+        String htmlContent = HtmlTemplateUtil.getHtmlContent("vm/sqlJob.html.vm");
         String path = null;
         if (StringUtils.isNotEmpty(htmlContent)) {
             try {
