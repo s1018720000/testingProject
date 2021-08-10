@@ -1,6 +1,9 @@
 package com.as.quartz.util;
 
 import com.as.common.config.ASConfig;
+import com.as.quartz.job.MoniElasticExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -14,20 +17,22 @@ import java.util.Objects;
  * @author kolin
  */
 public class HtmlTemplateUtil {
+    private static final Logger log = LoggerFactory.getLogger(HtmlTemplateUtil.class);
     /**
-     * @param FilePath
+     * @param filePath
      * @return
      * @Description 读取HTML模板文件，获取字符内容
      */
-    public static String getHtmlContent(String FilePath) {
-
+    public static String getHtmlContent(String filePath) {
+        log.info("FilePath:{}",filePath);
         String line = null;
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
 
         try {
             String path = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("vm")).getPath();
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path.concat(FilePath))), StandardCharsets.UTF_8));
+            log.info("FilePath:{}",path);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path.concat(filePath))), StandardCharsets.UTF_8));
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
