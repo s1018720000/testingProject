@@ -212,8 +212,8 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 builder.append("<td>").append(field).append("</td>");
             }
             builder.append("</tr>");
-            //数据超过60000则省略
-            if (builder.length() > 30000) {
+            //数据超过20000则省略
+            if (builder.length() > 20000) {
                 builder.append("<tr><td colspan=\"").append(fields.length).append("\">More data can not be showed......</td></tr>");
                 break;
             }
