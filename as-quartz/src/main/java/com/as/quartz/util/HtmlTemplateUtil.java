@@ -4,6 +4,7 @@ import com.as.common.config.ASConfig;
 import com.as.quartz.job.MoniElasticExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,11 +29,12 @@ public class HtmlTemplateUtil {
         String line = null;
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
+        InputStream is = null;
 
         try {
-            String path = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("vm")).getPath();
-            log.info("FilePath:{}",path);
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path.concat(filePath))), StandardCharsets.UTF_8));
+            ClassPathResource cpr = new ClassPathResource(filePath);
+            is = cpr.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
