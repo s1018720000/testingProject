@@ -33,6 +33,7 @@
     </div>
     <th:block th:include="include :: footer" />
      <th:block th:include="include :: bootstrap-table-export-js" />
+     <script th:src="@{/js/shortcut.js}"></script>
      <script type="text/javascript">
         var prefix = ctx + "order/pf1";
 
@@ -117,6 +118,16 @@
                 },
             }[column.field]
         }
+
+        //快捷键
+        shortcut.add("enter",function() {
+            tableSearch();
+        }, {
+            'type':'keydown', //事件
+            'propagate':false, //是否支持冒泡
+            'disable_in_input':false, //是否在输入框内有效
+            'target':document, //作用范围
+        });
     </script>
 </body>
 </html>

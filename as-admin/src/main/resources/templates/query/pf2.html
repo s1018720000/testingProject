@@ -43,6 +43,7 @@
 
 <th:block th:include="include :: footer" />
 <th:block th:include="include :: bootstrap-table-export-js" />
+<script th:src="@{/js/shortcut.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 	var prefix = ctx + "query/pf2";
 
@@ -134,6 +135,16 @@
 			css: { background: '#3c8dbc','font-size': '13px',color:'white','font-weight': 'bolder' }
 		}
 	}
+
+	//快捷键
+	shortcut.add("Ctrl+enter",function() {
+		tableSearch();
+	}, {
+		'type':'keydown', //事件
+		'propagate':false, //是否支持冒泡
+		'disable_in_input':false, //是否在输入框内有效
+		'target':document, //作用范围
+	});
 
 </script>
 </body>
