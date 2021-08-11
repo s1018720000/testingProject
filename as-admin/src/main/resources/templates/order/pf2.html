@@ -62,7 +62,6 @@
                 [{
                     title : i18n('pf2.order.content'),
                     align : 'center',
-                    field: '',
                     colspan : 3
                 }
                 ],
@@ -101,7 +100,6 @@
                 [{
                     title : i18n('pf2.order.detail'),
                     align : 'center',
-                    field: '',
                     colspan : 2
                 }
                 ],
@@ -134,7 +132,6 @@
                 [{
                     title : i18n('pf2.order.info'),
                     align : 'center',
-                    field: '',
                     colspan : 3
                 }
                 ],
@@ -173,7 +170,6 @@
                 [{
                     title : i18n('pf2.order.agent'),
                     align : 'center',
-                    field: '',
                     colspan : 6
                 }
                 ],
@@ -243,6 +239,10 @@
                 refreshTable();
             }
         }
+        $("#bootstrap-table-content>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        $("#bootstrap-table-detail>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        $("#bootstrap-table-info>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        $("#bootstrap-table-agent>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
     }
     // 刷新表格
     function refreshTable() {
@@ -254,46 +254,8 @@
 
     function headerStyle(column) {
         return {
-            '': {
-                css: { background: '#3c8dbc','font-size': '22px',color:'white','font-weight': 'bolder' }
-            },
-            columnName:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            dbValue:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            rdcValue:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            betContent:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            playId:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            playName:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            account:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            accountLevel:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            series:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            rebate:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            transactionType:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-            amount:{
-                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-            },
-        }[column.field]
+            css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+        }
     }
 
     //快捷键

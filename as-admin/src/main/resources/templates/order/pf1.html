@@ -50,7 +50,6 @@
                         [{
                             title : i18n('pf1.order.content'),
                             align : 'center',
-                            field: '',
                             colspan : 3
                         }
                     ],
@@ -96,6 +95,7 @@
                     refreshTable();
                 }
             }
+            $("#bootstrap-table>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
         }
         // 刷新表格
         function refreshTable() {
@@ -104,19 +104,8 @@
 
         function headerStyle(column) {
             return {
-                '': {
-                    css: { background: '#3c8dbc','font-size': '22px',color:'white','font-weight': 'bolder' }
-                },
-                columnName:{
-                    css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-                },
-                dbValue:{
-                    css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-                },
-                logValue:{
-                    css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
-                },
-            }[column.field]
+                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+            }
         }
 
         //快捷键
