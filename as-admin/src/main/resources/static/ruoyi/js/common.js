@@ -53,6 +53,7 @@ $(function() {
                 max: $('#endTime').val(),
                 theme: 'molv',
                 trigger: 'click',
+                lang: i18n('lang'),
                 done: function(value, date) {
                     // 结束时间大于开始时间
                     if (value !== '') {
@@ -71,6 +72,7 @@ $(function() {
                 min: $('#startTime').val(),
                 theme: 'molv',
                 trigger: 'click',
+                lang: i18n('lang'),
                 done: function(value, date) {
                     // 开始时间小于结束时间
                     if (value !== '') {
@@ -123,6 +125,7 @@ $(function() {
                     trigger: 'click',
                     type: type,
                     format: format,
+                    lang: i18n('lang'),
                     btns: newBtnArr,
                     done: function (value, data) {
                         if (typeof window[callback] != 'undefined'
