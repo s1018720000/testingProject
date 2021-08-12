@@ -398,7 +398,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 .replace("{result}", "Execution Results do not match expected result")
                 .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
 
-        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo + "\n\n`Failed to send picture\nplz click 'LOG Details' to view details`").parseMode(ParseMode.Markdown);
         String imgPath = createImg(moniJob, moniJobLog);
         SendPhoto sendPhoto = new SendPhoto(chatId, new File(imgPath));
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
