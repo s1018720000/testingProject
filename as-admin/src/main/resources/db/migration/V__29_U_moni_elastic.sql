@@ -1,0 +1,1 @@
+update moni_elastic set EXPECTED_RESULT = EXPECTED_RESULT - 1;
