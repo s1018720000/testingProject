@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-menu-edit" th:object="${menu}">
+		<form autocomplete="off" class="form-horizontal m" id="form-menu-edit" th:object="${menu}">
 			<input name="menuId"   type="hidden" th:field="*{menuId}"   />
 			<input id="treeId" name="parentId" type="hidden" th:field="*{parentId}" />
 			<div class="form-group">

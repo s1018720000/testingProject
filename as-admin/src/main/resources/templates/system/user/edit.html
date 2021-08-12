@@ -6,7 +6,7 @@
 </head>
 <body>
     <div class="main-content">
-        <form class="form-horizontal" id="form-user-edit" th:object="${user}">
+        <form autocomplete="off" class="form-horizontal" id="form-user-edit" th:object="${user}">
             <input name="userId"  type="hidden"  th:field="*{userId}" />
 			<input name="deptId"  type="hidden"  th:field="*{deptId}" id="treeId"/>
             <h4 class="form-header h4">[[#{user.add.basic.information}]]</h4>

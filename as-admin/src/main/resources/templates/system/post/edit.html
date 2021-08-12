@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-post-edit" th:object="${post}">
+		<form autocomplete="off" class="form-horizontal m" id="form-post-edit" th:object="${post}">
 			<input id="postId" name="postId" type="hidden" th:field="*{postId}"/>
 			<div class="form-group">
 				<label class="col-sm-3 control-label is-required">[[#{post.name}]]：</label>

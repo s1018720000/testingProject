@@ -23,7 +23,7 @@
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-${businessName}-add">
+        <form autocomplete="off" class="form-horizontal m" id="form-${businessName}-add">
 #if($table.sub)
             <h4 class="form-header h4">${functionName}信息</h4>
 #end

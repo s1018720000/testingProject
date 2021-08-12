@@ -6,7 +6,7 @@
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-notice-edit" th:object="${notice}">
+        <form autocomplete="off" class="form-horizontal m" id="form-notice-edit" th:object="${notice}">
             <input id="noticeId" name="noticeId" th:field="*{noticeId}"  type="hidden">
             <div class="form-group">	
                 <label class="col-sm-2 control-label is-required">[[#{notice.title}]]：</label>

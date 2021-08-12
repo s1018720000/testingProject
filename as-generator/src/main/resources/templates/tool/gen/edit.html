@@ -22,7 +22,7 @@
 								<i class="fa fa-code"></i> [[#{gen.table.create.config}]]
 							</li>
                         </ul>
-                        <form id="form-gen-edit" class="form-horizontal" th:object="${table}">
+                        <form autocomplete="off" id="form-gen-edit" class="form-horizontal" th:object="${table}">
                         <input name="tableId" type="hidden" th:field="*{tableId}" />
                         <div class="tab-content">
                             <!-- 基本信息 -->

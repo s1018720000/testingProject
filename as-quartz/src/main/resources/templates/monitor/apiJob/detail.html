@@ -15,7 +15,7 @@
 	</div>
 </div>
 
-	<form class="form-horizontal m-t" id="jobForm" th:if="${name == 'apiJob'}">
+	<form autocomplete="off" class="form-horizontal m-t" id="jobForm" th:if="${name == 'apiJob'}">
 	    <div class="form-group">
 			<label class="col-sm-3 control-label">[[#{sql.job.id}]]：</label>
 			<div class="form-control-static" th:text="${job.id}">

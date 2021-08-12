@@ -6,7 +6,7 @@
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-role-edit" th:object="${role}">
+		<form autocomplete="off" class="form-horizontal m" id="form-role-edit" th:object="${role}">
 			<input id="roleId" name="roleId" type="hidden" th:field="*{roleId}"/>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">[[#{user.role.name}]]：</label>

@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-menu-add">
+		<form autocomplete="off" class="form-horizontal m" id="form-menu-add">
 			<input id="treeId" name="parentId" type="hidden" th:value="${menu.menuId}" />
 			<div class="form-group">
 				<label class="col-sm-3 control-label">[[#{menu.father.menu}]]：</label>

@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-apiJob-edit" th:object="${moniApi}">
+        <form autocomplete="off" class="form-horizontal m" id="form-apiJob-edit" th:object="${moniApi}">
             <h4 class="form-header h4">[[#{user.add.basic.information}]]</h4>
             <input name="id" th:field="*{id}" type="hidden">
             <div class="form-group">    

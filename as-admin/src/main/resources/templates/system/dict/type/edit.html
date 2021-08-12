@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-dict-edit" th:object="${dict}">
+		<form autocomplete="off" class="form-horizontal m" id="form-dict-edit" th:object="${dict}">
 			<input id="dictId" name="dictId"  type="hidden" th:field="*{dictId}" />
 			<div class="form-group">
 				<label class="col-sm-3 control-label is-required">[[#{dict.name}]]：</label>
