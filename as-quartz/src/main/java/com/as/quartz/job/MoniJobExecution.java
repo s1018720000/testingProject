@@ -75,33 +75,32 @@ public class MoniJobExecution extends AbstractQuartzJob {
         String exeResult = getResultTable(rowSet);
         log.info("执行结果:{}", exeResult);
         moniJobLog.setExecuteResult(exeResult);
-        if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
-            moniJobLog.setExpectedResult("No need match");
-            moniJobLog.setStatus(Constants.SUCCESS);
-            moniJobLog.setAlertStatus(Constants.FAIL);
-        } else if (doMatch(rowSet)) {
-            moniJobLog.setStatus(Constants.SUCCESS);
-            moniJobLog.setAlertStatus(Constants.FAIL);
-        } else {
-            moniJobLog.setStatus(Constants.FAIL);
-            moniJobLog.setAlertStatus(Constants.SUCCESS);
+        if (resultIsExist(exeResult, moniJob.getId())) {
+            //没有重复发生的LOG
+            if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
+                moniJobLog.setExpectedResult("No need match");
+                moniJobLog.setStatus(Constants.SUCCESS);
+                moniJobLog.setAlertStatus(Constants.FAIL);
+            } else if (doMatch(rowSet)) {
+                moniJobLog.setStatus(Constants.SUCCESS);
+                moniJobLog.setAlertStatus(Constants.FAIL);
+            } else {
+                moniJobLog.setStatus(Constants.FAIL);
+                moniJobLog.setAlertStatus(Constants.SUCCESS);
 
-//            if (resultIsExist(exeResult, moniJob.getId())) {
-            //没有重复发生的LOG才发送TG告警，避免频繁发送
-            //发送告警
-            if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram();
-                if (!sendResponse.isOk()) {
-                    moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
-                } else {
-                    //更新最后告警时间
-                    moniJob.setLastAlert(DateUtils.getNowDate());
-                    SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+                if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
+                    SendResponse sendResponse = sendTelegram();
+                    if (!sendResponse.isOk()) {
+                        moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
+                    } else {
+                        //更新最后告警时间
+                        moniJob.setLastAlert(DateUtils.getNowDate());
+                        SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+                    }
                 }
+                //关联导出
+                doExport(moniJob.getRelExport());
             }
-            //关联导出
-            doExport(moniJob.getRelExport());
-//            }
         }
     }
 
