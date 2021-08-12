@@ -397,7 +397,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 .replace("{descr}", moniJob.getDescr())
                 .replace("{result}", "Execution Results do not match expected result")
                 .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
-        TelegramBot photoBot = new TelegramBot(bot);
 
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         String imgPath = createImg(moniJob, moniJobLog);
@@ -410,6 +409,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         SendResponse execute;
         try {
+            TelegramBot photoBot = new TelegramBot(bot);
             execute = photoBot.execute(sendPhoto);
         } catch (Exception e) {
             //图片发送异常则发送文字告警
