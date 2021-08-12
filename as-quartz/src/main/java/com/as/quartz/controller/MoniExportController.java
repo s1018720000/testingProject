@@ -10,7 +10,6 @@ import com.as.quartz.domain.MoniExport;
 import com.as.quartz.service.IMoniExportService;
 import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.CronUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +95,6 @@ public class MoniExportController extends BaseController {
         if (!CronUtils.isValid(moniExport.getCronExpression())) {
             return AjaxResult.error("新增任务'" + moniExport.getChName() + "'失败，Cron表达式不正确");
         }
-        //此处处理一下防止特殊符号被转义
-        unescapeHtml4(moniExport);
         return toAjax(moniExportService.insertMoniExport(moniExport));
     }
 
@@ -122,8 +119,6 @@ public class MoniExportController extends BaseController {
         if (!CronUtils.isValid(moniExport.getCronExpression())) {
             return AjaxResult.error("编辑任务'" + moniExport.getChName() + "'失败，Cron表达式不正确");
         }
-        //此处处理一下防止特殊符号被转义
-        unescapeHtml4(moniExport);
         return toAjax(moniExportService.updateMoniExport(moniExport));
     }
 
@@ -184,8 +179,7 @@ public class MoniExportController extends BaseController {
     @PostMapping("/test")
     @ResponseBody
     public AjaxResult test(MoniExport job) {
-        //StringEscapeUtils.unescapeHtml4 作用  防止特殊符号被转义  如<会被转义为 &gt; 影响sql执行
-        return toAjax(sysJobService.sqlTest(StringEscapeUtils.unescapeHtml4(job.getScript()), job.getJdbc()));
+        return toAjax(sysJobService.sqlTest(job.getScript(), job.getJdbc()));
     }
 
     /**
@@ -204,17 +198,6 @@ public class MoniExportController extends BaseController {
     @ResponseBody
     public String getCronSchdule(MoniExport job) {
         return sysJobService.getCronSchdule(job.getCronExpression(), 10);
-    }
-
-    /**
-     * 处理一下获取的数据，防止特殊符号被转义
-     *
-     * @param moniExport
-     */
-    private void unescapeHtml4(MoniExport moniExport) {
-        moniExport.setScript(StringEscapeUtils.unescapeHtml4(moniExport.getScript()));
-        moniExport.setChName(StringEscapeUtils.unescapeHtml4(moniExport.getChName()));
-        moniExport.setEnName(StringEscapeUtils.unescapeHtml4(moniExport.getEnName()));
     }
 
 }

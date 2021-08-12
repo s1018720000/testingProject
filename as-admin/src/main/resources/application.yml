@@ -7,7 +7,7 @@ as:
   # 版权年份
   copyrightYear: 2021
   # 获取ip地址开关
-  addressEnabled: false
+  addressEnabled: true
 
 mail:
   #主机
@@ -135,9 +135,9 @@ shiro:
 # 防止XSS攻击
 xss:
   # 过滤开关
-  enabled: true
+  enabled: false
   # 排除链接（多个用逗号分隔）
-  excludes: /system/notice/*
+  excludes: /system/notice/*,/monitor/sqlJob/*,/monitor/exportJob/*
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 

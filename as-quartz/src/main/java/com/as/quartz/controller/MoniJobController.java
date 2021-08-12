@@ -10,7 +10,6 @@ import com.as.quartz.domain.MoniJob;
 import com.as.quartz.service.IMoniJobService;
 import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.CronUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +87,6 @@ public class MoniJobController extends BaseController {
         if (!CronUtils.isValid(moniJob.getCronExpression())) {
             return AjaxResult.error("新增任务'" + moniJob.getChName() + "'失败，Cron表达式不正确");
         }
-        //此处处理一下防止特殊符号被转义
-        unescapeHtml4(moniJob);
         return toAjax(moniJobService.insertMoniJob(moniJob));
     }
 
@@ -114,8 +111,6 @@ public class MoniJobController extends BaseController {
         if (!CronUtils.isValid(moniJob.getCronExpression())) {
             return AjaxResult.error("编辑任务'" + moniJob.getChName() + "'失败，Cron表达式不正确");
         }
-        //此处处理sql 防止特殊符号被转义
-        unescapeHtml4(moniJob);
         return toAjax(moniJobService.updateMoniJob(moniJob));
     }
 
@@ -182,7 +177,7 @@ public class MoniJobController extends BaseController {
     @ResponseBody
     public AjaxResult test(MoniJob job) {
         //StringEscapeUtils.unescapeHtml4 作用  防止特殊符号被转义  如<会被转义为 &gt; 影响sql执行
-        return toAjax(sysJobService.sqlTest(StringEscapeUtils.unescapeHtml4(job.getScript()), job.getJdbc()));
+        return toAjax(sysJobService.sqlTest(job.getScript(), job.getJdbc()));
     }
 
     /**
@@ -201,18 +196,5 @@ public class MoniJobController extends BaseController {
     @ResponseBody
     public String getCronSchdule(MoniJob job) {
         return sysJobService.getCronSchdule(job.getCronExpression(), 10);
-    }
-
-    /**
-     * 处理一下获取的数据，防止特殊符号被转义
-     *
-     * @param moniJob
-     */
-    private void unescapeHtml4(MoniJob moniJob) {
-        moniJob.setScript(StringEscapeUtils.unescapeHtml4(moniJob.getScript()));
-        moniJob.setChName(StringEscapeUtils.unescapeHtml4(moniJob.getChName()));
-        moniJob.setEnName(StringEscapeUtils.unescapeHtml4(moniJob.getEnName()));
-        moniJob.setDescr(StringEscapeUtils.unescapeHtml4(moniJob.getDescr()));
-        moniJob.setTelegramInfo(StringEscapeUtils.unescapeHtml4(moniJob.getTelegramInfo()));
     }
 }
