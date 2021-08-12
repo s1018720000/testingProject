@@ -22,6 +22,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import gui.ava.html.image.generator.HtmlImageGenerator;
@@ -398,7 +399,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
         TelegramBot telegramBot = new TelegramBot(bot);
 
-//        SendMessage request = new SendMessage(tgData[1], telegramInfo).parseMode(ParseMode.Markdown);
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         String imgPath = createImg(moniJob, moniJobLog);
         SendPhoto sendPhoto = new SendPhoto(chatId, new File(imgPath));
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
@@ -406,7 +407,15 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
                 new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
         sendPhoto.replyMarkup(inlineKeyboard);
-        return telegramBot.execute(sendPhoto);
+
+        SendResponse execute;
+        try {
+            execute = telegramBot.execute(sendPhoto);
+        } catch (Exception e) {
+            //图片发送异常则发送文字告警
+            execute = telegramBot.execute(sendMessage);
+        }
+        return execute;
     }
 
     private String createImg(MoniJob moniJob, MoniJobLog moniJobLog) {
