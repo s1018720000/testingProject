@@ -101,6 +101,9 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 //关联导出
                 doExport(moniJob.getRelExport());
             }
+        } else {
+            moniJobLog.setStatus(Constants.SUCCESS);
+            moniJobLog.setAlertStatus(Constants.FAIL);
         }
     }
 
