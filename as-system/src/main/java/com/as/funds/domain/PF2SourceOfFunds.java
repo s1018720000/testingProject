@@ -2,18 +2,22 @@ package com.as.funds.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
- * PF1资金来源对象 liability_account_summary
+ * PF2资金来源对象 lott_fc3d_order_main
  *
  * @author kolin
  * @date 2021-07-05
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class PF1SourceOfFunds implements Serializable {
+public class PF2SourceOfFunds implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String bizDate;

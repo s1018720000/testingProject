@@ -25,11 +25,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="CLAIMSETTLEMENT"    property="sumComp"/>
         <result column="CREDIT_ADJ"    property="adjCredit"/>
         <result column="DEBIT_ADJ"    property="adjDebit"/>
-        <result column="BANK_FEES"    property="sumBankFess"/>
+        <result column="BANK_FEES"    property="sumBankFees"/>
         <result column="JACKPOT_WINNING"    property="sumJackpotWin"/>
         <result column="TRANSFER_3RD_IN"    property="sumTranIn"/>
         <result column="TRANSFER_3RD_OUT"    property="sumTranOut"/>
-        <result column="COMMISSION"    property="sumRetAgent"/>
         <result column="COMMISSION"    property="sumRetAgent"/>
         <result column="sumAgentTransferIn"    property="sumAgentTransferIn"/>
         <result column="sumAgentTransferOut"    property="sumAgentTransferOut"/>
