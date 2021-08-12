@@ -406,6 +406,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
                 new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
         sendPhoto.replyMarkup(inlineKeyboard);
+        sendMessage.replyMarkup(inlineKeyboard);
 
         SendResponse execute;
         try {
