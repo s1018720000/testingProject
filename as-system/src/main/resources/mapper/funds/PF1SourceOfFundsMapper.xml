@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.funds.mapper.PF1SourceOfFundsMapper">
+    
+    <resultMap type="PF1SourceOfFunds" id="PF1SourceOfFundsResult">
+        <result column="accounts"    property="account"/>
+        <result column="platform"    property="platform"/>
+        <result column="BALANCE_DATE"    property="bizDate"/>
+        <result column="OPENING_BALANCE"    property="sumOpening"/>
+        <result column="CLOSING_BALANCE"    property="sumClosing"/>
+        <result column="BETTING_TXN_AMOUNT"    property="sumBet"/>
+        <result column="BETTING_3RD_AMOUNT"    property="sumCgBet"/>
+        <result column="WINNING_TXN_AMOUNT"    property="sumWin"/>
+        <result column="WINNING_3RD_AMOUNT"    property="sumCgWin"/>
+        <result column="DEPOSIT_AMOUNT"    property="sumDeposit"/>
+        <result column="DEPOSIT_3RD_PAY_AMOUNT"    property="sum3rdPayDeposit"/>
+        <result column="WITHDRAW_AMOUNT"    property="sumWithdraw"/>
+        <result column="BET_REWARDS"    property="sumRetBet"/>
+        <result column="ACTIVITY_PROMO"    property="promoActive"/>
+        <result column="ADHOC_PROMO"    property="promoAdhoc"/>
+        <result column="TRANSFER_IN"    property="sumPfTranIn"/>
+        <result column="TRANSFER_OUT"    property="sumPfTranOut"/>
+        <result column="CLAIMSETTLEMENT"    property="sumComp"/>
+        <result column="CREDIT_ADJ"    property="adjCredit"/>
+        <result column="DEBIT_ADJ"    property="adjDebit"/>
+        <result column="BANK_FEES"    property="sumBankFess"/>
+        <result column="JACKPOT_WINNING"    property="sumJackpotWin"/>
+        <result column="TRANSFER_3RD_IN"    property="sumTranIn"/>
+        <result column="TRANSFER_3RD_OUT"    property="sumTranOut"/>
+        <result column="COMMISSION"    property="sumRetAgent"/>
+        <result column="COMMISSION"    property="sumRetAgent"/>
+        <result column="sumAgentTransferIn"    property="sumAgentTransferIn"/>
+        <result column="sumAgentTransferOut"    property="sumAgentTransferOut"/>
+    </resultMap>
+
+    <sql id="selectPF1SourceOfFundsVo">
+        select accounts,
+        '1.0' as platform,
+        BALANCE_DATE,
+        OPENING_BALANCE,
+        CLOSING_BALANCE,
+        BETTING_TXN_AMOUNT,
+        BETTING_3RD_AMOUNT,
+        WINNING_TXN_AMOUNT,
+        WINNING_3RD_AMOUNT,
+        DEPOSIT_AMOUNT,
+        DEPOSIT_3RD_PAY_AMOUNT,
+        WITHDRAW_AMOUNT,
+        BET_REWARDS,
+        ACTIVITY_PROMO,
+        ADHOC_PROMO,
+        TRANSFER_IN,
+        TRANSFER_OUT,
+        CLAIMSETTLEMENT,
+        CREDIT_ADJ,
+        DEBIT_ADJ,
+        BANK_FEES,
+        JACKPOT_WINNING,
+        TRANSFER_3RD_IN,
+        TRANSFER_3RD_OUT,
+        COMMISSION,
+        '0' as sumAgentTransferIn,
+        '0' as sumAgentTransferOut
+        from lott_new_a3d1.liability_account_summary
+    </sql>
+    
+    <select id="getPF1SourceOfFound" parameterType="String" resultMap="PF1SourceOfFundsResult">
+        <include refid="selectPF1SourceOfFundsVo"/>
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and trunc(BALANCE_DATE) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
+            </if>
+            <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+                and trunc(BALANCE_DATE) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
+            </if>
+        </where>
+         order by BALANCE_DATE desc
+    </select>
+
+    <resultMap type="PF1SourceOfFundsSummary" id="PF1SourceOfFundsSummaryResult">
+        <result column="accounts"    property="account"/>
+        <result column="platform"    property="platform"/>
+        <result column="sumBet"    property="totalBet"/>
+        <result column="sumCgBet"    property="totalCgBet"/>
+        <result column="sumWin"    property="totalWin"/>
+        <result column="sumCgWin"    property="totalCgWin"/>
+        <result column="sumRetBet"    property="totalBetReward"/>
+        <result column="sumPfTranIn"    property="totalTransferIn"/>
+        <result column="sumPfTranOut"    property="totalTransferOut"/>
+        <result column="adjCredit"    property="totalCredetAdj"/>
+        <result column="sumTranIn"    property="totalTransfer3rdIn"/>
+        <result column="sumTranOut"    property="totalTransfer3rdOut"/>
+    </resultMap>
+
+    <select id="getPF1SourceOfFoundSummary" parameterType="String" resultMap="PF1SourceOfFundsSummaryResult">
+        select accounts,
+        '1.0' as platform,
+        sum(BETTING_TXN_AMOUNT) as sumBet,
+        sum(BETTING_3RD_AMOUNT) as sumCgBet,
+        sum(WINNING_TXN_AMOUNT) as sumWin,
+        sum(WINNING_3RD_AMOUNT) as sumCgWin,
+        sum(BET_REWARDS) as sumRetBet,
+        sum(TRANSFER_IN) as sumPfTranIn,
+        sum(TRANSFER_OUT) as sumPfTranOut,
+        sum(CREDIT_ADJ)  as adjCredit  ,
+        sum(TRANSFER_3RD_IN) as sumTranIn,
+        sum(TRANSFER_3RD_OUT) as sumTranOut
+        from lott_new_a3d1.liability_account_summary
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and trunc(BALANCE_DATE) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
+            </if>
+            <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+                and trunc(BALANCE_DATE) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
+            </if>
+        </where>
+        group by accounts,'1.0'
+    </select>
+
+</mapper>

@@ -9,10 +9,19 @@ as:
     asDomain: http://127.0.0.1
 
 elastic:
-    #pf1 url
-    pf1: 172.26.101.48
-    #pf2 url
-    pf2: 172.26.113.95
+    #pf1
+    pf1:
+        #url
+        url: 172.26.101.48
+        #端口
+        port: 9200
+    #pf2
+    pf2:
+        #url
+        Url: 172.26.113.95
+        #端口
+        port: 9200
+
 
 # 开发环境配置
 server:

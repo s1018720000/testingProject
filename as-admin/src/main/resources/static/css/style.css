@@ -7035,3 +7035,11 @@ nav .logo {
 	z-index: 9998;
 	margin: 0;
 }
+
+.rctheme {
+    background-color: #017ca1 !important;
+}
+
+.text-white {
+    color: #fff !important;
+}

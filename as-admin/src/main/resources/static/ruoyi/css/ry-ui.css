@@ -338,7 +338,7 @@ label.error {
 
 .input-group label.error {
 	z-index:99;
-	right: 42px
+	right: 65px
 }
 
 .input-group input.error + label.error + .input-group-addon>i {

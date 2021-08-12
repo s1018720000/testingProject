@@ -9,10 +9,18 @@ as:
     asDomain: https://asportal.nuttli.com
 
 elastic:
-    #pf1 url
-    pf1: kibana2.pf1prod.com
-    #pf2 url
-    pf2: log-kafka1.pf2prod.com
+    #pf1
+    pf1:
+        #url
+        url: kibana2.pf1prod.com
+        #端口
+        port: 9200
+    #pf2
+    pf2:
+        #url
+        Url: log-kafka1.pf2prod.com
+        #端口
+        port: 9200
 
 # 生产环境配置
 server:

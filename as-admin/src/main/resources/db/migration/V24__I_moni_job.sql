@@ -1,5 +1,4 @@
 truncate table moni_job;
-
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
 ('CB-MID-3:EID-265','',' Check negative return point',' 檢查是否有負返點產生','【 L1 Actions 】
 1. Callback alert and check if export was sent to AS Teams
@@ -5186,17 +5185,15 @@ ORDER BY TASK.CREATE_TIME DESC','0','','kevin','2017-10-13 13:41:20','mediza.p',
 *{asid}/{priority}*
 *{en_name}/{zh_name}*','2','AS','1','CB',null);
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
-('NU-MID-141','',' PF1 new register with a negative frozen amount',' PF1 新手注册用户冻结余额少于0的监控','【 L1 Actions 】
-1. Copy to AS-RC Teams [ 會員凍結金額為負，請注意會員提現異常，建議加入至人工審單列表中 ]','0','ub8-pf1-sec','1.0','0 0/30 * * * ?','select ACCOUNTS,DJAMOUNT,U_TIME from LOTT_NEW_A3D1.LOTT_FROST
-  where DJAMOUNT < 0 and AVFLAG = 1
-        and u_time between sysdate -1/24 and sysdate -0.5/24
-        and ACCOUNTS not in (''656930440'',''bmw320'',''lcx16888'')
-        and  ACCOUNTS in (
-             select ACCOUNTS from LOTT_NEW_A3D1.LOTT_VW_MEMBER_INFO
-             where REGTIME >=  to_date(''2017-11-01 00:00:00'',''yyyy-mm-dd hh24:mi:ss'')
-             )','5','','NorthT','2017-11-08 18:06:37','martmil.n','2020-03-06 18:38:40','','0','*DB Monitor ID({id})/{platform}/{env}*
+('URG-CAL2-MID-141','',' PF1 The frozen amount is negative',' PF1 冻结金額為負','【 L1 Actions 】
+1. Copy to AS-RC Teams [ 會員凍結金額為負，請注意會員提現異常，建議加入至人工審單列表中 ]
+2. Create an ASI for this urgent MID and post it on AS General
+【 L2 Actions 】
+1.調查負金額原因，查看是否為PED回調成功AS又Data Patch','0','ub8-pf1-sec','1.0','0 0 0/1 * * ?','SELECT ACCOUNTS,DJAMOUNT,U_TIME
+FROM LOTT_NEW_A3D1.LOTT_FROST
+WHERE DJAMOUNT < 0 AND AVFLAG = 1 AND U_TIME>SYSDATE-1/24','5','','NorthT','2017-11-08 18:06:37','mickey','2021-08-11 13:15:24','','0','*DB Monitor ID({id})/{platform}/{env}*
 *{asid}/{priority}*
-*{en_name}/{zh_name}*','1','AS','1','CHK',null);
+*{en_name}/{zh_name}*','1','AS','0','CAL2',null);
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
 ('NU-CHK-MID-142','',' 11X5 and PK Game draw stop API',' 官彩11選5系列開獎中斷偵測','【 L1 Actions 】
 1. Do the API url on the alert
@@ -6877,11 +6874,11 @@ WHERE
 *{asid}/{priority}*
 *{en_name}/{zh_name}*','1','AS','0','CAL2',null);
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
-('NU-CHK-MID-345','ASI-18479',' PF2 Service Connection Exception',' PF2 PF2近5mins無登入/訂單數據','This is to monitor whether the DB has data written from the android 、ios or web page.
+('NU-CHK-MID-345','ASI-18479',' PF2 No login and order data within 5 mins',' PF2 五分鐘內無登入/訂單數據','This is to monitor whether the DB has data written from the android 、ios or web page.
 【 L1 Actions 】
 1. This monitor will show all of device login record in past few minutes. In normal case, we should see 3 of devices (ANDROID,IOS,WEB)
 2. Check if you can login to frontend for the missing  device . If normal, inform on Telegram.
-3. If not normal, copy to AS Teams [ Hi L2, CMS <NU-CHK-MID-345>，PF2 (fill a missing device record)服務連接異常 ] with the screenshot of issue.','0','ub8-pf5-core-sec','5.0','0 0/5 * * * ?','---登入、訂單、使用者事件
+3. If not normal, copy to AS Teams [ Hi L2, CMS <NU-CHK-MID-345>，PF2 (fill a missing device record)五分鐘內無登入/訂單數據 ] with the screenshot of issue.','0','ub8-pf5-core-sec','5.0','0 0/5 * * * ?','---登入、訂單、使用者事件
 SELECT LISTAGG(DEVICE,'','') WITHIN GROUP(ORDER BY DEVICE) AS DEVICE
 FROM(
 SELECT DEVICE
@@ -6903,15 +6900,15 @@ FROM CORE.UE_USER_EVENT_MASTER
 WHERE CREATE_TIME > SYSDATE-5/24/60 AND EVENT=''login''
 GROUP BY DEVICE
 ) GROUP BY DEVICE HAVING DEVICE IN(''ANDROID'',''IOS'',''WEB'')
-)','1','ANDROID,IOS,WEB','mickey','2021-07-30 12:38:37','jason','2021-08-10 12:32:12','','0','*DB Monitor ID({id})/{platform}/{env}*
+)','1','ANDROID,IOS,WEB','mickey','2021-07-30 12:38:37','mickey','2021-08-11 11:45:28','','0','*DB Monitor ID({id})/{platform}/{env}*
 *{asid}/{priority}*
 *{en_name}/{zh_name}*','2','AS','1','CAL2',null);
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
-('NU-CHK-MID-347','ASI-18436',' PF1 Service Connection Exception',' PF1 近5mins無登入/訂單數據','This is to monitor whether the DB has data written from the app or web page.
+('NU-CHK-MID-347','ASI-18436',' PF1 No login and order data within 5 mins',' PF1 五分鐘內無登入/訂單數據','This is to monitor whether the DB has data written from the app or web page.
 【 L1 Actions 】
 1. This monitor will show all of device login record in past few minutes. In normal case, we should see 2 of devices (APP,WEB)
 2. Check if you can login to frontend for the missing  device . If normal, inform on Telegram.
-3. If not normal, copy to AS Teams [ Hi L2, CMS &lt;NU-CHK-MID-347&gt;，PF1 (fill a missing device record)服務連接異常 ] with the screenshot of issue.','0','ub8-pf1-sec','1.0','0 0/5 * * * ?','SELECT LISTAGG(DEVICE,'','') WITHIN GROUP(ORDER BY DEVICE) AS DEVICE
+3. If not normal, copy to AS Teams [ Hi L2, CMS &lt;NU-CHK-MID-347&gt;，PF1 (fill a missing device record)五分鐘內無登入/訂單數據 ] with the screenshot of issue.','0','ub8-pf1-sec','1.0','0 0/5 * * * ?','SELECT LISTAGG(DEVICE,'','') WITHIN GROUP(ORDER BY DEVICE) AS DEVICE
 FROM(
 SELECT DEVICE
 FROM (
@@ -6934,17 +6931,27 @@ GROUP BY DEVICE
 )
 GROUP BY DEVICE
 HAVING DEVICE IN(''APP'',''WEB'')
-)','1','APP,WEB','mickey','2021-08-09 16:38:12','mickey','2021-08-10 15:28:13','','0','*DB Monitor ID({id})/{platform}/{env}*
+)','1','APP,WEB','mickey','2021-08-09 16:38:12','mickey','2021-08-11 11:46:00','','0','*DB Monitor ID({id})/{platform}/{env}*
 *{asid}/{priority}*
 *{en_name}/{zh_name}*','1','AS','1','CAL2',null);
 INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
 ('URG-CAL2-MID-348','ASI-18564',' PF1 Job member group scheduling task fail',' PF1會員組自動化排成失敗','【 L1 Actions 】
 1. Copy to Telegram and AS Teams [ Hi L2, CMS &lt;URG-CAL2-MID-348&gt;，PF1，是緊急的，會員組自動化排成失敗 ]
-2.Create an ASI for this urgent
+2.Create an ASI for this urgent MID and post it on AS General
 【 L2 Actions 】
 1.開LOTTERY單給開發
 2.通知1.0生产群&gt;1.0 生產問題討論群','0','ub8-pf1-sec','1.0','0 5 2  * * ?','select * from LOTT_NEW_A3D1.LOTT_UB_JOB_LOG
 where REASON not in ''成功''
-order by GID desc','5','','mickey','2021-08-10 12:23:45','mickey','2021-08-10 12:24:36','','0','*DB Monitor ID({id})/{platform}/{env}*
+order by GID desc','5','','mickey','2021-08-10 12:23:45','mickey','2021-08-11 11:34:04','','0','*DB Monitor ID({id})/{platform}/{env}*
 *{asid}/{priority}*
 *{en_name}/{zh_name}*','1','AS','0','CAL2',null);
+INSERT INTO moni_job (ASID,TICKET_NUMBER,EN_NAME,CH_NAME,DESCR,STATUS,JDBC,PLATFORM,CRON_EXPRESSION,SCRIPT,AUTO_MATCH,EXPECTED_RESULT,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,REL_EXPORT,TELEGRAM_ALERT,TELEGRAM_INFO,TELEGRAM_CONFIG,REQUESTER,PRIORITY,ACTION_ITEM,LAST_ALERT) VALUES
+('URG-CAL2-MID-349','',' PF2 The frozen amount is negative',' PF2 冻结金額為負','【 L1 Actions 】
+1. Copy to AS-RC Teams [ 會員凍結金額為負，請注意會員提現異常，建議加入至人工審單列表中 ]
+2. Create an ASI for this urgent MID and post it on AS General
+【 L2 Actions 】
+1.調查負金額原因，查看是否為PED回調成功AS又Data Patch','0','ub8-pf5-core-sec','5.0','0 0 0/1 * * ?','SELECT CUSTOMER_NAME,(BALANCE-AVAIL_BALANCE)FROZEN,UPDATE_TIME
+FROM CORE.ACS_ACCOUNT
+WHERE ACCOUNT_TYPE_ID=1 AND (BALANCE-AVAIL_BALANCE)<0 AND UPDATE_TIME>SYSDATE-1/24','5','','mickey','2021-08-11 12:30:36','mickey','2021-08-12 09:35:18','','0','*DB Monitor ID({id})/{platform}/{env}*
+*{asid}/{priority}*
+*{en_name}/{zh_name}*','2','AS','0','CAL2',null);

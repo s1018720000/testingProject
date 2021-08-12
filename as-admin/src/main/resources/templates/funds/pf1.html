@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('PF1资金来源')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="form-pf1-funds" class="form-horizontal">
+                    <h4 class="form-header h4">[[#{funds.pf1}]]</h4>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-lg-offset-2 col-xl-offset-2">
+                            <div class="col-sm-4">
+                                <div class="input-group m-b">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.account}]]：
+                                </span>
+                                    <input class="form-control" type="text" name="account" placeholder="EX:account1,account2"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-daterange input-group">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.trade.date}]]：
+                                </span>
+                                    <input type="text" class="time-input input-sm form-control" id="startTime" name="startTime" th:placeholder="#{common.start.time}"/>
+                                    <span class="input-group-addon">-</span>
+                                    <input type="text" class="time-input input-sm form-control" id="endTime" name="endTime" th:placeholder="#{common.end.time}"/>
+                                    <span class="input-group-btn">
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
+                                    <i class="fa fa-search"></i> [[#{db.query.query}]]
+                                    </a>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-total"></table>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-detail"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-export-js" />
+     <script type="text/javascript">
+        var prefix = ctx + "funds/pf1";
+
+        function initTotalTable(){
+            var options = {
+                url: prefix + "/listTotal",
+                id:'bootstrap-table-total',
+                firstLoad:false,
+                showExport: true,
+                pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('funds.model'),
+                columns: [
+                    [{
+                        title : i18n('funds.total'),
+                        align : 'center',
+                        colspan : 13
+                    }
+                    ],
+                    [{
+                        field: 'platform',
+                        title: i18n('funds.platform'),
+                        halign: 'center'
+                    },
+                        {
+                            field: 'account',
+                            title: i18n('funds.account'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalBet',
+                            title: i18n('funds.total.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalCgBet',
+                            title: i18n('funds.total.cg.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalWin',
+                            title: i18n('funds.total.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalCgWin',
+                            title: i18n('funds.total.cg.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalBetReward',
+                            title: i18n('funds.total.reward'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalBetReward',
+                            title: i18n('funds.total.reward'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalTransferIn',
+                            title: i18n('funds.total.transfer.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalTransferOut',
+                            title: i18n('funds.total.transfer.out'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalCredetAdj',
+                            title: i18n('funds.total.credet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalTransfer3rdIn',
+                            title: i18n('funds.total.transfer.3rd.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'totalTransfer3rdOut',
+                            title: i18n('funds.total.transfer.3rd.out'),
+                            halign: 'center'
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+        function initDetailTable(){
+            var options = {
+                url: prefix + "/listDetail",
+                id:'bootstrap-table-detail',
+                firstLoad:false,
+                showExport: true,
+                // pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('funds.model'),
+                columns: [
+                    [{
+                        title : i18n('funds.detail'),
+                        align : 'center',
+                        colspan : 27
+                    }
+                    ],
+                    [{
+                        field: 'platform',
+                        title: i18n('funds.platform'),
+                        halign: 'center'
+                    },
+                        {
+                            field: 'account',
+                            title: i18n('funds.account'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'bizDate',
+                            title: i18n('funds.date'),
+                            halign: 'center',
+                            formatter: function (value, row, index) {
+                                return $.common.dateFormat(value, 'yyyy-MM-dd')
+                            },
+                        },
+                        {
+                            field: 'sumOpening',
+                            title: i18n('funds.sum.opening'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumClosing',
+                            title: i18n('funds.sum.closing'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumBet',
+                            title: i18n('funds.sum.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumCgBet',
+                            title: i18n('funds.sum.cg.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumWin',
+                            title: i18n('funds.sum.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumCgWin',
+                            title: i18n('funds.sum.cg.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumDeposit',
+                            title: i18n('funds.sum.deposit'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sum3rdPayDeposit',
+                            title: i18n('funds.sum.3rd.pay.deposit'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumWithdraw',
+                            title: i18n('funds.sum.withdraw'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumRetBet',
+                            title: i18n('funds.sum.ret.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'promoActive',
+                            title: i18n('funds.sum.promo.active'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'promoAdhoc',
+                            title: i18n('funds.sum.promo.adhoc'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumPfTranIn',
+                            title: i18n('funds.sum.Pf.tran.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumPfTranOut',
+                            title: i18n('funds.sum.Pf.tran.out'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumComp',
+                            title: i18n('funds.sum.comp'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'adjCredit',
+                            title: i18n('funds.sum.adj.credit'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'adjDebit',
+                            title: i18n('funds.sum.adj.debit'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumBankFess',
+                            title: i18n('funds.sum.bank.fees'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumJackpotWin',
+                            title: i18n('funds.sum.jackpot.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumTranIn',
+                            title: i18n('funds.sum.tran.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumTranOut',
+                            title: i18n('funds.sum.tran.out'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumRetAgent',
+                            title: i18n('funds.date'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumAgentTransferIn',
+                            title: i18n('funds.sum.agent.transfer.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumAgentTransferOut',
+                            title: i18n('funds.sum.agent.transfer.out'),
+                            halign: 'center'
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+
+        $("#form-pf1-funds").validate({
+            onkeyup: false,
+            rules:{
+                account:{
+                    required:true
+                },
+            },
+            focusCleanup: true
+        });
+        // 搜索
+        function tableSearch(){
+            if ($.validate.form()){
+                if(!table.get(table.options.id)){
+                    initTotalTable();
+                    initDetailTable();
+                    refreshTable();
+                } else {
+                    refreshTable();
+                }
+            }
+            $("#bootstrap-table-total>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+            $("#bootstrap-table-detail>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        }
+        // 刷新表格
+        function refreshTable() {
+            $("#" + table.config['bootstrap-table-total'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-total']);
+            $("#" + table.config['bootstrap-table-detail'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-detail']);
+        }
+
+        function headerStyle(column) {
+            return {
+                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -21,14 +21,26 @@ public class ElasticConfig {
     /**
      * pf1 url
      */
-    @Value("${elastic.pf1}")
+    @Value("${elastic.pf1.url}")
     private String pf1Url;
+
+    /**
+     * pf1 port
+     */
+    @Value("${elastic.pf1.port}")
+    private int pf1Port;
 
     /**
      * pf2 url
      */
-    @Value("${elastic.pf2}")
+    @Value("${elastic.pf2.url}")
     private String pf2Url;
+
+    /**
+     * pf2 port
+     */
+    @Value("${elastic.pf2.port}")
+    private int pf2Port;
 
     @Bean(name = "PF1Elasticsearch")
     public RestHighLevelClient PF1Client() {
@@ -40,7 +52,7 @@ public class ElasticConfig {
             //PROD  172.30.1.48
             client = new RestHighLevelClient(
                     RestClient.builder(
-                            new HttpHost(pf1Url, 9200, "http")));
+                            new HttpHost(pf1Url, pf1Port, "http")));
 
             logger.info("PF1 ElasticsearchClient 连接成功 ===");
         } catch (Exception e) {
@@ -59,7 +71,7 @@ public class ElasticConfig {
             //PROD  172.30.13.95
             client = new RestHighLevelClient(
                     RestClient.builder(
-                            new HttpHost(pf2Url, 9200, "http")));
+                            new HttpHost(pf2Url, pf2Port, "http")));
 
             logger.info("PF2 ElasticsearchClient 连接成功 ===");
         } catch (Exception e) {

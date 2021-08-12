@@ -9,10 +9,18 @@ as:
     asDomain: https://asportal.e3xm.com
 
 elastic:
-    #pf1 url
-    pf1: 172.27.130.48
-    #pf2 url
-    pf2: 172.27.130.95
+    #pf1
+    pf1:
+        #url
+        url: 172.27.130.48
+        #端口
+        port: 9200
+    #pf2
+    pf2:
+        #url
+        Url: 172.27.130.95
+        #端口
+        port: 9200
 
 # UAT环境配置
 server:
