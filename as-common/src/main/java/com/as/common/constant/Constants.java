@@ -106,4 +106,14 @@ public class Constants
      * RMI 远程方法调用
      */
     public static final String LOOKUP_RMI = "rmi://";
+
+    /**
+     * 1.0平台
+     */
+    public static final String PLATFORM_1 = "1.0";
+
+    /**
+     * 5.0平台
+     */
+    public static final String PLATFORM_2 = "5.0";
 }

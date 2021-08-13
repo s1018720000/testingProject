@@ -2,11 +2,13 @@ package com.as.quartz.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.as.common.config.datasource.DynamicDataSourceContextHolder;
+import com.as.common.constant.Constants;
 import com.as.common.constant.ScheduleConstants;
 import com.as.common.core.text.Convert;
 import com.as.common.enums.DataSourceType;
 import com.as.common.utils.DateUtils;
 import com.as.common.utils.ShiroUtils;
+import com.as.common.utils.StringUtils;
 import com.as.quartz.domain.MoniElastic;
 import com.as.quartz.job.MoniElasticExecution;
 import com.as.quartz.mapper.MoniElasticMapper;
@@ -14,10 +16,11 @@ import com.as.quartz.mapper.PF1DrawCompareMapper;
 import com.as.quartz.mapper.PF2DrawCompareMapper;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.ScheduleUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -31,7 +34,7 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,19 +60,43 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
     @Autowired
     private Scheduler scheduler;
 
-    @Autowired
-    @Qualifier("PF1Elasticsearch")
-    private RestHighLevelClient PF1Client;
-
-    @Autowired
-    @Qualifier("PF2Elasticsearch")
-    private RestHighLevelClient PF2Client;
+//    @Autowired
+//    @Qualifier("PF1Elasticsearch")
+//    private RestHighLevelClient PF1Client;
+//
+//    @Autowired
+//    @Qualifier("PF2Elasticsearch")
+//    private RestHighLevelClient PF2Client;
 
     @Autowired
     private PF1DrawCompareMapper pf1DrawCompareMapper;
 
     @Autowired
     private PF2DrawCompareMapper pf2DrawCompareMapper;
+
+    /**
+     * pf1 url
+     */
+    @Value("${elastic.pf1.url}")
+    private String pf1Url;
+
+    /**
+     * pf1 port
+     */
+    @Value("${elastic.pf1.port}")
+    private int pf1Port;
+
+    /**
+     * pf2 url
+     */
+    @Value("${elastic.pf2.url}")
+    private String pf2Url;
+
+    /**
+     * pf2 port
+     */
+    @Value("${elastic.pf2.port}")
+    private int pf2Port;
 
     /**
      * 查询ElasticSearch任务
@@ -286,15 +313,38 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
     @Override
     public SearchResponse doElasticSearch(MoniElastic moniElastic) throws IOException {
         SearchResponse searchResponse = null;
-        if ("5.0".equals(moniElastic.getPlatform())) {
-            searchResponse = doPF2(moniElastic);
-        } else if ("1.0".equals(moniElastic.getPlatform())) {
-            searchResponse = doPF1(moniElastic);
+        RestHighLevelClient client = null;
+        try {
+            if (Constants.PLATFORM_2.equals(moniElastic.getPlatform())) {
+                client = createClient(pf2Url, pf2Port);
+                searchResponse = doPF2(moniElastic, client);
+            } else if (Constants.PLATFORM_1.equals(moniElastic.getPlatform())) {
+                client = createClient(pf1Url, pf1Port);
+                searchResponse = doPF1(moniElastic, client);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (StringUtils.isNotNull(client)) {
+                client.close();
+            }
         }
+
         return searchResponse;
     }
 
-    public SearchResponse doPF1(MoniElastic moniElastic) throws IOException {
+    private RestHighLevelClient createClient(String url, int port) {
+        return new RestHighLevelClient(
+                RestClient.builder(
+                        new HttpHost(url, port, "http"))
+                        .setRequestConfigCallback(requestConfigBuilder -> {
+                            return requestConfigBuilder.setConnectTimeout(5000 * 1000) // 连接超时（默认为1秒）
+                                    .setSocketTimeout(6000 * 1000)// 套接字超时（默认为30秒）//更改客户端的超时限制默认30秒现在改为100分钟
+                                    .setConnectionRequestTimeout(5000 * 1000); //请求超时
+                        }));
+    }
+
+    public SearchResponse doPF1(MoniElastic moniElastic, RestHighLevelClient client) throws IOException {
         String query = moniElastic.getQuery();
         QueryBuilder qb = QueryBuilders.boolQuery().filter(QueryBuilders.queryStringQuery(query))
                 .filter(QueryBuilders.rangeQuery("json.@timestamp").gte(moniElastic.getTimeFrom()).lte(moniElastic.getTimeTo()));
@@ -305,7 +355,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
         searchSourceBuilder.sort("json.@timestamp", SortOrder.DESC);
         searchRequest.source(searchSourceBuilder);
         searchRequest.indices(moniElastic.getIndex());
-        SearchResponse searchResponse = PF1Client.search(searchRequest, RequestOptions.DEFAULT);
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] hits = searchResponse.getHits().getHits();
         Integer rows = hits.length;
         logger.info(String.format("[PF1] 本轮监控结果 ： find %s hits in %s by [%s]", rows, searchResponse.getTook().getStringRep(), StringUtils.isBlank(moniElastic.getAsid()) ? moniElastic.getEnName() : moniElastic.getAsid()));
@@ -313,7 +363,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
     }
 
 
-    private SearchResponse doPF2(MoniElastic moniElastic) throws IOException {
+    private SearchResponse doPF2(MoniElastic moniElastic, RestHighLevelClient client) throws IOException {
         String query = moniElastic.getQuery();
         QueryBuilder qb = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.queryStringQuery(query))
@@ -337,7 +387,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
         searchSourceBuilder.sort("@timestamp", SortOrder.DESC);
         searchRequest.source(searchSourceBuilder);
         searchRequest.indices(moniElastic.getIndex());
-        SearchResponse searchResponse = PF2Client.search(searchRequest, RequestOptions.DEFAULT);
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHit[] hits = searchResponse.getHits().getHits();
         logger.info(String.format("PF2 本轮监控结果 ： find %s hits in %s by [%s]", hits.length, searchResponse.getTook().getStringRep(), StringUtils.isBlank(moniElastic.getAsid()) ? moniElastic.getEnName() : moniElastic.getAsid()));
         return searchResponse;
