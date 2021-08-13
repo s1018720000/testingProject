@@ -374,6 +374,9 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 Integer count = pf1DrawCompareMapper.selectPF1DrawNumberCount(gameCode, numero, winNo);
                 if (count != 1) {
                     String winNumber = pf1DrawCompareMapper.selectPF1DrawNumber(gameCode, numero);
+                    if (StringUtils.isBlank(winNumber)) {
+                        winNumber = "Not Found";
+                    }
                     result.append(String.format("========================== \nGameCode : %s \nLOG-WinningNumber : %s \nDB-WinningNumber : %s \nNumero : %s \n",
                             gameCode, winNo, winNumber, numero));
                     index++;
@@ -417,6 +420,9 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 int count = pf2DrawCompareMapper.selectPF2DrawNumberCount(gameCode, numero, winNo);
                 if (count != 1) {
                     String winNumber = pf2DrawCompareMapper.selectPF2DrawNumber(gameCode, numero);
+                    if (StringUtils.isBlank(winNumber)) {
+                        winNumber = "Not Found";
+                    }
                     result.append(String.format("========================== \nGameCode : %s \nLOG-WinningNumber : %s \nDB-WinningNumber : %s \nNumero : %s \n", gameCode, winNo, winNumber, numero));
                     index++;
                 } else {
