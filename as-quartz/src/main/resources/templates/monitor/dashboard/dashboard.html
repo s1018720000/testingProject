@@ -23,7 +23,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-sql"></table>
+                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
                                     <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -31,7 +31,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-export"></table>
+                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
                                     <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-elastic"></table>
+                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
                                     <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-api"></table>
+                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
                                     <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -69,21 +69,20 @@
 </audio>
 
 <th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-auto-refresh-js" />
 <script th:inline="javascript">
     var statusDatas = [[${@dict.getType('sys_common_status')}]];
     var PLATFORMDatas = [[${@dict.getType('ub8_platform_type')}]];
     var prefix = ctx + "monitor/dashboard";
 
-    var time1 = 10000; //定时的时间
-    var time2 = 1000; //定时的时间
-    var interval1;//定时器1
-    var interval2;//定时器2
+    var time = 1000; //监听告警声是否开启的时间
+    var interval;//定时器1
 
     $(function (){
         switchOn()
         searchTable()
-        interval1 = setInterval(searchTable,time1);
-        interval2 = setInterval(checkAlert,time2);
+        $("button.auto-refresh").parent().attr("style","display:none;")
+        interval = setInterval(checkAlert,time);
     })
 
     function searchTable(){
