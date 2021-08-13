@@ -23,7 +23,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
                                     <div id="sql-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -31,7 +31,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
                                     <div id="elastic-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
                                     <div id="api-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
                                     <div id="export-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -74,16 +74,6 @@
     var PLATFORMDatas = [[${@dict.getType('ub8_platform_type')}]];
     var prefix = ctx + "monitor/dashboard";
 
-    var time = 1000; //监听告警声是否开启的时间
-    var interval;//定时器
-
-    $(function (){
-        switchOn()
-        // searchTable()
-        // $("button.auto-refresh").parent().attr("style","display:none;")
-        interval = setInterval(checkAlert,time);
-    })
-
     function checkAlert(){
         if (isSwitchOn()){
             var sqlJobRow = $('#bootstrap-table-sql').bootstrapTable('getOptions').totalRows
@@ -99,13 +89,6 @@
                 pause()
             }
         }
-    }
-
-    function refreshTable() {
-        $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
-        $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
-        $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-api']);
-        $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-elastic']);
     }
 
     function play(){
@@ -125,11 +108,13 @@
     //      打開開關
     function switchOn(){
         $("#switchButton").html('<i class="fa fa-bell-o"></i>');
+        checkAlert()
     }
 
     //      關閉開關
     function switchOff(){
         $("#switchButton").html('<i class="fa fa-bell-slash-o"></i>');
+        checkAlert()
     }
 
     function isSwitchOn(){
@@ -137,20 +122,23 @@
     }
 
     function sqlLastUpdateTime(){
+        checkAlert()
         $("#sql-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
     }
     function exportLastUpdateTime(){
+        checkAlert()
         $("#export-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
     }
     function elasticLastUpdateTime(){
+        checkAlert()
         $("#elastic-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
     }
     function apiLastUpdateTime(){
+        checkAlert()
         $("#api-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
     }
 
     $(document).ready(function(){
-
         $("#switchButton").bind("click", function(){
             if(isSwitchOn()){
                 switchOff();
@@ -160,7 +148,9 @@
             if(isSwitchOn()){
                 checkAlert();
             }else{
-                pause();
+                if (!isPaused()){
+                    pause()
+                }
             }
         });
     });
@@ -235,6 +225,7 @@
             ]
         };
         $.table.init(options);
+        switchOn()
     })
 
     $(function(){
@@ -463,16 +454,14 @@
 
     /* sql检测告警-停用 */
     function sqlJobAlertStop(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
-            $.operate.post(prefix + "/stopSqlJobAlert", {"id": jobId, "alertStatus": 1});
-        })
+        $.operate.post(prefix + "/stopSqlJobAlert", {"id": jobId, "alertStatus": 1});
+        checkAlert()
     }
 
     /* sql检测告警-启用 */
     function sqlJobAlertStart(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
-            $.operate.post(prefix + "/startSqlJobAlert", {"id": jobId, "alertStatus": 0});
-        })
+        $.operate.post(prefix + "/startSqlJobAlert", {"id": jobId, "alertStatus": 0});
+        checkAlert()
     }
 
     /* api检测调度任务告警显示 */
@@ -486,16 +475,14 @@
 
     /* api检测告警-停用 */
     function apiJobAlertStop(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
-            $.operate.post(prefix + "/stopApiJobAlert", {"id": jobId, "alertStatus": 1});
-        })
+        $.operate.post(prefix + "/stopApiJobAlert", {"id": jobId, "alertStatus": 1});
+        checkAlert()
     }
 
     /* api检测告警-启用 */
     function apiJobAlertStart(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
-            $.operate.post(prefix + "/startApiJobAlert", {"id": jobId, "alertStatus": 0});
-        })
+        $.operate.post(prefix + "/startApiJobAlert", {"id": jobId, "alertStatus": 0});
+        checkAlert()
     }
 
     /* elastic检测任务告警显示 */
@@ -509,16 +496,14 @@
 
     /*elastic检测任务告警-停用 */
     function elasticJobAlertStop(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.stop.alert'), function () {
-            $.operate.post(prefix + "/stopElasticJobAlert", {"id": jobId, "alertStatus": 1});
-        })
+        $.operate.post(prefix + "/stopElasticJobAlert", {"id": jobId, "alertStatus": 1});
+        checkAlert()
     }
 
     /* elastic检测任务告警-启用 */
     function elasticJobAlertStart(jobId) {
-        $.modal.confirm(i18n('sql.job.confirm.start.alert'), function () {
-            $.operate.post(prefix + "/startElasticJobAlert", {"id": jobId, "alertStatus": 0});
-        })
+        $.operate.post(prefix + "/startElasticJobAlert", {"id": jobId, "alertStatus": 0});
+        checkAlert()
     }
 
     function headerStyle(column) {
