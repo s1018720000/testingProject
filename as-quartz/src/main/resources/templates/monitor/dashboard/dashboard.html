@@ -24,7 +24,25 @@
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
                                     <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
-                                    <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
+                                    <div id="sql-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <div id="elastic-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-12 select-table table-bordered">
+                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
+                                    <div id="api-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
                         </div>
@@ -32,26 +50,7 @@
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
                                     <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
-                                    <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
-                                    <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="10"></table>
-                                    <div class="update_time badge badge-success pull-right"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
+                                    <div id="export-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
                         </div>
@@ -76,26 +75,14 @@
     var prefix = ctx + "monitor/dashboard";
 
     var time = 1000; //监听告警声是否开启的时间
-    var interval;//定时器1
+    var interval;//定时器
 
     $(function (){
         switchOn()
-        searchTable()
-        $("button.auto-refresh").parent().attr("style","display:none;")
+        // searchTable()
+        // $("button.auto-refresh").parent().attr("style","display:none;")
         interval = setInterval(checkAlert,time);
     })
-
-    function searchTable(){
-        if(!table.get('bootstrap-table-sql')){
-            initSqlJobTable();
-            initExportJobTable()
-            initApiJobTable()
-            initElasticJobTable()
-        } else {
-            refreshTable();
-        }
-        $(".update_time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
-    }
 
     function checkAlert(){
         if (isSwitchOn()){
@@ -149,6 +136,19 @@
         return $("#switchButton").html() === '<i class="fa fa-bell-o"></i>';
     }
 
+    function sqlLastUpdateTime(){
+        $("#sql-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+    }
+    function exportLastUpdateTime(){
+        $("#export-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+    }
+    function elasticLastUpdateTime(){
+        $("#elastic-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+    }
+    function apiLastUpdateTime(){
+        $("#api-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+    }
+
     $(document).ready(function(){
 
         $("#switchButton").bind("click", function(){
@@ -165,7 +165,7 @@
         });
     });
 
-    function initSqlJobTable(){
+    $(function(){
         var options = {
             url: prefix + "/updateSqlJob",
             id:'bootstrap-table-sql',
@@ -177,6 +177,7 @@
             showRefresh: false,
             showToggle: false,
             showColumns: false,
+            onLoadSuccess: sqlLastUpdateTime,
             headerStyle: headerStyle,
             sortName: "startTime",
             sortOrder: "desc",
@@ -234,9 +235,9 @@
             ]
         };
         $.table.init(options);
-    }
+    })
 
-    function initExportJobTable(){
+    $(function(){
         var options = {
             url: prefix + "/updateExportJob",
             id:'bootstrap-table-export',
@@ -249,6 +250,7 @@
             showToggle: false,
             showColumns: false,
             headerStyle: headerStyle,
+            onLoadSuccess: exportLastUpdateTime,
             sortName: "startTime",
             sortOrder: "desc",
             modalName: i18n('export.job'),
@@ -302,10 +304,10 @@
             ]
         };
         $.table.init(options);
-    }
+    })
 
 
-    function initApiJobTable(){
+    $(function(){
         var options = {
             url: prefix + "/updateApiJob",
             id:'bootstrap-table-api',
@@ -318,6 +320,7 @@
             showToggle: false,
             showColumns: false,
             headerStyle: headerStyle,
+            onLoadSuccess: apiLastUpdateTime,
             sortName: "startTime",
             sortOrder: "desc",
             modalName: i18n('api.job'),
@@ -374,9 +377,9 @@
             ]
         };
         $.table.init(options);
-    }
+    })
 
-    function initElasticJobTable(){
+    $(function(){
         var options = {
             url: prefix + "/updateElasticJob",
             id:'bootstrap-table-elastic',
@@ -389,6 +392,7 @@
             showToggle: false,
             showColumns: false,
             headerStyle: headerStyle,
+            onLoadSuccess: elasticLastUpdateTime,
             sortName: "startTime",
             sortOrder: "desc",
             modalName: i18n('elastic.job'),
@@ -445,7 +449,7 @@
             ]
         };
         $.table.init(options);
-    }
+    })
 
 
     /* sql检测调度任务告警显示 */
@@ -516,7 +520,6 @@
             $.operate.post(prefix + "/startElasticJobAlert", {"id": jobId, "alertStatus": 0});
         })
     }
-
 
     function headerStyle(column) {
         return {

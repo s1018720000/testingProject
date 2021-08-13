@@ -408,7 +408,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
 
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo + "\n\n`Failed to send picture\nplz click 'LOG Details' to view details`").parseMode(ParseMode.Markdown);
-        String imgPath = createImg(moniJob, moniJobLog);
+        String imgPath = createImg();
         SendPhoto sendPhoto = new SendPhoto(chatId, new File(imgPath));
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
@@ -429,7 +429,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         return execute;
     }
 
-    private String createImg(MoniJob moniJob, MoniJobLog moniJobLog) {
+    private String createImg() {
         String htmlContent = HtmlTemplateUtil.getHtmlContent("vm/sqlJob.html.vm");
         String path = null;
         if (StringUtils.isNotEmpty(htmlContent)) {
@@ -437,7 +437,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 //替换模板数据
                 htmlContent = htmlContent.replace("{descr}", moniJob.getDescr())
                         .replace("{startTime}", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, moniJobLog.getStartTime()))
-                        .replace("{expectedResult}", moniJobLog.getExpectedResult())
+                        .replace("{expectedResult}", StringUtils.isNull(moniJob.getExpectedResult()) ? "" : moniJob.getExpectedResult())
                         .replace("{executeResult}", moniJobLog.getExecuteResult());
                 HtmlImageGenerator imageGenerator = new HtmlImageGenerator();
                 imageGenerator.loadHtml(htmlContent);
