@@ -50,9 +50,14 @@ public class ElasticConfig {
             //UAT  172.27.130.48  172.27.1.48  172.27.101.48
             //kibana2.pf1uat1-oob.com 172.27.101.48
             //PROD  172.30.1.48
+            // 该方法接收一个RequestConfig.Builder对象，对该对象进行修改后然后返回。
             client = new RestHighLevelClient(
                     RestClient.builder(
-                            new HttpHost(pf1Url, pf1Port, "http")));
+                            new HttpHost(pf1Url, pf1Port, "http"))
+                            .setRequestConfigCallback(requestConfigBuilder -> {
+                                return requestConfigBuilder.setConnectTimeout(5000 * 1000) // 连接超时（默认为1秒）
+                                        .setSocketTimeout(6000 * 1000);// 套接字超时（默认为30秒）//更改客户端的超时限制默认30秒现在改为100*1000分钟
+                            }));
 
             logger.info("PF1 ElasticsearchClient 连接成功 ===");
         } catch (Exception e) {
@@ -71,7 +76,11 @@ public class ElasticConfig {
             //PROD  172.30.13.95
             client = new RestHighLevelClient(
                     RestClient.builder(
-                            new HttpHost(pf2Url, pf2Port, "http")));
+                            new HttpHost(pf2Url, pf2Port, "http"))
+                            .setRequestConfigCallback(requestConfigBuilder -> {
+                                return requestConfigBuilder.setConnectTimeout(5000 * 1000) // 连接超时（默认为1秒）
+                                        .setSocketTimeout(6000 * 1000);// 套接字超时（默认为30秒）//更改客户端的超时限制默认30秒现在改为100*1000分钟
+                            }));
 
             logger.info("PF2 ElasticsearchClient 连接成功 ===");
         } catch (Exception e) {
