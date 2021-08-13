@@ -82,12 +82,15 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                 compareResult = SpringUtils.getBean(IMoniElasticService.class).doPf2DrawCompare(hits);
                 doCompare(compareResult);
             } else {
-                moniElasticLog.setStatus(Constants.FAIL);
-                moniElasticLog.setAlertStatus(Constants.SUCCESS);
-//                if (resultIsExist(result, moniElastic.getId())) {
-                //没有重复发生的LOG才发送TG告警，避免频繁发送
-                sendAlert();
-//                }
+                if (resultIsExist()) {
+                    //没有重复发生的LOG才发送TG告警，避免频繁发送
+                    moniElasticLog.setStatus(Constants.FAIL);
+                    moniElasticLog.setAlertStatus(Constants.SUCCESS);
+                    sendAlert();
+                } else {
+                    moniElasticLog.setStatus(Constants.SUCCESS);
+                    moniElasticLog.setAlertStatus(Constants.FAIL);
+                }
             }
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
@@ -99,16 +102,18 @@ public class MoniElasticExecution extends AbstractQuartzJob {
     /**
      * 检测是否存在相同结果日志
      *
-     * @param result
-     * @param jobId
      * @return
      */
-    private boolean resultIsExist(String result, Long jobId) {
+    private boolean resultIsExist() {
         try {
+            //为0则不过滤
+            if (moniElastic.getIgnoreAlert() == 0) {
+                return true;
+            }
             DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
-            String sql = "SELECT COUNT(*) FROM MONI_ELASTIC_LOG WHERE EXECUTE_RESULT = ? AND ELASTIC_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+            String sql = "SELECT COUNT(*) FROM MONI_ELASTIC_LOG WHERE EXECUTE_RESULT = ? AND ELASTIC_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
-            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{result, jobId}, Integer.class);
+            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{moniElasticLog.getExecuteResult(), moniElastic.getId(), moniElastic.getIgnoreAlert()}, Integer.class);
             return row == 0;
         } catch (Exception e) {
             return true;
@@ -121,12 +126,15 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         if (!"0".equals(index)) {
             result = String.format("find %s hits;\n", index) + compareResult.get("result");
             moniElasticLog.setExecuteResult(result);
-            moniElasticLog.setStatus(Constants.FAIL);
-            moniElasticLog.setAlertStatus(Constants.SUCCESS);
-//            if (resultIsExist(result, moniElastic.getId())) {
-            //没有重复发生的LOG才发送TG告警，避免频繁发送
-            sendAlert();
-//            }
+            if (resultIsExist()) {
+                //没有重复发生的LOG才发送TG告警，避免频繁发送
+                moniElasticLog.setStatus(Constants.FAIL);
+                moniElasticLog.setAlertStatus(Constants.SUCCESS);
+                sendAlert();
+            } else {
+                moniElasticLog.setStatus(Constants.SUCCESS);
+                moniElasticLog.setAlertStatus(Constants.FAIL);
+            }
         } else {
             result = "find 0 hits";
             moniElasticLog.setExecuteResult(result);

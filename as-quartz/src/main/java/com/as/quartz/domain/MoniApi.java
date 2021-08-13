@@ -170,6 +170,12 @@ public class MoniApi extends BaseEntity {
     @Excel(name = "最后告警时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date lastAlert;
 
+    /**
+     * 忽略x分钟内告警
+     */
+    @Excel(name = "忽略x分钟内告警")
+    private Integer ignoreAlert;
+
     public Date getNextValidTime() {
         if (StringUtils.isNotEmpty(cronExpression)) {
             return CronUtils.getNextExecution(cronExpression);
@@ -206,6 +212,7 @@ public class MoniApi extends BaseEntity {
                 .append("priority", getPriority())
                 .append("actionItem", getActionItem())
                 .append("lastAlert", getLastAlert())
+                .append("ignoreAlert", getIgnoreAlert())
                 .toString();
     }
 }

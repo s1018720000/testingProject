@@ -65,28 +65,27 @@ public class MoniApiExecution extends AbstractQuartzJob {
         //保存执行结果
         String result = response.getStatusCode().toString();
         moniApiLog.setExecuteResult(result);
-        if (doMatch(response.getStatusCodeValue())) {
-            moniApiLog.setStatus(Constants.SUCCESS);
-            moniApiLog.setAlertStatus(Constants.FAIL);
-        } else {
-            moniApiLog.setStatus(Constants.FAIL);
-            moniApiLog.setAlertStatus(Constants.SUCCESS);
-
-//            if (resultIsExist(result, moniApi.getId())) {
-            //没有重复发生的LOG才发送TG告警，避免频繁发送
-            //发送告警
-            if (Constants.SUCCESS.equals(moniApi.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram();
-                if (!sendResponse.isOk()) {
-                    moniApiLog.setStatus(Constants.ERROR);
-                    moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
-                } else {
-                    //更新最后告警时间
-                    moniApi.setLastAlert(DateUtils.getNowDate());
-                    SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
+        if (resultIsExist()) {
+            //没有重复发生的LOG
+            if (doMatch(response.getStatusCodeValue())) {
+                moniApiLog.setStatus(Constants.SUCCESS);
+                moniApiLog.setAlertStatus(Constants.FAIL);
+            } else {
+                moniApiLog.setStatus(Constants.FAIL);
+                moniApiLog.setAlertStatus(Constants.SUCCESS);
+                //发送告警
+                if (Constants.SUCCESS.equals(moniApi.getTelegramAlert())) {
+                    SendResponse sendResponse = sendTelegram();
+                    if (!sendResponse.isOk()) {
+                        moniApiLog.setStatus(Constants.ERROR);
+                        moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
+                    } else {
+                        //更新最后告警时间
+                        moniApi.setLastAlert(DateUtils.getNowDate());
+                        SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
+                    }
                 }
             }
-//            }
         }
 
     }
@@ -167,16 +166,18 @@ public class MoniApiExecution extends AbstractQuartzJob {
     /**
      * 检测是否存在相同结果日志
      *
-     * @param result
-     * @param jobId
      * @return
      */
-    private boolean resultIsExist(String result, Long jobId) {
+    private boolean resultIsExist() {
         try {
+            //为0则不过滤
+            if (moniApi.getIgnoreAlert() == 0) {
+                return true;
+            }
             DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
-            String sql = "SELECT COUNT(*) FROM MONI_API_LOG WHERE EXECUTE_RESULT = ? AND API_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+            String sql = "SELECT COUNT(*) FROM MONI_API_LOG WHERE EXECUTE_RESULT = ? AND API_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
-            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{result, jobId}, Integer.class);
+            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{moniApiLog.getExecuteResult(), moniApi.getId(), moniApi.getIgnoreAlert()}, Integer.class);
             return row == 0;
         } catch (Exception e) {
             return true;

@@ -162,6 +162,11 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label class="col-sm-3 control-label">[[#{sql.job.ignore.alert}]]：</label>
+			<div id="ignoreAlert" class="form-control-static"  th:text="${job.ignoreAlert}">
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
 			<div id="telegramConfig" class="form-control-static"  th:text="${#strings.defaultString(job.telegramConfig, '-')}">
 			</div>

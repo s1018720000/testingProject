@@ -30,10 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="priority"    column="PRIORITY"    />
         <result property="actionItem"    column="ACTION_ITEM"    />
         <result property="lastAlert"    column="LAST_ALERT"    />
+        <result property="ignoreAlert"    column="IGNORE_ALERT"    />
     </resultMap>
 
     <sql id="selectMoniJobVo">
-        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT from moni_job
+        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT, IGNORE_ALERT from moni_job
     </sql>
 
     <select id="selectMoniJobList" parameterType="MoniJob" resultMap="MoniJobResult">
@@ -92,6 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="priority != null and priority != ''">PRIORITY,</if>
             <if test="actionItem != null and actionItem != ''">ACTION_ITEM,</if>
             <if test="lastAlert != null">LAST_ALERT,</if>
+            <if test="ignoreAlert != null">IGNORE_ALERT,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="enName != null and enName != ''">#{enName},</if>
@@ -118,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="priority != null and priority != ''">#{priority},</if>
             <if test="actionItem != null and actionItem != ''">#{actionItem},</if>
             <if test="lastAlert != null">#{lastAlert},</if>
+            <if test="ignoreAlert != null">#{ignoreAlert},</if>
          </trim>
     </insert>
 
@@ -148,6 +151,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="priority != null and priority != ''">PRIORITY = #{priority},</if>
             <if test="actionItem != null and actionItem != ''">ACTION_ITEM = #{actionItem},</if>
             <if test="lastAlert != null">LAST_ALERT = #{lastAlert},</if>
+            <if test="ignoreAlert != null">IGNORE_ALERT = #{ignoreAlert},</if>
         </trim>
         where ID = #{id}
     </update>

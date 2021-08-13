@@ -76,36 +76,36 @@ public class MoniJobExecution extends AbstractQuartzJob {
         String exeResult = getResultTable(rowSet);
         log.info("执行结果:{}", exeResult);
         moniJobLog.setExecuteResult(exeResult);
-//        if (resultIsExist(exeResult, moniJob.getId())) {
-        //没有重复发生的LOG
-        if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
-            moniJobLog.setExpectedResult("No need match");
-            moniJobLog.setStatus(Constants.SUCCESS);
-            moniJobLog.setAlertStatus(Constants.FAIL);
-        } else if (doMatch(rowSet)) {
-            moniJobLog.setStatus(Constants.SUCCESS);
-            moniJobLog.setAlertStatus(Constants.FAIL);
-        } else {
-            moniJobLog.setStatus(Constants.FAIL);
-            moniJobLog.setAlertStatus(Constants.SUCCESS);
+        if (resultIsExist()) {
+            //没有重复发生的LOG
+            if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
+                moniJobLog.setExpectedResult("No need match");
+                moniJobLog.setStatus(Constants.SUCCESS);
+                moniJobLog.setAlertStatus(Constants.FAIL);
+            } else if (doMatch(rowSet)) {
+                moniJobLog.setStatus(Constants.SUCCESS);
+                moniJobLog.setAlertStatus(Constants.FAIL);
+            } else {
+                moniJobLog.setStatus(Constants.FAIL);
+                moniJobLog.setAlertStatus(Constants.SUCCESS);
 
-            if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
-                SendResponse sendResponse = sendTelegram();
-                if (!sendResponse.isOk()) {
-                    moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
-                } else {
-                    //更新最后告警时间
-                    moniJob.setLastAlert(DateUtils.getNowDate());
-                    SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+                if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
+                    SendResponse sendResponse = sendTelegram();
+                    if (!sendResponse.isOk()) {
+                        moniJobLog.setExceptionLog("Telegram send photo error: ".concat(sendResponse.description()));
+                    } else {
+                        //更新最后告警时间
+                        moniJob.setLastAlert(DateUtils.getNowDate());
+                        SpringUtils.getBean(IMoniJobService.class).updateMoniJobLastAlertTime(moniJob);
+                    }
                 }
+                //关联导出
+                doExport(moniJob.getRelExport());
             }
-            //关联导出
-            doExport(moniJob.getRelExport());
+        } else {
+            moniJobLog.setStatus(Constants.SUCCESS);
+            moniJobLog.setAlertStatus(Constants.FAIL);
         }
-//        } else {
-//            moniJobLog.setStatus(Constants.SUCCESS);
-//            moniJobLog.setAlertStatus(Constants.FAIL);
-//        }
     }
 
     /**
@@ -229,16 +229,18 @@ public class MoniJobExecution extends AbstractQuartzJob {
     /**
      * 检测是否存在相同结果日志
      *
-     * @param result
-     * @param jobId
      * @return
      */
-    private boolean resultIsExist(String result, Long jobId) {
+    private boolean resultIsExist() {
         try {
+            //为0则不过滤
+            if (moniJob.getIgnoreAlert() == 0) {
+                return true;
+            }
             DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
-            String sql = "SELECT COUNT(*) FROM MONI_JOB_LOG WHERE EXECUTE_RESULT = ? AND JOB_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+            String sql = "SELECT COUNT(*) FROM MONI_JOB_LOG WHERE EXECUTE_RESULT = ? AND JOB_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
-            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{result, jobId}, Integer.class);
+            int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{moniJobLog.getExecuteResult(), moniJob.getId(), moniJob.getIgnoreAlert()}, Integer.class);
             return row == 0;
         } catch (Exception e) {
             return true;
