@@ -369,6 +369,15 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 if ("UUSSKENO".equals(gameCode)) {
                     gameCode = "UUKENO";
                 }
+                if ("TWLSSC".equals(gameCode)) {
+                    gameCode = "TWBGS";
+                }
+                if ("JSK3".equals(gameCode)) {
+                    numero = numero.substring(2).replace("-", "");
+                }
+                if ("HLJSSC".equals(gameCode)) {
+                    numero = "1".concat(numero);
+                }
                 //如果未找到匹配的开奖数据则记录
 
                 Integer count = pf1DrawCompareMapper.selectPF1DrawNumberCount(gameCode, numero, winNo);
