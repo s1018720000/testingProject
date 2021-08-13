@@ -301,7 +301,7 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
         SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(qb);
-        searchSourceBuilder.size(3);
+        searchSourceBuilder.size(500);
         searchSourceBuilder.sort("json.@timestamp", SortOrder.DESC);
         searchRequest.source(searchSourceBuilder);
         searchRequest.indices(moniElastic.getIndex());
@@ -362,6 +362,12 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 String gameCode = drawInfo.getString("gameCode");
                 if ("TWLKENO".equals(gameCode)) {
                     gameCode = "TWK8";
+                }
+                if ("UUFFC11X5".equals(gameCode)) {
+                    gameCode = "UUFF11X5";
+                }
+                if ("UUSSKENO".equals(gameCode)) {
+                    gameCode = "UUKENO";
                 }
                 //如果未找到匹配的开奖数据则记录
 
