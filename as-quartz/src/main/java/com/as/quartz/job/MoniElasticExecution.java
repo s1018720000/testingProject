@@ -70,7 +70,6 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         String result = String.format("find %s hits", hits.length);
         moniElasticLog.setExecuteResult(result);
         if (ScheduleConstants.MATCH_NO_NEED.equals(moniElastic.getAutoMatch())) {
-            moniElasticLog.setExpectedResult("No need match");
             moniElasticLog.setStatus(Constants.SUCCESS);
             moniElasticLog.setAlertStatus(Constants.FAIL);
         } else if (doMatch(hits)) {
@@ -168,7 +167,6 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         moniElastic = (MoniElastic) job;
         moniElasticLog.setStartTime(new Date());
         moniElasticLog.setElasticId(moniElastic.getId());
-        moniElasticLog.setExpectedResult(moniElastic.getExpectedResult());
         //输出日志
         log.info("[Elastic任务]任务ID:{},任务名称:{},准备执行",
                 moniElastic.getId(), moniElastic.getChName());
@@ -206,7 +204,21 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         } else {
             moniElasticLog.setOperator("system");
         }
-
+        if (ScheduleConstants.MATCH_EQUAL.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output = " + moniElastic.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_NOT_EQUAL.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output != " + moniElastic.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_GREATER.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output > " + moniElastic.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_LESS.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output < " + moniElastic.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_NO_NEED.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("No need match");
+        } else if (ScheduleConstants.MATCH_EMPTY.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output is empty");
+        } else if (ScheduleConstants.MATCH_NOT_EMPTY.equals(moniElastic.getAutoMatch())) {
+            moniElasticLog.setExpectedResult("output is not empty");
+        }
         //插入日志到数据库中
         SpringUtils.getBean(IMoniElasticLogService.class).addJobLog(moniElasticLog);
         //输出日志
@@ -228,37 +240,31 @@ public class MoniElasticExecution extends AbstractQuartzJob {
 
         //大于比对
         if (ScheduleConstants.MATCH_GREATER.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result Greater than [" + moniElastic.getExpectedResult() + "]");
             return rows > Integer.parseInt(moniElastic.getExpectedResult());
         }
 
         //小于比对
         if (ScheduleConstants.MATCH_LESS.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result Less than [" + moniElastic.getExpectedResult() + "]");
             return rows < Integer.parseInt(moniElastic.getExpectedResult());
         }
 
         // 等于比对
         if (ScheduleConstants.MATCH_EQUAL.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result Equal to [" + moniElastic.getExpectedResult() + "]");
             return rows < Integer.parseInt(moniElastic.getExpectedResult());
         }
 
         //	不等于比对
         if (ScheduleConstants.MATCH_NOT_EQUAL.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result not Equal to [" + moniElastic.getExpectedResult() + "]");
             return rows != Integer.parseInt(moniElastic.getExpectedResult());
         }
 
         // 无资料
         if (ScheduleConstants.MATCH_EMPTY.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result is empty");
             return rows == 0;
         }
 
         // 有资料
         if (ScheduleConstants.MATCH_NOT_EMPTY.equals(autoMatch)) {
-            moniElasticLog.setExpectedResult("Execute Result is not empty");
             return rows != 0;
         }
 

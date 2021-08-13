@@ -79,7 +79,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
         if (resultIsExist()) {
             //没有重复发生的LOG
             if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
-                moniJobLog.setExpectedResult("No need match");
                 moniJobLog.setStatus(Constants.SUCCESS);
                 moniJobLog.setAlertStatus(Constants.FAIL);
             } else if (doMatch(rowSet)) {
@@ -118,7 +117,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
         moniJob = (MoniJob) job;
         moniJobLog.setStartTime(new Date());
         moniJobLog.setJobId(moniJob.getId());
-        moniJobLog.setExpectedResult(moniJob.getExpectedResult());
         //此处先插入一条日志以获取日志id，方便告警拼接url使用
         SpringUtils.getBean(IMoniJobLogService.class).addJobLog(moniJobLog);
         //输出日志
@@ -157,6 +155,21 @@ public class MoniJobExecution extends AbstractQuartzJob {
             moniJobLog.setOperator(operator);
         } else {
             moniJobLog.setOperator("system");
+        }
+        if (ScheduleConstants.MATCH_EQUAL.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output = " + moniJob.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_NOT_EQUAL.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output != " + moniJob.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_GREATER.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output > " + moniJob.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_LESS.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output < " + moniJob.getExpectedResult());
+        } else if (ScheduleConstants.MATCH_NO_NEED.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("No need match");
+        } else if (ScheduleConstants.MATCH_EMPTY.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output is empty");
+        } else if (ScheduleConstants.MATCH_NOT_EMPTY.equals(moniJob.getAutoMatch())) {
+            moniJobLog.setExpectedResult("output is not empty");
         }
 
         //之前已经插入,本次更新日志到数据库中
@@ -282,7 +295,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         //大于比对
         if (ScheduleConstants.MATCH_GREATER.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result Greater than [".concat(moniJobLog.getExpectedResult()).concat("]"));
             expectedDouble = Double.valueOf(expected[0]);
             do {
                 resultDouble = Double.valueOf(Objects.requireNonNull(rowSet.getString(fields[0])));
@@ -295,7 +307,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         //小于比对
         if (ScheduleConstants.MATCH_LESS.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result Less than [".concat(moniJobLog.getExpectedResult()).concat("]"));
             expectedDouble = Double.valueOf(expected[0]);
             do {
                 resultDouble = Double.valueOf(Objects.requireNonNull(rowSet.getString(fields[0])));
@@ -309,7 +320,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         // 等于比对
         if (ScheduleConstants.MATCH_EQUAL.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result Equal to [".concat(moniJobLog.getExpectedResult()).concat("]"));
             do {
                 for (int i = 0; i < fields.length; i++) {
                     field = rowSet.getObject(fields[i]) != null ? Objects.requireNonNull(rowSet.getObject(fields[i])).toString() : "";
@@ -324,7 +334,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         //	不等于比对
         if (ScheduleConstants.MATCH_NOT_EQUAL.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result not Equal to [".concat(moniJobLog.getExpectedResult()).concat("]"));
             do {
                 for (int i = 0; i < fields.length; i++) {
                     field = rowSet.getObject(fields[i]) != null ? Objects.requireNonNull(rowSet.getObject(fields[i])).toString() : "";
@@ -338,13 +347,11 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         // 无资料
         if (ScheduleConstants.MATCH_EMPTY.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result is empty");
             return rowSet.getRow() == 0;
         }
 
         // 有资料
         if (ScheduleConstants.MATCH_NOT_EMPTY.equals(autoMatch)) {
-            moniJobLog.setExpectedResult("Execute Result is not empty");
             return rowSet.getRow() != 0;
         }
 

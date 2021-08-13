@@ -152,7 +152,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
      *
      * @throws Exception
      */
-    private boolean doMatch(Integer statusCode) throws Exception {
+    private boolean doMatch(Integer statusCode) {
         String expectedCode = moniApi.getExpectedCode();
         String[] expectedCodes = expectedCode.split(";");
         for (String code : expectedCodes) {
