@@ -16,6 +16,6 @@ public interface PF2FundListMapper {
      *
      * @return PF2资金对账
      */
-    public List<PF2FundList> getPF2FundList(String[] accounts);
+    public List<PF2FundList> getPF2FundList(String account);
 
 }

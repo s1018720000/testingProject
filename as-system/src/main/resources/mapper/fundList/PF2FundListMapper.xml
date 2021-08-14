@@ -21,11 +21,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_today x
         WHERE x.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -38,11 +35,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_today xx
         WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -53,11 +47,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from core.RPT_CUSTOMER_BALANCE
         where customer_id in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -70,11 +61,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_DATA y
         WHERE y.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -87,11 +75,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_DATA xx
         WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -102,11 +87,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from core.RPT_CUSTOMER_BALANCE
         where customer_id in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -119,11 +101,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_DATA z
         WHERE z.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -136,11 +115,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM core.RPT_CUSTOMER_BILL_DATA xx
         WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )
@@ -151,11 +127,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from core.RPT_CUSTOMER_BALANCE
         where customer_id in (select customer_id from core.us_customer_vw
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and customer_name in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and customer_name = #{account}
             </if>
         </where>
         )

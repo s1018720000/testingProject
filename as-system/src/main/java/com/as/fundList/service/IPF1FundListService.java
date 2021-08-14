@@ -16,7 +16,7 @@ public interface IPF1FundListService {
      *
      * @return PF1资金对账
      */
-    public List<PF1FundList> getPF1FundList(String[] accounts);
+    public List<PF1FundList> getPF1FundList(String account);
 
 
 }

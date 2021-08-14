@@ -39,8 +39,7 @@ public class PF2FundListController extends BaseController {
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(@RequestParam(name = "account") String account) {
-        String[] accounts = account.split(",");
-        List<PF2FundList> pf2FoundList = pf2FundListService.getPF2FundList(accounts);
+        List<PF2FundList> pf2FoundList = pf2FundListService.getPF2FundList(account);
         if (pf2FoundList != null) {
             return getDataTable(pf2FoundList);
         }

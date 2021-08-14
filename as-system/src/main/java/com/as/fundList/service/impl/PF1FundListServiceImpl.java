@@ -23,8 +23,8 @@ public class PF1FundListServiceImpl implements IPF1FundListService {
     private PF1FundListMapper pf1FundListMapper;
 
     @Override
-    public List<PF1FundList> getPF1FundList(String[] accounts) {
-        return pf1FundListMapper.getPF1FundList(accounts);
+    public List<PF1FundList> getPF1FundList(String account) {
+        return pf1FundListMapper.getPF1FundList(account);
     }
 
 }

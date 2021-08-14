@@ -20,11 +20,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(x.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill x
         <where>
-        <if test="accounts != null and accounts.length > 0">
-            and x.accounts in
-            <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                #{account}
-            </foreach>
+        <if test="account != null and account != ''">
+            and x.accounts = #{account}
         </if>
             AND trunc(x.BIZ_DATE) > trunc(sysdate - 1)
             AND BILLTYPE NOT IN ('2052', '2053')
@@ -36,23 +33,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(xx.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and xx.accounts = #{account}
+        </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 1)
             AND BILLTYPE NOT IN ('2052', '2053')
         </where>
         and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and xx.accounts = #{account}
+        </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 1)
             AND BILLTYPE NOT IN ('2052', '2053')
             and xx.ACCOUNTS_TYPE in ('KAIYUAN')
@@ -62,20 +53,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select '*期末减期初' bill_type,
         (select AMOUNTS from LOTT_NEW_A3D1.lott_accounts_info
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and accounts = #{account}
+        </if>
         </where>)-OPENING_BALANCE amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and accounts = #{account}
+        </if>
             and BALANCE_DATE > sysdate -1
         </where>
         ),
@@ -85,12 +70,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(x.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill x
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and x.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and x.accounts = #{account}
+        </if>
             AND trunc(x.BIZ_DATE) > trunc(sysdate - 8) and trunc(x.BIZ_DATE) &lt; trunc(sysdate - 1)
         </where>
         GROUP BY x.billtype
@@ -100,23 +82,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(xx.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and xx.accounts = #{account}
+        </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 8)
             AND BILLTYPE NOT IN ('2052', '2053')
         </where>
         and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and xx.accounts = #{account}
+        </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 8)
             AND BILLTYPE NOT IN ('2052', '2053')
             and xx.ACCOUNTS_TYPE in ('KAIYUAN')
@@ -125,12 +101,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         union all
         select '*期末减期初' bill_type, sum(CLOSING_BALANCE-OPENING_BALANCE) amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and accounts = #{account}
+        </if>
             and BALANCE_DATE > sysdate -8
         </where>
         ),
@@ -140,12 +113,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(x.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill x
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and x.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and x.accounts = #{account}
+        </if>
             AND trunc(x.BIZ_DATE) > trunc(sysdate - 14)
         </where>
         GROUP BY x.billtype
@@ -155,23 +125,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SUM(xx.BILL_AMOUNT) amt
         FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
+            <if test="account != null and account != ''">
+                and xx.accounts = #{account}
             </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 14)
             AND BILLTYPE NOT IN ('2052', '2053')
         </where>
         and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and xx.accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and xx.accounts = #{account}
+        </if>
             AND trunc(xx.BIZ_DATE) > trunc(sysdate - 14)
             AND BILLTYPE NOT IN ('2052', '2053')
             and xx.ACCOUNTS_TYPE in ('KAIYUAN')
@@ -180,12 +144,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         union all
         select '*期末减期初' bill_type, sum(CLOSING_BALANCE-OPENING_BALANCE) amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
         <where>
-            <if test="accounts != null and accounts.length > 0">
-                and accounts in
-                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
-                    #{account}
-                </foreach>
-            </if>
+            <if test="account != null and account != ''">
+            and accounts = #{account}
+        </if>
             and BALANCE_DATE > sysdate -14
         </where>
         ),

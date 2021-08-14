@@ -23,8 +23,8 @@ public class PF2FundListServiceImpl implements IPF2FundListService {
     private PF2FundListMapper pf2FundListMapper;
 
     @Override
-    public List<PF2FundList> getPF2FundList(String[] accounts) {
-        return pf2FundListMapper.getPF2FundList(accounts);
+    public List<PF2FundList> getPF2FundList(String account) {
+        return pf2FundListMapper.getPF2FundList(account);
     }
 
 }
