@@ -295,10 +295,12 @@
     /* 调度日志查询 */
     function jobLog(jobId) {
         var url = ctx + 'monitor/sqlJobLog';
+        var tabName = i18n('sql.job.sql.task.log');
         if ($.common.isNotEmpty(jobId)) {
             url += '?jobId=' + jobId;
+            tabName = i18n('sql.job.sql.task.log') + "(" + jobId + ")";
         }
-        $.modal.openTab(i18n('sql.job.sql.task.log') + "(" + jobId + ")", url);
+        $.modal.openTab(tabName, url);
     }
 </script>
 </body>
