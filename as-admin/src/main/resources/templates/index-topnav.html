@@ -282,7 +282,7 @@
 							</li>
 							<li>
 								<a onclick="toggleMenu()">
-								<i class="fa fa-toggle-off"></i> [[#{home.toggle.menu}]]</a>
+								<i class="fa fa-toggle-off"></i> [[#{home.toggle.menu.left}]]</a>
 							</li>
 							<li class="divider"></li>
 							<li>
@@ -401,7 +401,7 @@ function switchSkin() {
 
 /* 切换菜单 */
 function toggleMenu() {
-	$.modal.confirm(i18n('home.confirm.toggle.menu'), function() {
+	$.modal.confirm(i18n('home.confirm.toggle.menu.left'), function() {
 		$.get(ctx + 'system/menuStyle/default', function(result) {
             window.location.reload();
 	    });
