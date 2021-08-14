@@ -225,7 +225,7 @@
             if ($.common.isNotEmpty(jobId)) {
                 url += '?jobId=' + jobId;
             }
-            $.modal.openTab(i18n('export.job.log'), url);
+            $.modal.openTab(i18n('export.job.log') + "[" + jobId + "]", url);
         }
     </script>
 </body>
