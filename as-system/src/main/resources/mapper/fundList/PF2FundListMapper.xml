@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.fundList.mapper.PF2FundListMapper">
+
+    <resultMap type="PF2FundList" id="PF2FundListResult">
+        <result column="constantId"    property="constantId"/>
+        <result column="constantName"    property="constantName"/>
+        <result column="today"    property="today"/>
+        <result column="week"    property="week"/>
+        <result column="dweek"    property="dweek"/>
+    </resultMap>
+
+
+    <select id="getPF2FundList" parameterType="String" resultMap="PF2FundListResult">
+        WITH today
+        AS (SELECT
+        to_char(x.bill_type) bill_type,
+        SUM(x.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_today x
+        WHERE x.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(x.BIZ_TIME) > trunc(sysdate - 1)
+        GROUP BY x.bill_type
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_today xx
+        WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(xx.BIZ_TIME) > trunc(sysdate - 1) AND BILL_TYPE not in (2004)
+        union all
+        select '*期末减期初' bill_type,
+        sum(CLOSING_BALANCE -OPENING_BALANCE) amt
+        from core.RPT_CUSTOMER_BALANCE
+        where customer_id in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        and BIZ_DATE> sysdate -1
+        ),
+        week
+        AS (SELECT
+        to_char(y.bill_type) bill_type,
+        SUM(y.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_DATA y
+        WHERE y.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(y.BIZ_TIME) > trunc(sysdate - 7)
+        GROUP BY y.bill_type
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_DATA xx
+        WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(xx.BIZ_TIME) > trunc(sysdate - 7) AND BILL_TYPE not in (2004)
+        union all
+        select '*期末减期初' bill_type,
+        sum(CLOSING_BALANCE -OPENING_BALANCE) amt
+        from core.RPT_CUSTOMER_BALANCE
+        where customer_id in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        and BIZ_DATE> sysdate -7
+        ),
+        dweek
+        AS (SELECT
+        to_char(z.bill_type) bill_type,
+        SUM(z.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_DATA z
+        WHERE z.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(z.BIZ_TIME) > trunc(sysdate - 14)
+        GROUP BY z.bill_type
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.amount) amt
+        FROM core.RPT_CUSTOMER_BILL_DATA xx
+        WHERE xx.CUSTOMER_ID in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        AND trunc(xx.BIZ_TIME) > trunc(sysdate - 14) AND BILL_TYPE not in (2004)
+        union all
+        select '*期末减期初' bill_type,
+        sum(CLOSING_BALANCE -OPENING_BALANCE) amt
+        from core.RPT_CUSTOMER_BALANCE
+        where customer_id in (select customer_id from core.us_customer_vw
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and customer_name in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>
+        )
+        and BIZ_DATE> sysdate -14),
+        const
+        AS (SELECT
+        to_char(TX_TYPE_ID) CONSTANTID,
+        to_char(TX_REASON) CONSTANTNAME
+        FROM core.ACS_TRANSACTION_TYPE a
+
+        union all
+        SELECT
+        '*合计' CONSTANTID,
+        '*合计' CONSTANTNAME
+        FROM DUAL
+        UNION ALL
+        SELECT
+        '*期末减期初' CONSTANTID,
+        '*期末减期初' CONSTANTNAME
+        FROM DUAL
+
+        )
+        select '*核對' constantid,
+        '*核對' constantname,
+        sum(today) today,
+        sum(week) week ,
+        sum(dweek) dweek
+        from (
+        SELECT
+        -sum(nvl(today.amt, 0)) today,
+        -sum(nvl(week.amt, 0)) week,
+        -sum(nvl(dweek.amt, 0)) dweek
+
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where const.constantid in ('*期末减期初')
+        union all
+        SELECT
+        sum(nvl(today.amt, 0)) today,
+        sum(nvl(week.amt, 0)) week,
+        sum(nvl(dweek.amt, 0)) dweek
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where const.constantid in ('*合计'))
+        union all
+        SELECT
+        const.constantid,
+        const.constantname,
+        nvl(today.amt, 0) today,
+        nvl(week.amt, 0) week,
+        nvl(dweek.amt, 0) dweek
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where today.amt &lt;&gt; 0
+        or week.amt &lt;&gt; 0
+        or dweek.amt &lt;&gt; 0
+        ORDER BY CONSTANTID desc
+    </select>
+
+
+</mapper>

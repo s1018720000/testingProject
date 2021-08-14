@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('PF2资金对账')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form autocomplete="off" id="form-pf2-fund" class="form-horizontal">
+                <h4 class="form-header h4">[[#{fund.list.pf2}]]</h4>
+                <div class="form-group">
+                    <div class="col-sm-4 col-md-offset-4 col-lg-offset-4 col-xl-offset-4">
+                        <div class="input-group m-b">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.account}]]：
+                                </span>
+                            <input class="form-control" type="text" name="account" placeholder="EX:account1,account2"/>
+                            <span class="input-group-btn">
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
+                                    <i class="fa fa-search"></i> [[#{db.query.query}]]
+                                    </a>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-bordered">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-table-export-js" />
+<script type="text/javascript">
+    var prefix = ctx + "fundList/pf2";
+
+    function initTable(){
+        var options = {
+            url: prefix + "/list",
+            firstLoad:false,
+            showExport: true,
+            pagination: false,
+            striped: true,
+            headerStyle: headerStyle,
+            modalName: i18n('fund.list.model'),
+            columns: [
+                [{
+                    title : i18n('fund.list.record'),
+                    align : 'center',
+                    colspan : 5
+                }
+                ],
+                [{
+                    field: 'constantId',
+                    title: i18n('fund.list.constant.id'),
+                    halign: 'center'
+                },
+                    {
+                        field: 'constantName',
+                        title: i18n('fund.list.constant.name'),
+                        halign: 'center'
+                    },
+                    {
+                        field: 'today',
+                        title: i18n('fund.list.today'),
+                        halign: 'center'
+                    },
+                    {
+                        field: 'week',
+                        title: i18n('fund.list.week'),
+                        halign: 'center'
+                    },
+                    {
+                        field: 'dweek',
+                        title: i18n('fund.list.dweek'),
+                        halign: 'center'
+                    }
+                ]
+            ]
+        };
+        $.table.init(options);
+    }
+
+    $("#form-pf2-fund").validate({
+        onkeyup: false,
+        rules:{
+            account:{
+                required:true
+            },
+        },
+        focusCleanup: true
+    });
+    // 搜索
+    function tableSearch(){
+        if ($.validate.form()){
+            if(!table.get(table.options.id)){
+                initTable();
+                refreshTable();
+            } else {
+                refreshTable();
+            }
+        }
+        $("#bootstrap-table>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+    }
+    // 刷新表格
+    function refreshTable() {
+        $("#" + table.options.id).bootstrapTable('refreshOptions',table.options);
+    }
+
+    function headerStyle(column) {
+        return {
+            css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+        }
+    }
+</script>
+</body>
+</html>

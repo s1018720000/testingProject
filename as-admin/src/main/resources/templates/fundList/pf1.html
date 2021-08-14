@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('PF1订单查询列表')" />
+    <th:block th:include="include :: header('PF1资金对账')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
         <div class="row">
             <div class="col-sm-12 search-collapse">
-                <form autocomplete="off" id="form-pf1-order" class="form-horizontal">
-                    <h4 class="form-header h4">[[#{pf1.order.query}]]</h4>
+                <form autocomplete="off" id="form-pf1-fund" class="form-horizontal">
+                    <h4 class="form-header h4">[[#{fund.list.pf1}]]</h4>
                     <div class="form-group">
                         <div class="col-sm-4 col-md-offset-4 col-lg-offset-4 col-xl-offset-4">
                             <div class="input-group m-b">
                                 <span class="rctheme text-white input-group-addon">
-                                [[#{pf1.order.number}]]：
+                                [[#{funds.account}]]：
                                 </span>
-                                <input class="form-control" type="text" name="orderNo"/>
+                                <input class="form-control" type="text" name="account" placeholder="EX:account1,account2"/>
                                 <span class="input-group-btn">
                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
                                     <i class="fa fa-search"></i> [[#{db.query.query}]]
@@ -33,9 +33,8 @@
     </div>
     <th:block th:include="include :: footer" />
      <th:block th:include="include :: bootstrap-table-export-js" />
-     <script th:src="@{/js/shortcut.js}"></script>
      <script type="text/javascript">
-        var prefix = ctx + "order/pf1";
+        var prefix = ctx + "fundList/pf1";
 
         function initTable(){
             var options = {
@@ -45,27 +44,37 @@
                 pagination: false,
                 striped: true,
                 headerStyle: headerStyle,
-                modalName: i18n('pf1.order.query'),
+                modalName: i18n('fund.list.model'),
                 columns: [
-                        [{
-                            title : i18n('pf1.order.content'),
-                            align : 'center',
-                            colspan : 3
-                        }
+                    [{
+                        title : i18n('fund.list.record'),
+                        align : 'center',
+                        colspan : 5
+                    }
                     ],
                     [{
-                            field: 'columnName',
-                            title: i18n('pf1.order.field.name'),
+                        field: 'constantId',
+                        title: i18n('fund.list.constant.id'),
+                        halign: 'center'
+                    },
+                        {
+                            field: 'constantName',
+                            title: i18n('fund.list.constant.name'),
                             halign: 'center'
                         },
                         {
-                            field: 'dbValue',
-                            title: i18n('pf1.order.db.value'),
+                            field: 'today',
+                            title: i18n('fund.list.today'),
                             halign: 'center'
                         },
                         {
-                            field: 'logValue',
-                            title: i18n('pf1.order.log.value'),
+                            field: 'week',
+                            title: i18n('fund.list.week'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'dweek',
+                            title: i18n('fund.list.dweek'),
                             halign: 'center'
                         }
                     ]
@@ -74,13 +83,11 @@
             $.table.init(options);
         }
 
-
-        $("#form-pf1-order").validate({
+        $("#form-pf1-fund").validate({
             onkeyup: false,
             rules:{
-                orderNo:{
-                    required:true,
-                    isOrder:true
+                account:{
+                    required:true
                 },
             },
             focusCleanup: true
@@ -107,16 +114,6 @@
                 css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
             }
         }
-
-        //快捷键
-        shortcut.add("enter",function() {
-            tableSearch();
-        }, {
-            'type':'keydown', //事件
-            'propagate':false, //是否支持冒泡
-            'disable_in_input':false, //是否在输入框内有效
-            'target':document, //作用范围
-        });
     </script>
 </body>
 </html>

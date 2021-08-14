@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.fundList.mapper.PF1FundListMapper">
+    
+    <resultMap type="PF1FundList" id="PF1FundListResult">
+        <result column="constantId"    property="constantId"/>
+        <result column="constantName"    property="constantName"/>
+        <result column="today"    property="today"/>
+        <result column="week"    property="week"/>
+        <result column="dweek"    property="dweek"/>
+    </resultMap>
+
+    
+    <select id="getPF1FundList" parameterType="String" resultMap="PF1FundListResult">
+        WITH today
+        AS (SELECT
+        to_char(x.billtype,'9990990') BILL_TYPE,
+        SUM(x.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill x
+        <where>
+        <if test="accounts != null and accounts.length > 0">
+            and x.accounts in
+            <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                #{account}
+            </foreach>
+        </if>
+            AND trunc(x.BIZ_DATE) > trunc(sysdate - 1)
+            AND BILLTYPE NOT IN ('2052', '2053')
+        </where>
+        GROUP BY x.billtype
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 1)
+            AND BILLTYPE NOT IN ('2052', '2053')
+        </where>
+        and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 1)
+            AND BILLTYPE NOT IN ('2052', '2053')
+            and xx.ACCOUNTS_TYPE in ('KAIYUAN')
+        </where>
+        )
+        union all
+        select '*期末减期初' bill_type,
+        (select AMOUNTS from LOTT_NEW_A3D1.lott_accounts_info
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+        </where>)-OPENING_BALANCE amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            and BALANCE_DATE > sysdate -1
+        </where>
+        ),
+        week
+        AS (SELECT
+        to_char(x.billtype,'9990990') BILL_TYPE,
+        SUM(x.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill x
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and x.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(x.BIZ_DATE) > trunc(sysdate - 8) and trunc(x.BIZ_DATE) &lt; trunc(sysdate - 1)
+        </where>
+        GROUP BY x.billtype
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 8)
+            AND BILLTYPE NOT IN ('2052', '2053')
+        </where>
+        and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 8)
+            AND BILLTYPE NOT IN ('2052', '2053')
+            and xx.ACCOUNTS_TYPE in ('KAIYUAN')
+        </where>
+        )
+        union all
+        select '*期末减期初' bill_type, sum(CLOSING_BALANCE-OPENING_BALANCE) amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            and BALANCE_DATE > sysdate -8
+        </where>
+        ),
+        dweek
+        AS (SELECT
+        to_char(x.billtype,'9990990') BILL_TYPE,
+        SUM(x.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill x
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and x.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(x.BIZ_DATE) > trunc(sysdate - 14)
+        </where>
+        GROUP BY x.billtype
+        union all
+        SELECT
+        '*合计' billtype,
+        SUM(xx.BILL_AMOUNT) amt
+        FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 14)
+            AND BILLTYPE NOT IN ('2052', '2053')
+        </where>
+        and xx.gid not in (SELECT GID FROM lott_new_a3d1.lott_accounts_bill xx
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and xx.accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            AND trunc(xx.BIZ_DATE) > trunc(sysdate - 14)
+            AND BILLTYPE NOT IN ('2052', '2053')
+            and xx.ACCOUNTS_TYPE in ('KAIYUAN')
+        </where>
+        )
+        union all
+        select '*期末减期初' bill_type, sum(CLOSING_BALANCE-OPENING_BALANCE) amt from LOTT_NEW_A3D1.LIABILITY_ACCOUNT_SUMMARY
+        <where>
+            <if test="accounts != null and accounts.length > 0">
+                and accounts in
+                <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
+                    #{account}
+                </foreach>
+            </if>
+            and BALANCE_DATE > sysdate -14
+        </where>
+        ),
+        const
+        AS (SELECT
+        to_char(CONSTANTID, '9990999') CONSTANTID,
+        CONSTANTNAME
+        FROM lott_new_a3d1.LOTT_KEYCONSTANT a
+        UNION ALL
+        SELECT
+        '*合计' CONSTANTID,
+        '*合计' CONSTANTNAME
+        FROM DUAL
+        UNION ALL
+        SELECT
+        '*期末减期初' CONSTANTID,
+        '*期末减期初' CONSTANTNAME
+        FROM DUAL)
+        select '*核對' constantid,
+        '*核對' constantname,
+        sum(today) today,
+        sum(week) week ,
+        sum(dweek) dweek
+        from (
+        SELECT
+        -sum(nvl(today.amt, 0)) today,
+        -sum(nvl(week.amt, 0)) week,
+        -sum(nvl(dweek.amt, 0)) dweek
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where const.constantid in ('*期末减期初')
+        union all
+        SELECT
+        sum(nvl(today.amt, 0)) today,
+        sum(nvl(week.amt, 0)) week,
+        sum(nvl(dweek.amt, 0)) dweek
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where const.constantid in ('*合计'))
+        union all
+        SELECT
+        const.constantid,
+        const.constantname,
+        nvl(today.amt, 0) today,
+        nvl(week.amt, 0) week,
+        nvl(dweek.amt, 0) dweek
+        FROM const
+        LEFT JOIN today
+        ON const.constantid = today.bill_type
+        LEFT JOIN week
+        ON const.constantid = week.bill_type
+        LEFT JOIN dweek
+        ON const.constantid = dweek.bill_type
+        where today.amt &lt;&gt; 0
+        or week.amt &lt;&gt; 0
+        or dweek.amt &lt;&gt; 0
+        ORDER BY CONSTANTID desc
+    </select>
+</mapper>
