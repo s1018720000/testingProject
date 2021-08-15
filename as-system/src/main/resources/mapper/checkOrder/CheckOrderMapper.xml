@@ -169,7 +169,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="findAllOdsByAccounts" parameterType="String" resultMap="OdsCheckOrderResult">
          select
-    	 'sum_win' as sumType
+    	 'sum_win' as sumType,
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum7,
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum15,
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum30,
