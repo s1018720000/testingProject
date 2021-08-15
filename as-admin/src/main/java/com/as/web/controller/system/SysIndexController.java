@@ -46,6 +46,8 @@ public class SysIndexController extends BaseController {
     public String index(ModelMap mmap) {
         // 取国际化信息
         String locale = LocaleContextHolder.getLocale().toString();
+        HttpServletResponse response = getResponse();
+        CookieUtils.setCookie(response, "locale", locale);
         // 取身份信息
         SysUser user = ShiroUtils.getSysUser();
         // 根据用户id取出菜单
