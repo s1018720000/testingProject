@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectPF2SourceOfFundsVo">
         select
-        'pf2' as platform,
+        '5.0' as platform,
         B.customer_name,
         biz_date,
         sum_opening,
