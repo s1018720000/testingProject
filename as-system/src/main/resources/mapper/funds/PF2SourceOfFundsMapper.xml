@@ -80,6 +80,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
                 and trunc(biz_date) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
             </if>
+            <if test="startTime == null or startTime == ''"><!-- 开始时间检索 -->
+                and trunc(biz_date) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
+            </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
                 and trunc(biz_date) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
             </if>
@@ -127,6 +130,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
                 and trunc(biz_date) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
+            </if>
+            <if test="startTime == null or startTime == ''"><!-- 开始时间检索 -->
+                and trunc(biz_date) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
                 and trunc(biz_date) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')

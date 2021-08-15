@@ -59,7 +59,9 @@
                 showExport: true,
                 pagination: false,
                 striped: true,
+                showFooter: true,
                 headerStyle: headerStyle,
+                footerStyle: footerStyle,
                 modalName: i18n('history.model'),
                 columns: [
                     [{
@@ -91,7 +93,9 @@
                             title: i18n('funds.account'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].customerName;
+                                if (value.length > 0){
+                                    return value[0].customerName
+                                }
                             }
                         },
                         {
@@ -99,7 +103,12 @@
                             title: i18n('history.date'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].bizDate;
+                                if (value.length > 0){
+                                    return value[0].bizDate
+                                }
+                            },
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
                             }
                         },
                         {
@@ -107,7 +116,12 @@
                             title: i18n('history.max.time'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].maxTime;
+                                if (value.length > 0){
+                                    return value[0].maxTime
+                                }
+                            },
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
                             }
                         },
                         {
@@ -115,7 +129,12 @@
                             title: i18n('history.data.reg'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].dataReg;
+                                if (value.length > 0){
+                                    return value[0].dataReg
+                                }
+                            },
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
                             }
                         },
                         {
@@ -207,7 +226,9 @@
                             title: i18n('history.levelno'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].levelno;
+                                if (value.length > 0){
+                                    return value[0].levelno
+                                }
                             }
                         },
                         {
@@ -287,7 +308,9 @@
                             title: i18n('history.upper.agent'),
                             halign: 'center',
                             footerFormatter:function (value) {
-                                return value[0].upperAgent;
+                                if (value.length > 0){
+                                    return value[0].upperAgent
+                                }
                             }
                         }
                     ]
@@ -303,8 +326,10 @@
                 firstLoad:false,
                 showExport: true,
                 // pagination: false,
+                sidePagination:'client',
                 striped: true,
                 headerStyle: headerStyle,
+                footerStyle: footerStyle,
                 modalName: i18n('history.model'),
                 columns: [
                     [{
@@ -336,17 +361,26 @@
                         {
                             field: 'bizDate',
                             title: i18n('history.date'),
-                            halign: 'center'
+                            halign: 'center',
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
+                            }
                         },
                         {
                             field: 'maxTime',
                             title: i18n('history.max.time'),
-                            halign: 'center'
+                            halign: 'center',
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
+                            }
                         },
                         {
                             field: 'dataReg',
                             title: i18n('history.data.reg'),
-                            halign: 'center'
+                            halign: 'center',
+                            cellStyle: {
+                                css:{"white-space":"nowrap"}
+                            }
                         },
                         {
                             field: 'dep',
@@ -463,6 +497,20 @@
             return {
                 css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
             }
+        }
+
+        function footerStyle(column) {
+            return {
+                bizDate: {
+                    css: { "white-space":"nowrap" }
+                },
+                maxTime: {
+                    css: { "white-space":"nowrap" }
+                },
+                dataReg: {
+                    css: { "white-space":"nowrap" }
+                }
+            }[column.field]
         }
     </script>
 </body>
