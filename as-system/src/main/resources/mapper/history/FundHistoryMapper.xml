@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.history.mapper.FundHistoryMapper">
+    
+    <resultMap type="fundHistory" id="fundHistoryResult">
+        <result column="bizDate"    property="bizDate"/>
+        <result column="customerName"    property="customerName"/>
+        <result column="source"    property="source"/>
+        <result column="maxTime"    property="maxTime"/>
+        <result column="dep"    property="dep"/>
+        <result column="wit"    property="wit"/>
+        <result column="bet"    property="bet"/>
+        <result column="win"    property="win"/>
+        <result column="retBet"    property="retBet"/>
+        <result column="retIn"    property="retIn"/>
+        <result column="gift"    property="gift"/>
+        <result column="levelno"    property="levelno"/>
+        <result column="dataReg"    property="dataReg"/>
+        <result column="customerWinlost"    property="customerWinlost"/>
+        <result column="platformWinlost"    property="platformWinlost"/>
+        <result column="sumAgentTransferIn"    property="sumAgentTransferIn"/>
+        <result column="sumAgentTransferOut"    property="sumAgentTransferOut"/>
+        <result column="capitalAdjustments"    property="capitalAdjustments"/>
+        <result column="retOut"    property="retOut"/>
+        <result column="upperAgent"    property="upperAgent"/>
+    </resultMap>
+
+
+    <sql id="fundHistoryVo">
+        select distinct a.customer_name customerName,
+        d.dw_source source ,
+        d.biz_date bizDate, max_time maxTime,date_reg dataReg,
+        nvl(dep,0) as dep ,nvl(wit,0) as wit ,nvl(bet,0) as bet ,nvl(win,0) as win ,nvl(ret_bet,0) as retBet,
+        nvl(ret_in,0) as retIn ,nvl(gift,0) as gift, levelno,
+        nvl(win,0)+nvl(ret_bet,0)-nvl(bet,0) customerWinlost,nvl(bet,0)-nvl(win,0)-nvl(ret_bet,0)-nvl(ret_out,0)-nvl(gift,0) platformWinlost,
+        nvl(SUM_AGENT_TRANSFER_IN,0) as sumAgentTransferIn ,nvl(SUM_AGENT_TRANSFER_OUT,0) as sumAgentTransferOut ,nvl(Capital_adjustments,0) as capitalAdjustments,
+        nvl(ret_out,0) as retOut ,b.customer_name upperAgent from
+        (select customer_id,old_customer_id,customer_name,levelno,date_reg,recommender_id from dw.DW_d_CUSTOMER) a
+        left join
+        (select customer_id,old_customer_id,customer_name from dw.DW_d_CUSTOMER) b
+        on (a.recommender_id=b.customer_id or a.recommender_id=b.old_customer_id) left join
+        (select customer_name,dw_source,max(biz_date) max_time
+        from dw.DW_r_CUSTOMER_actionday
+        where cnt_login>0
+        group by customer_name,dw_source ) c
+        on a.customer_name=c.customer_name  left join
+        (select customer_id,dw_source,biz_date,
+        sum(sum_deposit) dep,sum(sum_withdraw) wit,
+        sum(sum_bet_lott+sum_bet_casu+SUM_BET_CARD+SUM_BET_FMC+SUM_BET_AG) bet,sum(sum_win_lott+sum_win_casu+SUM_WIN_CARD+SUM_WIN_FMC+SUM_WIN_AG) win,
+        sum(sum_ret_bet_lott+sum_ret_bet_casu+SUM_RET_BET_CARD+SUM_RET_BET_FMC+SUM_RET_BET_AG) ret_bet,sum(sum_ret_agent_lott+sum_ret_agent_casu+SUM_RET_AGENT_CARD+SUM_RET_AGENT_FMC+SUM_RET_AGENT_AG) ret_in,
+        sum(sum_agent_lott+sum_agent_casu) ret_out,sum(sum_reward) gift
+        from dw.dw_r_customer_actionday group by customer_id,dw_source,biz_date) d
+        on (a.customer_id=d.customer_id or a.old_customer_id=d.customer_id) and c.dw_source=d.dw_source left join
+        (select customer_id,dw_source,biz_date,sum(SUM_AGENT_TRANSFER_IN) SUM_AGENT_TRANSFER_IN,
+        sum(SUM_AGENT_TRANSFER_OUT) SUM_AGENT_TRANSFER_OUT,
+        sum(Capital_adjustments) Capital_adjustments from
+        (select customer_id,dw_source,biz_date,
+        case when bill_type='2081' then sum_bill_amt else 0 end SUM_AGENT_TRANSFER_OUT,
+        case when bill_type='2080' then sum_bill_amt else 0 end SUM_AGENT_TRANSFER_IN,
+        case when bill_type in('2003','2020','2028') then sum_bill_amt else 0 end Capital_adjustments
+        from dw.DW_F_CUSTOMER_BILL
+        where bill_type in('2081','2080','2003','2020','2028'))
+        group by customer_id,dw_source,biz_date) e
+        on (a.customer_id=e.customer_id or a.old_customer_id=e.customer_id) and c.dw_source=e.dw_source  and d.biz_date=e.biz_date
+        <where>
+            <if test="account != null and account != ''">
+                and a.customer_name = #{account}
+            </if>
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and trunc(d.biz_date) >= to_date(#{startTime} , 'YYYY-MM-DD')
+            </if>
+            <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+                and trunc(d.biz_date) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
+            </if>
+        </where>
+        order by bizDate desc, source  desc
+    </sql>
+    
+    <select id="getFundHistory" parameterType="String" resultMap="fundHistoryResult">
+        <include refid="fundHistoryVo"/>
+    </select>
+
+    <select id="getFundHistorySummary" parameterType="String" resultMap="fundHistoryResult">
+       select a.source as source,a.customerName as customerName,min(a.bizDate) as bizDate,max(a.maxTime) as maxTime,max(a.dataReg) as dataReg,sum(a.dep) as dep,sum(a.wit) as wit,sum(a.bet) as bet ,sum(a.win) as win,sum(a.retBet) as retBet,
+       sum(a.retIn) as retIn,sum(a.gift) as gift,min(a.levelno) as levelno,sum(a.customerWinlost) as customerWinlost,sum(a.platformWinlost) as platformWinlost,sum(a.sumAgentTransferIn) as sumAgentTransferIn,sum(a.sumAgentTransferOut) as sumAgentTransferOut,
+        sum(a.capitalAdjustments) as capitalAdjustments,sum(a.retOut) as retOut,max(a.upperAgent) as upperAgent from (
+        <include refid="fundHistoryVo"/>
+        ) a group by a.source,a.customerName
+    </select>
+
+</mapper>

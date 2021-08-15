@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('PF1资金来源')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form autocomplete="off" id="form-fund-history" class="form-horizontal">
+                    <h4 class="form-header h4">[[#{history.model}]]</h4>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-lg-offset-2 col-xl-offset-2">
+                            <div class="col-sm-4">
+                                <div class="input-group m-b">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.account}]]：
+                                </span>
+                                    <input class="form-control" type="text" name="account"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-daterange input-group">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.trade.date}]]：
+                                </span>
+                                    <input type="text" class="time-input input-sm form-control" id="startTime" name="startTime" th:placeholder="#{common.start.time}"/>
+                                    <span class="input-group-addon">-</span>
+                                    <input type="text" class="time-input input-sm form-control" id="endTime" name="endTime" th:placeholder="#{common.end.time}"/>
+                                    <span class="input-group-btn">
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
+                                    <i class="fa fa-search"></i> [[#{db.query.query}]]
+                                    </a>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-total"></table>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-detail"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-export-js" />
+     <script type="text/javascript">
+        var prefix = ctx + "fund/history";
+
+        function initTotalTable(){
+            var options = {
+                url: prefix + "/listTotal",
+                id:'bootstrap-table-total',
+                firstLoad:false,
+                showExport: true,
+                pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('history.model'),
+                columns: [
+                    [{
+                        title : i18n('history.total'),
+                        align : 'center',
+                        colspan : 20
+                    }
+                    ],
+                    [{
+                        field: 'source',
+                        title: i18n('funds.platform'),
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (value === '1'){
+                                return '1.0'
+                            }else if(value === '2') {
+                                return '5.0'
+                            } else {
+                                return value
+                            }
+                        },
+                        footerFormatter:function (value) {
+                            return i18n('funds.total');
+                        }
+
+                    },
+                        {
+                            field: 'customerName',
+                            title: i18n('funds.account'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].customerName;
+                            }
+                        },
+                        {
+                            field: 'bizDate',
+                            title: i18n('history.date'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].bizDate;
+                            }
+                        },
+                        {
+                            field: 'maxTime',
+                            title: i18n('history.max.time'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].maxTime;
+                            }
+                        },
+                        {
+                            field: 'dataReg',
+                            title: i18n('history.data.reg'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].dataReg;
+                            }
+                        },
+                        {
+                            field: 'dep',
+                            title: i18n('history.dep'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].dep);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'wit',
+                            title: i18n('history.wit'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].wit);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'bet',
+                            title: i18n('history.bet'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].bet);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'win',
+                            title: i18n('history.win'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].win);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'retBet',
+                            title: i18n('history.ret.bet'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].retBet);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'retOut',
+                            title: i18n('history.ret.out'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].retOut);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'gift',
+                            title: i18n('history.gift'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].gift);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'levelno',
+                            title: i18n('history.levelno'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].levelno;
+                            }
+                        },
+                        {
+                            field: 'customerWinlost',
+                            title: i18n('history.customer.win.lost'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].customerWinlost);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'platformWinlost',
+                            title: i18n('history.platform.win.lost'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].platformWinlost);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'sumAgentTransferIn',
+                            title: i18n('history.agent.transfer.in'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].sumAgentTransferIn);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'sumAgentTransferOut',
+                            title: i18n('history.agent.transfer.out'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].sumAgentTransferOut);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'capitalAdjustments',
+                            title: i18n('history.capital.adjustments'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].capitalAdjustments);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'retIn',
+                            title: i18n('history.ret.in'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                var sum = 0;
+                                for (var i in value) {
+                                    sum += parseFloat(value[i].retIn);
+                                }
+                                return sum;
+                            }
+                        },
+                        {
+                            field: 'upperAgent',
+                            title: i18n('history.upper.agent'),
+                            halign: 'center',
+                            footerFormatter:function (value) {
+                                return value[0].upperAgent;
+                            }
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+        function initDetailTable(){
+            var options = {
+                url: prefix + "/listDetail",
+                id:'bootstrap-table-detail',
+                firstLoad:false,
+                showExport: true,
+                // pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('history.model'),
+                columns: [
+                    [{
+                        title : i18n('history.history'),
+                        align : 'center',
+                        colspan : 20
+                    }
+                    ],
+                    [{
+                        field: 'source',
+                        title: i18n('funds.platform'),
+                        halign: 'center',
+                        formatter: function (value, row, index) {
+                            if (value === '1'){
+                                return '1.0'
+                            }else if(value === '2') {
+                                return '5.0'
+                            } else {
+                                return value
+                            }
+                        },
+
+                    },
+                        {
+                            field: 'customerName',
+                            title: i18n('funds.account'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'bizDate',
+                            title: i18n('history.date'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'maxTime',
+                            title: i18n('history.max.time'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'dataReg',
+                            title: i18n('history.data.reg'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'dep',
+                            title: i18n('history.dep'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'wit',
+                            title: i18n('history.wit'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'bet',
+                            title: i18n('history.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'win',
+                            title: i18n('history.win'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'retBet',
+                            title: i18n('history.ret.bet'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'retOut',
+                            title: i18n('history.ret.out'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'gift',
+                            title: i18n('history.gift'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'levelno',
+                            title: i18n('history.levelno'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'customerWinlost',
+                            title: i18n('history.customer.win.lost'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'platformWinlost',
+                            title: i18n('history.platform.win.lost'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumAgentTransferIn',
+                            title: i18n('history.agent.transfer.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'sumAgentTransferOut',
+                            title: i18n('history.agent.transfer.out'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'capitalAdjustments',
+                            title: i18n('history.capital.adjustments'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'retIn',
+                            title: i18n('history.ret.in'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'upperAgent',
+                            title: i18n('history.upper.agent'),
+                            halign: 'center'
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+
+        $("#form-fund-history").validate({
+            onkeyup: false,
+            rules:{
+                account:{
+                    required:true
+                },
+            },
+            focusCleanup: true
+        });
+        // 搜索
+        function tableSearch(){
+            if ($.validate.form()){
+                if(!table.get(table.options.id)){
+                    initTotalTable();
+                    initDetailTable();
+                    refreshTable();
+                } else {
+                    refreshTable();
+                }
+            }
+            $("#bootstrap-table-total>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+            $("#bootstrap-table-detail>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        }
+        // 刷新表格
+        function refreshTable() {
+            $("#" + table.config['bootstrap-table-total'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-total']);
+            $("#" + table.config['bootstrap-table-detail'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-detail']);
+        }
+
+        function headerStyle(column) {
+            return {
+                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+            }
+        }
+    </script>
+</body>
+</html>
