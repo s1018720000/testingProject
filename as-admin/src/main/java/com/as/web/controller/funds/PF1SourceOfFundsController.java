@@ -2,6 +2,7 @@ package com.as.web.controller.funds;
 
 import com.as.common.core.controller.BaseController;
 import com.as.common.core.page.TableDataInfo;
+import com.as.common.utils.StringUtils;
 import com.as.funds.domain.PF1SourceOfFunds;
 import com.as.funds.domain.PF1SourceOfFundsSummary;
 import com.as.funds.service.IPF1SourceOfFundsService;
@@ -51,7 +52,7 @@ public class PF1SourceOfFundsController extends BaseController {
         map.put("startTime", startTime);
         map.put("endTime", endTime);
         List<PF1SourceOfFunds> pf1SourceOfFounds = pf1SourceOfFundsService.getPF1SourceOfFound(map);
-        if (pf1SourceOfFounds != null) {
+        if (StringUtils.isNotNull(pf1SourceOfFounds)) {
             return getDataTable(pf1SourceOfFounds);
         }
         return getDataTable(new LinkedList<>());
@@ -72,7 +73,7 @@ public class PF1SourceOfFundsController extends BaseController {
         map.put("startTime", startTime);
         map.put("endTime", endTime);
         List<PF1SourceOfFundsSummary> pf1SourceOfFundsSummaries = pf1SourceOfFundsService.getPF1SourceOfFoundSummary(map);
-        if (pf1SourceOfFundsSummaries != null) {
+        if (StringUtils.isNotNull(pf1SourceOfFundsSummaries)) {
             return getDataTable(pf1SourceOfFundsSummaries);
         }
         return getDataTable(new LinkedList<>());

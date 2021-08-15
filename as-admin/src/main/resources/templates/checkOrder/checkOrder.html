@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('多平台订单比对')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form autocomplete="off" id="form-check-order" class="form-horizontal">
+                    <h4 class="form-header h4">[[#{funds.pf1}]]</h4>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-md-offset-4 col-lg-offset-4 col-xl-offset-4">
+                            <div class="input-group m-b">
+                                <span class="rctheme text-white input-group-addon">
+                                [[#{funds.account}]]：
+                                </span>
+                                <input class="form-control" type="text" name="account"/>
+                                <span class="input-group-btn">
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
+                                    <i class="fa fa-search"></i> [[#{db.query.query}]]
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-platform"></table>
+            </div>
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table-all"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-export-js" />
+     <script type="text/javascript">
+        var prefix = ctx + "check/order";
+
+        function initPlatformTable(){
+            var options = {
+                url: prefix + "/listPlatform",
+                id:'bootstrap-table-platform',
+                firstLoad:false,
+                showExport: true,
+                pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('check.order.model'),
+                columns: [
+                    [{
+                        title : i18n('check.order.7day'),
+                        align : 'center',
+                        colspan : 6
+                    }
+                    ],
+                    [{
+                        field: 'platform',
+                        title: i18n('funds.platform'),
+                        halign: 'center',
+                        formatter: function (value, row, index) {
+                            return '<p><span class="label label-success">' + value + '</span></p>'
+
+                        }
+                    },
+                        {
+                            field: 'accounts',
+                            title: i18n('funds.account'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'orderTimeNormal',
+                            title: i18n('check.order.time.normal'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'orderTimeAbnormal',
+                            title: i18n('check.order.time.abnormal'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'withdrawTimeNormal',
+                            title: i18n('check.order.withdraw.time.normal'),
+                            halign: 'center'
+                        },
+                        {
+                            field: 'withdrawTimeAbnormal',
+                            title: i18n('check.order.withdraw.time.abnormal'),
+                            halign: 'center'
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+        function initAllTable(){
+            var options = {
+                url: prefix + "/listAll",
+                id:'bootstrap-table-all',
+                firstLoad:false,
+                showExport: true,
+                pagination: false,
+                striped: true,
+                headerStyle: headerStyle,
+                modalName: i18n('check.order.model'),
+                columns: [
+                    [{
+                        title : i18n('check.order.amount'),
+                        align : 'center',
+                        colspan : 9
+                    }
+                    ],
+                    [{
+                        field: 'sumType',
+                        title: i18n('check.order.sum.type'),
+                        halign: 'center',
+                        formatter: function (value, row, index) {
+                            return '<p><span class="label label-success">' + i18n(value) + '</span></p>'
+                        },
+                    },
+                        {
+                            field: 'pf1sum7',
+                            title: '1.0 Last 7 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf1sum15',
+                            title: '1.0 Last 15 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf1sum30',
+                            title: '1.0 Last 30 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf1sum60',
+                            title: '1.0 Last 60 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf2sum7',
+                            title: '2.0 Last 7 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf2sum15',
+                            title: '2.0 Last 15 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf2sum30',
+                            title: '2.0 Last 30 Days',
+                            halign: 'center'
+                        },
+                        {
+                            field: 'pf2sum60',
+                            title: '2.0 Last 60 Days',
+                            halign: 'center'
+                        }
+                    ]
+                ]
+            };
+            $.table.init(options);
+        }
+
+
+        $("#form-check-order").validate({
+            onkeyup: false,
+            rules:{
+                account:{
+                    required:true
+                },
+            },
+            focusCleanup: true
+        });
+        // 搜索
+        function tableSearch(){
+            if ($.validate.form()){
+                if(!table.get(table.options.id)){
+                    initPlatformTable();
+                    initAllTable();
+                    refreshTable();
+                } else {
+                    refreshTable();
+                }
+            }
+            $("#bootstrap-table-platform>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+            $("#bootstrap-table-all>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+        }
+        // 刷新表格
+        function refreshTable() {
+            $("#" + table.config['bootstrap-table-platform'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-platform']);
+            $("#" + table.config['bootstrap-table-all'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-all']);
+        }
+
+        function headerStyle(column) {
+            return {
+                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+            }
+        }
+    </script>
+</body>
+</html>

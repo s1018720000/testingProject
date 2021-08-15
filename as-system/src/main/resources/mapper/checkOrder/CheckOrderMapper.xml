@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.as.checkOrder.mapper.CheckOrderMapper">
+    
+    <resultMap type="CheckOrder" id="CheckOrderResult">
+        <result column="platform"    property="platform"/>
+        <result column="accounts"    property="accounts"/>
+        <result column="orderTimeNormal"    property="orderTimeNormal"/>
+        <result column="orderTimeAbnormal"    property="orderTimeAbnormal"/>
+        <result column="withdrawTimeNormal"    property="withdrawTimeNormal"/>
+        <result column="withdrawTimeAbnormal"    property="withdrawTimeAbnormal"/>
+    </resultMap>
+
+    
+    <select id="findAllPf1ByAccounts" parameterType="String" resultMap="CheckOrderResult">
+        with AA as (
+        select A.accounts , listagg(ORDERNO,',') within group( order by ORDERNO ) as OrderTime_Nonnormal
+        from lott_new_a3d1.lott_fc3d_order_main A
+        left join lott_new_a3d1.lott_manaul_temp B on A.sortid = B.sortid
+        and A.numero = B.numero
+        left join lott_new_a3d1.lott_group_series C on A.sortid = C.GROUP_VALUE
+        and C.GROUP_TYPE = 1
+        left join lott_new_a3d1.lott_para_all D on D.paramnames = 'LockingTime'
+        and D.GROUPNAMES = C.PARAM_ONE||'_LotteryParameterSetting'
+        where
+        A.bet_time > B.win_date - D.PARAMVALUES/24/60/60
+        and A.bet_time > sysdate - 7
+        <if test="account != null and account != ''">
+            and A.accounts = #{account}
+        </if>
+        group by A.accounts
+        ) , BB as (
+        select A.accounts , count(*) as OrderTime_normal
+        from lott_new_a3d1.lott_fc3d_order_main A
+        left join lott_new_a3d1.lott_manaul_temp B on A.sortid = B.sortid
+        and A.numero = B.numero
+        left join lott_new_a3d1.lott_group_series C on A.sortid = C.GROUP_VALUE
+        and C.GROUP_TYPE = 1
+        left join lott_new_a3d1.lott_para_all D on D.paramnames = 'LockingTime'
+        and D.GROUPNAMES = C.PARAM_ONE||'_LotteryParameterSetting'
+        where
+        A.bet_time &lt;= B.win_date - D.PARAMVALUES/24/60/60
+        and A.bet_time > sysdate - 7
+        <if test="account != null and account != ''">
+            and A.accounts = #{account}
+        </if>
+        group by A.accounts
+        ),CC as(
+        select A.accounts , listagg(ORDERNO,',') within group( order by ORDERNO ) as WithdrawTime_Nonnormal
+        from lott_new_a3d1.lott_fc3d_order_main A
+        left join lott_new_a3d1.lott_manaul_temp B on A.sortid = B.sortid
+        and A.numero = B.numero
+        left join lott_new_a3d1.lott_group_series C on A.sortid = C.GROUP_VALUE
+        and C.GROUP_TYPE = 1
+        left join lott_new_a3d1.lott_para_all D on D.paramnames = 'LockingTime'
+        and D.GROUPNAMES = C.PARAM_ONE||'_LotteryParameterSetting'
+        where status = '008'
+        and A.into_time > B.win_date
+        and A.into_time > sysdate - 7
+        and A.accounts in ( accounts )
+        group by A.accounts
+        ) , DD as (
+        select A.accounts , count(*) as WithdrawTime_Normal
+        from lott_new_a3d1.lott_fc3d_order_main A
+        left join lott_new_a3d1.lott_manaul_temp B on A.sortid = B.sortid
+        and A.numero = B.numero
+        left join lott_new_a3d1.lott_group_series C on A.sortid = C.GROUP_VALUE
+        and C.GROUP_TYPE = 1
+        left join lott_new_a3d1.lott_para_all D on D.paramnames = 'LockingTime'
+        and D.GROUPNAMES = C.PARAM_ONE||'_LotteryParameterSetting'
+        where status = '008'
+        and A.into_time &lt;= B.win_date
+        and A.into_time > sysdate - 7
+        <if test="account != null and account != ''">
+            and A.accounts = #{account}
+        </if>
+        group by A.accounts
+        )
+        select '1.0' as platform,BB.ACCOUNTS as accounts ,
+        OrderTime_normal as ordertimenormal,
+        CASE WHEN OrderTime_Nonnormal is  null THEN '0' ELSE OrderTime_Nonnormal  END ordertimeabnormal ,
+        CASE WHEN WithdrawTime_Normal is  null THEN 0 ELSE WithdrawTime_Normal  END withdrawtimenormal ,
+        CASE WHEN WithdrawTime_Nonnormal is  null THEN '0' ELSE WithdrawTime_Nonnormal  END withdrawTimeAbnormal
+        from BB
+        left join AA on AA.ACCOUNTS=BB.ACCOUNTS
+        left join CC on CC.ACCOUNTS=BB.ACCOUNTS
+        left join DD on DD.ACCOUNTS=BB.ACCOUNTS
+        order by accounts
+    </select>
+
+    <select id="findAllPf2ByAccounts" parameterType="String" resultMap="CheckOrderResult">
+        with AA as (
+        select A.CUSTOMER_NAME , count(*) as OrderTime_normal
+        from core.lgs_order_detail A
+        left join core.lgs_draw_number_result B on A.game_code = B.game_code
+        and A.numero = B.numero
+        left join core.lgs_game_setting C on A.game_code = C.game_code
+        where A.create_time &lt;= B.WINNING_TIME - C.LOCKED/24/60/60
+        and A.create_time > sysdate - 7
+        <if test="account != null and account != ''">
+            and A.CUSTOMER_NAME = #{account}
+        </if>
+        group by A.CUSTOMER_NAME
+        ), BB as (
+        select A.CUSTOMER_NAME , listagg(ORDER_NUM,',') within group( order by ORDER_NUM) as OrderTime_abnormal
+        from core.lgs_order_detail A
+        left join core.lgs_draw_number_result B on A.game_code = B.game_code
+        and A.numero = B.numero
+        left join core.lgs_game_setting C on A.game_code = C.game_code
+        left join core.LGS_ORDER_MASTER D on A.ORDER_MASTER_ID = D.ORDER_MASTER_ID
+        where A.create_time > B.WINNING_TIME - C.LOCKED/24/60/60
+        and A.create_time > sysdate - 7
+        <if test="account != null and account != ''">
+            and A.CUSTOMER_NAME = #{account}
+        </if>
+        group by A.CUSTOMER_NAME
+        ),CC as (
+        select A.CUSTOMER_NAME , count(*) as WithdrawTime_Normal
+        from core.lgs_order_detail A
+        left join core.lgs_draw_number_result B on A.game_code = B.game_code and A.numero = B.numero
+        left join core.lgs_game_setting C on A.game_code = C.game_code
+        where A.UPDATE_TIME &lt;= B.WINNING_TIME - C.LOCKED/24/60/60
+        and A.status = 8
+        and A.UPDATE_TIME > sysdate-7
+        <if test="account != null and account != ''">
+            and A.CUSTOMER_NAME = #{account}
+        </if>
+        group by A.CUSTOMER_NAME
+        ),DD as (
+        select A.CUSTOMER_NAME , listagg(ORDER_NUM,',') within group( order by ORDER_NUM) as WithdrawTime_Nonnormal
+        from core.lgs_order_detail A
+        left join core.lgs_draw_number_result B on A.game_code = B.game_code and A.numero = B.numero
+        left join core.lgs_game_setting C on A.game_code = C.game_code
+        left join core.LGS_ORDER_MASTER D on A.ORDER_MASTER_ID = D.ORDER_MASTER_ID
+        where A.UPDATE_TIME > B.WINNING_TIME - C.LOCKED/24/60/60
+        and A.status = 8
+        and A.UPDATE_TIME > sysdate-7
+        <if test="account != null and account != ''">
+            and A.CUSTOMER_NAME = #{account}
+        </if>
+        group by A.CUSTOMER_NAME
+        )
+        select '5.0' as platform,AA.CUSTOMER_NAME as accounts,
+        OrderTime_normal as ordertimenormal,
+        CASE WHEN OrderTime_abnormal is  null THEN '0' ELSE OrderTime_abnormal END ordertimeabnormal ,
+        CASE WHEN WithdrawTime_Normal is  null THEN 0 ELSE WithdrawTime_Normal  END withdrawtimenormal ,
+        CASE WHEN WithdrawTime_Nonnormal is  null THEN '0' ELSE WithdrawTime_Nonnormal  END withdrawTimeAbnormal
+        from AA
+        left join BB on AA.CUSTOMER_NAME = BB.CUSTOMER_NAME
+        left join CC on AA.CUSTOMER_NAME =CC.CUSTOMER_NAME
+        left join DD on AA.CUSTOMER_NAME =DD.CUSTOMER_NAME
+    </select>
+
+
+
+    <resultMap type="OdsCheckOrder" id="OdsCheckOrderResult">
+        <result column="sumType"    property="sumType"/>
+        <result column="platform"    property="platform"/>
+        <result column="pf1sum7"    property="pf1sum7"/>
+        <result column="pf1sum15"    property="pf1sum15"/>
+        <result column="pf1sum30"    property="pf1sum30"/>
+        <result column="pf1sum60"    property="pf1sum60"/>
+        <result column="pf2sum7"    property="pf2sum7"/>
+        <result column="pf2sum15"    property="pf2sum15"/>
+        <result column="pf2sum30"    property="pf2sum30"/>
+        <result column="pf2sum60"    property="pf2sum60"/>
+    </resultMap>
+
+    <select id="findAllOdsByAccounts" parameterType="String" resultMap="OdsCheckOrderResult">
+         select
+    	 'sum_win' as sumType,
+    	 A.ODS_SRC_TYPE as platform,
+    	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum7,
+    	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum15,
+    	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum30,
+    	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum60,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WIN end ) pf2sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WIN end ) pf2sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WIN end ) pf2sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WIN end ) pf2sum60
+    	 from ods.ODS_LIABILITY_SUM A
+    	 left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+    	 group by B.customer_name , A.ODS_SRC_TYPE
+        union all
+        select
+        'sum_bet' as sumType,
+        A.ODS_SRC_TYPE as platform,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum60,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_BET end ) pf2sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_BET end ) pf2sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_BET end ) pf2sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_BET end ) pf2sum60
+        from ods.ODS_LIABILITY_SUM A
+        left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+        group by B.customer_name , A.ODS_SRC_TYPE
+        union all
+        select
+        'sum_ret_bet' as sumType,
+        A.ODS_SRC_TYPE as platform,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum60,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_BET end ) pf2sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_BET end ) pf2sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_BET end ) pf2sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_BET end ) pf2sum60
+        from ods.ODS_LIABILITY_SUM A
+        left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+        group by B.customer_name , A.ODS_SRC_TYPE
+        union all
+        select
+        'sum_ret_agent' as sumType,
+        A.ODS_SRC_TYPE as platform,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum60,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_AGENT end ) pf2sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_AGENT end ) pf2sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_AGENT end ) pf2sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_RET_AGENT end ) pf2sum60
+        from ods.ODS_LIABILITY_SUM A
+        left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+        group by B.customer_name , A.ODS_SRC_TYPE
+        union all
+        select
+        'sum_deposit' as sumType,
+        A.ODS_SRC_TYPE as platform,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf1sum7 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf1sum15 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf1sum30 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf1sum60 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf2sum7 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf2sum15 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf2sum30 ,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_DEPOSIT end) +
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf2sum60
+        from ods.ODS_LIABILITY_SUM A
+        left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+        group by B.customer_name , A.ODS_SRC_TYPE
+        union all
+        select
+        'sum_withdraw' as sumType,
+        A.ODS_SRC_TYPE as platform,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum60,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WITHDRAW end ) pf2sum7,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WITHDRAW end ) pf2sum15,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WITHDRAW end ) pf2sum30,
+        sum( case when A.biz_date >= trunc( sysdate-6/24 +1-60 ) and A.ODS_SRC_TYPE = 'P2_DB' then A.SUM_WITHDRAW end ) pf2sum60
+        from ods.ODS_LIABILITY_SUM A
+        left join ods.ODS_CUSTOMER_vw B on A.customer_id = B.customer_id
+        <where>
+            <if test="account != null and account != ''">
+                and B.customer_name = #{account}
+            </if>
+        </where>
+        group by B.customer_name , A.ODS_SRC_TYPE
+    </select>
+</mapper>

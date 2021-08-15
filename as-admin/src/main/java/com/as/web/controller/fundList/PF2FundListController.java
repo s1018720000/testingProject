@@ -2,6 +2,7 @@ package com.as.web.controller.fundList;
 
 import com.as.common.core.controller.BaseController;
 import com.as.common.core.page.TableDataInfo;
+import com.as.common.utils.StringUtils;
 import com.as.fundList.domain.PF2FundList;
 import com.as.fundList.service.IPF2FundListService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -40,7 +41,7 @@ public class PF2FundListController extends BaseController {
     @ResponseBody
     public TableDataInfo list(@RequestParam(name = "account") String account) {
         List<PF2FundList> pf2FoundList = pf2FundListService.getPF2FundList(account);
-        if (pf2FoundList != null) {
+        if (StringUtils.isNotNull(pf2FoundList)) {
             return getDataTable(pf2FoundList);
         }
         return getDataTable(new LinkedList<>());
