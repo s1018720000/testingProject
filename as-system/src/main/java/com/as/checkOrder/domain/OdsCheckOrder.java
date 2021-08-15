@@ -17,7 +17,6 @@ public class OdsCheckOrder implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String sumType;
-    private String platform;
     private String pf1sum7;
     private String pf1sum15;
     private String pf1sum30;

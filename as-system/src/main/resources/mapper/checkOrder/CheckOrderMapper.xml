@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="findAllPf1ByAccounts" parameterType="String" resultMap="CheckOrderResult">
         with AA as (
         select A.accounts , listagg(ORDERNO,',') within group( order by ORDERNO ) as OrderTime_Nonnormal
-        from lott_new_a3d1.lott_fc3d_order_main A
+            from lott_new_a3d1.lott_fc3d_order_main A
         left join lott_new_a3d1.lott_manaul_temp B on A.sortid = B.sortid
         and A.numero = B.numero
         left join lott_new_a3d1.lott_group_series C on A.sortid = C.GROUP_VALUE
@@ -157,7 +157,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="OdsCheckOrder" id="OdsCheckOrderResult">
         <result column="sumType"    property="sumType"/>
-        <result column="platform"    property="platform"/>
         <result column="pf1sum7"    property="pf1sum7"/>
         <result column="pf1sum15"    property="pf1sum15"/>
         <result column="pf1sum30"    property="pf1sum30"/>
@@ -170,8 +169,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="findAllOdsByAccounts" parameterType="String" resultMap="OdsCheckOrderResult">
          select
-    	 'sum_win' as sumType,
-    	 A.ODS_SRC_TYPE as platform,
+    	 'sum_win' as sumType
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum7,
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum15,
     	 sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WIN end ) pf1sum30,
@@ -187,11 +185,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-    	 group by B.customer_name , A.ODS_SRC_TYPE
+    	 group by B.customer_name
         union all
         select
         'sum_bet' as sumType,
-        A.ODS_SRC_TYPE as platform,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum7,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum15,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_BET end ) pf1sum30,
@@ -207,11 +204,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-        group by B.customer_name , A.ODS_SRC_TYPE
+        group by B.customer_name
         union all
         select
         'sum_ret_bet' as sumType,
-        A.ODS_SRC_TYPE as platform,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum7,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum15,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_BET end ) pf1sum30,
@@ -227,11 +223,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-        group by B.customer_name , A.ODS_SRC_TYPE
+        group by B.customer_name
         union all
         select
         'sum_ret_agent' as sumType,
-        A.ODS_SRC_TYPE as platform,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum7,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum15,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_RET_AGENT end ) pf1sum30,
@@ -247,11 +242,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-        group by B.customer_name , A.ODS_SRC_TYPE
+        group by B.customer_name
         union all
         select
         'sum_deposit' as sumType,
-        A.ODS_SRC_TYPE as platform,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_3RD_PAY_DEPOSIT end) as pf1sum7 ,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_DEPOSIT end) +
@@ -275,11 +269,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-        group by B.customer_name , A.ODS_SRC_TYPE
+        group by B.customer_name
         union all
         select
         'sum_withdraw' as sumType,
-        A.ODS_SRC_TYPE as platform,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-7 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum7,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-15 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum15,
         sum( case when A.biz_date >= trunc( sysdate-6/24 +1-30 ) and A.ODS_SRC_TYPE = 'P1_DB' then A.SUM_WITHDRAW end ) pf1sum30,
@@ -295,6 +288,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and B.customer_name = #{account}
             </if>
         </where>
-        group by B.customer_name , A.ODS_SRC_TYPE
+        group by B.customer_name
     </select>
 </mapper>
