@@ -120,7 +120,8 @@ public class MoniJobLogServiceImpl implements IMoniJobLogService {
     @Transactional
     public int callback(Long id) {
         MoniJobLog moniJobLog = moniJobLogMapper.selectMoniJobLogById(id);
-        moniJobLog.setStatus(Constants.SUCCESS);
+        //callback 不修改状态
+//        moniJobLog.setStatus(Constants.SUCCESS);
         moniJobLog.setAlertStatus(Constants.FAIL);
         moniJobLog.setOperator(ShiroUtils.getSysUser().getLoginName());
         return moniJobLogMapper.callbackMoniJobLog(moniJobLog);
