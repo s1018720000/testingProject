@@ -110,7 +110,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                 return true;
             }
             DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
-            String sql = "SELECT COUNT(*) FROM MONI_ELASTIC_LOG WHERE EXECUTE_RESULT = ? AND ELASTIC_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+            String sql = "SELECT COUNT(*) FROM MONI_ELASTIC_LOG WHERE EXECUTE_RESULT = ? AND ELASTIC_ID = ? AND STATUS != '0' AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
             int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{moniElasticLog.getExecuteResult(), moniElastic.getId(), moniElastic.getIgnoreAlert()}, Integer.class);
             return row == 0;

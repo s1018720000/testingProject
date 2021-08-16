@@ -86,6 +86,9 @@ public class MoniApiExecution extends AbstractQuartzJob {
                     }
                 }
             }
+        } else {
+            moniApiLog.setStatus(Constants.SUCCESS);
+            moniApiLog.setAlertStatus(Constants.FAIL);
         }
 
     }
@@ -175,7 +178,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                 return true;
             }
             DataSource masterDataSource = SpringUtils.getBean("masterDataSource");
-            String sql = "SELECT COUNT(*) FROM MONI_API_LOG WHERE EXECUTE_RESULT = ? AND API_ID = ? AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+            String sql = "SELECT COUNT(*) FROM MONI_API_LOG WHERE EXECUTE_RESULT = ? AND API_ID = ? AND STATUS != '0' AND START_TIME > DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             JdbcTemplate jdbcTemplateMysql = new JdbcTemplate(masterDataSource);
             int row = jdbcTemplateMysql.queryForObject(sql, new Object[]{moniApiLog.getExecuteResult(), moniApi.getId(), moniApi.getIgnoreAlert()}, Integer.class);
             return row == 0;
