@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('平台亏损')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <span id="last-update-time" class="label label-warning">[[#{common.last.update.time}]]：<span class="time"></span></span>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" data-auto-refresh="true" data-auto-refresh-interval="60"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-auto-refresh-js" />
+    <script th:inline="javascript">
+        var detailFlag = [[${@permission.hasPermi('monitor:sqlJobLog:detail')}]];
+        var statusDatas = [[${@dict.getType('sys_common_status')}]];
+        var alertStatusDatas = [[${@dict.getType('sys_normal_disable')}]];
+        var prefix = ctx + "rc/loss";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                sortName: "startTime",
+                sortOrder: "desc",
+                queryParams : {'id':'98,99'},
+                striped: true,
+                showSearch: false,
+                showRefresh: true,
+                showToggle: false,
+                showColumns: false,
+                pagination: false,
+                headerStyle: headerStyle,
+                onLoadSuccess: setLastUpdateTime,
+                modalName: i18n('rc.loss.platform'),
+                columns: [
+                    [{
+                        title : i18n('rc.loss.platform'),
+                        align : 'center',
+                        colspan : 2
+                    }
+                    ],
+                [{
+                    field: 'startTime',
+                    title: i18n('rc.loss.date'),
+                    align: 'center',
+                    formatter:function (value, row, index){
+                        return $.common.dateFormat(value,'yyyy-MM-dd HH:mm:ss')
+                    },
+                    cellStyle: {
+                        css:{"white-space":"nowrap"}
+                    },
+                    sortable: true
+                },
+                {
+                    field: 'executeResult',
+                    title: i18n('rc.loss.info'),
+                    align: 'center'
+                }]
+                ]
+            };
+            $.table.init(options);
+        });
+
+        function setLastUpdateTime(){
+            $("#bootstrap-table>thead>tr>th>div:first").attr("style","font-size:22px;font-weight:bolder")
+            $("#last-update-time .time").text($.common.dateFormat(new Date(),'yyyy-MM-dd HH:mm:ss'));
+        }
+
+        function headerStyle(column) {
+            return {
+                css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
+            }
+        }
+    </script>
+</body>
+</html>

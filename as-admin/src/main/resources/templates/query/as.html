@@ -45,7 +45,7 @@
 	<th:block th:include="include :: bootstrap-table-export-js" />
 	<script th:src="@{/js/shortcut.js}"></script>
 	<script type="text/javascript">
-		var prefix = ctx + "query/as";
+		var prefix = ctx + "query/db";
 		// 动态获取列
 		function ajaxColumns() {
 			var url = prefix + "/ajaxColumns";

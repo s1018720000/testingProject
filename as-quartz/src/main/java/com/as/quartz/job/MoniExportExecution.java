@@ -69,9 +69,8 @@ public class MoniExportExecution extends AbstractQuartzJob {
                 mail.setBcc(moniExport.getMailBcc().split(";"));
             }
         } else {
-            String[] testMail = new String[2];
+            String[] testMail = new String[1];
             testMail[0] = "c98fb80a.my-cpg.com@apac.teams.ms";
-            testMail[1] = "kolin.z@my-cpg.com";
             mail.setTo(testMail);
             mail.setCc(null);
             mail.setBcc(null);

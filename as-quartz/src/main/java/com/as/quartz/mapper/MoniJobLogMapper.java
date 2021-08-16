@@ -77,4 +77,7 @@ public interface MoniJobLogMapper {
      * @return SQL检测任務LOG集合
      */
     public List<MoniJobLog> selectMoniJobLogListNoSuccess();
+
+
+    public List<MoniJobLog> selectLossByIds(String[] jobIds);
 }

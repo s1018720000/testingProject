@@ -48,6 +48,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectLossByIds" parameterType="String" resultMap="MoniJobLogResult">
+        <include refid="selectMoniJobLogVo"/>
+        <where>
+            <if test="jobIds != null and jobIds.length > 0">
+                AND MJL.JOB_ID in
+                <foreach collection="jobIds" item="jobId" index="index" open="(" separator="," close=")">
+                    #{jobId}
+                </foreach>
+            </if>
+            AND MJL.START_TIME > DATE_SUB(NOW(), INTERVAL 2 HOUR)
+            AND MJL.STATUS = '1'
+        </where>
+    </select>
+
     <select id="selectMoniJobLogListNoSuccess" resultMap="MoniJobLogResult">
         <include refid="selectMoniJobLogVo"/>
         where MJL.STATUS != '0' and MJL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR)

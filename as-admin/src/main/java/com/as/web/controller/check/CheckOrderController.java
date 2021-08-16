@@ -30,7 +30,7 @@ public class CheckOrderController extends BaseController {
 
     @RequiresPermissions("check:order:view")
     @GetMapping()
-    public String pf1() {
+    public String checkOrder() {
         return prefix + "/checkOrder";
     }
 

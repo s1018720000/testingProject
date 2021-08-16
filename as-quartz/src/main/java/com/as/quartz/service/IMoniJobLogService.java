@@ -74,4 +74,6 @@ public interface IMoniJobLogService
      * 回调
      */
     public int callback(Long id);
+
+    public List<MoniJobLog> selectLossByIds(String[] jobIds);
 }

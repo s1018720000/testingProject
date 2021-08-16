@@ -125,4 +125,9 @@ public class MoniJobLogServiceImpl implements IMoniJobLogService {
         moniJobLog.setOperator(ShiroUtils.getSysUser().getLoginName());
         return moniJobLogMapper.callbackMoniJobLog(moniJobLog);
     }
+
+    @Override
+    public List<MoniJobLog> selectLossByIds(String[] jobIds) {
+        return moniJobLogMapper.selectLossByIds(jobIds);
+    }
 }

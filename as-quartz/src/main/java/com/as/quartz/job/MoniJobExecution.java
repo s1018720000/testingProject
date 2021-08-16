@@ -195,7 +195,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         String[] fields = rowSet.getMetaData().getColumnNames();
 
         //拼接表头
-        builder.append("<table class=\"data_table\"><thead><tr>");
+        builder.append("<table style=\"width:100%;\" class=\"data_table\"><thead><tr>");
         for (int i = 0; i < fields.length; i++) {
             builder.append("<th>").append(fields[i]).append("</th>");
         }

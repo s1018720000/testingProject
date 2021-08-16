@@ -31,7 +31,7 @@ public class FundHistoryController extends BaseController {
 
     @RequiresPermissions("fund:history:view")
     @GetMapping()
-    public String pf1() {
+    public String history() {
         return prefix + "/history";
     }
 

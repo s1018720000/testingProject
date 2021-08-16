@@ -18,26 +18,37 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * pf1 sql查询
+ * DB sql查询
  *
  * @author kolin
  */
 @Controller
-@RequestMapping("/query/pf1")
-public class PF1QueryController extends BaseController {
+@RequestMapping("/query/db")
+public class DBQueryController extends BaseController {
 
     @Autowired
     private IDBQueryService queryService;
 
     private String prefix = "query";
 
+    @RequiresPermissions("query:as:view")
+    @GetMapping("/as")
+    public String as() {
+        return prefix + "/as";
+    }
+
     @RequiresPermissions("query:pf1:view")
-    @GetMapping()
-    public String build() {
+    @GetMapping("/pf1")
+    public String pf1() {
         return prefix + "/pf1";
     }
 
-    @RequiresPermissions("query:pf1:query")
+    @RequiresPermissions("query:pf2:view")
+    @GetMapping("/pf2")
+    public String pf2() {
+        return prefix + "/pf2";
+    }
+
     @PostMapping("/query")
     @ResponseBody
     public TableDataInfo query(@Validated DBQuery dbQuery) {
