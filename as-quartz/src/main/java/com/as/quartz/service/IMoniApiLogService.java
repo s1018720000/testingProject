@@ -71,4 +71,9 @@ public interface IMoniApiLogService
      * 清空任务日志
      */
     public void cleanApiJobLog();
+
+    /**
+     * 回调
+     */
+    public int callback(Long id);
 }

@@ -334,6 +334,7 @@
                 sortOrder: "desc",
                 headerStyle: headerStyle,
                 footerStyle: footerStyle,
+                height: getTableHeight(),
                 modalName: i18n('history.model'),
                 columns: [
                     [{
@@ -501,6 +502,10 @@
             return {
                 css: { background: '#3c8dbc','font-size': '17px',color:'white','font-weight': 'bold' }
             }
+        }
+
+        function getTableHeight() {
+            return  $(window).height();
         }
 
         function footerStyle(column) {

@@ -2,6 +2,7 @@ package com.as.quartz.mapper;
 
 import java.util.List;
 import com.as.quartz.domain.MoniApiLog;
+import com.as.quartz.domain.MoniExportLog;
 import com.as.quartz.domain.MoniJobLog;
 
 /**
@@ -71,4 +72,12 @@ public interface MoniApiLogMapper
      * @return 自动API检测LOG集合
      */
     public List<MoniApiLog> selectMoniApiLogListNoSuccess();
+
+    /**
+     * 回调
+     *
+     * @param moniApiLog
+     * @return
+     */
+    public int callbackMoniApiLog(MoniApiLog moniApiLog);
 }

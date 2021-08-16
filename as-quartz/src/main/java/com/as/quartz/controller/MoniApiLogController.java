@@ -111,4 +111,16 @@ public class MoniApiLogController extends BaseController {
         moniApiLogService.cleanApiJobLog();
         return success();
     }
+
+    /**
+     * 回调
+     *
+     * @return
+     */
+    @Log(title = "自动API检测任务LOG", businessType = BusinessType.UPDATE)
+    @GetMapping("/callback/{id}")
+    @ResponseBody
+    public AjaxResult callback(@PathVariable("id") Long id) {
+        return toAjax(moniApiLogService.callback(id));
+    }
 }

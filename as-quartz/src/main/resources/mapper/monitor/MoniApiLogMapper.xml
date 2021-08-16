@@ -39,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.jobName != null "> and (MA.CH_NAME like concat('%', #{params.jobName}, '%') or MA.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="apiId != null "> and MAL.API_ID = #{apiId}</if>
             <if test="params.priority != null and params.priority != ''"> and MA.PRIORITY = #{params.priority}</if>
-            <if test="params.platform != null params.platform != ''"> and MA.PLATFORM = #{params.platform}</if>
+            <if test="params.platform != null and params.platform != ''"> and MA.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
                 AND date_format(MAL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
             </if>
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniApiLogListNoSuccess" resultMap="MoniApiLogResult">
         <include refid="selectMoniApiLogVo"/>
-        where MAL.STATUS != '0' and MAL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR)
+        where MAL.STATUS != '0' and MAL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system'
     </select>
         
     <insert id="insertMoniApiLog" parameterType="MoniApiLog" useGeneratedKeys="true" keyProperty="id">
@@ -119,5 +119,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <update id="callbackMoniApiLog" parameterType="MoniApiLog">
+        update moni_api_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="alertStatus != null">ALERT_STATUS = #{alertStatus},</if>
+            <if test="operator != null">OPERATOR = #{operator},</if>
+        </trim>
+        where ID = #{id}
+    </update>
 
 </mapper>

@@ -124,4 +124,16 @@ public class MoniExportLogController extends BaseController {
             log.error("下载文件失败", e);
         }
     }
+
+    /**
+     * 回调
+     *
+     * @return
+     */
+    @Log(title = "自动报表任务LOG", businessType = BusinessType.UPDATE)
+    @GetMapping("/callback/{id}")
+    @ResponseBody
+    public AjaxResult callback(@PathVariable("id") Long id) {
+        return toAjax(moniExportLogService.callback(id));
+    }
 }

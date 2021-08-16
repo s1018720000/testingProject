@@ -1,12 +1,15 @@
 package com.as.quartz.service.impl;
 
+import com.as.common.constant.Constants;
 import com.as.common.core.text.Convert;
+import com.as.common.utils.ShiroUtils;
 import com.as.quartz.domain.MoniExportLog;
 import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.mapper.MoniExportLogMapper;
 import com.as.quartz.service.IMoniExportLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -103,5 +106,19 @@ public class MoniExportLogServiceImpl implements IMoniExportLogService {
     @Override
     public List<MoniExportLog> selectMoniExportLogListNoSuccess() {
         return moniExportLogMapper.selectMoniExportLogListNoSuccess();
+    }
+
+    /**
+     * 回调
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public int callback(Long id) {
+        MoniExportLog moniExportLog = moniExportLogMapper.selectMoniExportLogById(id);
+        moniExportLog.setOperator(ShiroUtils.getSysUser().getLoginName());
+        return moniExportLogMapper.callbackExportJobLog(moniExportLog);
     }
 }

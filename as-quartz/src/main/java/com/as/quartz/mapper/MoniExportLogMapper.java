@@ -1,6 +1,7 @@
 package com.as.quartz.mapper;
 
 import com.as.quartz.domain.MoniExportLog;
+import com.as.quartz.domain.MoniJobLog;
 
 import java.util.List;
 
@@ -70,4 +71,12 @@ public interface MoniExportLogMapper {
      * @return Export任務集合
      */
     public List<MoniExportLog> selectMoniExportLogListNoSuccess();
+
+    /**
+     * 回调
+     *
+     * @param moniExportLog
+     * @return
+     */
+    public int callbackExportJobLog(MoniExportLog moniExportLog);
 }

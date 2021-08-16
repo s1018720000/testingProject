@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * ElasticSearch任务LOGController
+ * Elastic检测任务LOGController
  *
  * @author kolin
  * @date 2021-07-28
@@ -47,7 +47,7 @@ public class MoniElasticLogController extends BaseController {
     }
 
     /**
-     * 查询ElasticSearch任务LOG列表
+     * 查询Elastic检测任务LOG列表
      */
     @RequiresPermissions("monitor:elasticJobLog:list")
     @PostMapping("/list")
@@ -59,23 +59,23 @@ public class MoniElasticLogController extends BaseController {
     }
 
     /**
-     * 导出ElasticSearch任务LOG列表
+     * 导出Elastic检测任务LOG列表
      */
     @RequiresPermissions("monitor:elasticJobLog:export")
-    @Log(title = "ElasticSearch任务LOG", businessType = BusinessType.EXPORT)
+    @Log(title = "Elastic检测任务LOG", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(MoniElasticLog moniElasticLog) {
         List<MoniElasticLog> list = moniElasticLogService.selectMoniElasticLogList(moniElasticLog);
         ExcelUtil<MoniElasticLog> util = new ExcelUtil<MoniElasticLog>(MoniElasticLog.class);
-        return util.exportExcel(list, "ElasticSearch任务LOG数据");
+        return util.exportExcel(list, "Elastic检测任务LOG数据");
     }
 
     /**
-     * 删除ElasticSearch任务LOG
+     * 删除Elastic检测任务LOG
      */
     @RequiresPermissions("monitor:elasticJobLog:remove")
-    @Log(title = "ElasticSearch任务LOG", businessType = BusinessType.DELETE)
+    @Log(title = "Elastic检测任务LOG", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
@@ -87,12 +87,24 @@ public class MoniElasticLogController extends BaseController {
      *
      * @return
      */
-    @Log(title = "ElasticSearch任务LOG", businessType = BusinessType.CLEAN)
+    @Log(title = "Elastic检测任务LOG", businessType = BusinessType.CLEAN)
     @RequiresPermissions("monitor:elasticJobLog:clear")
     @PostMapping("/clean")
     @ResponseBody
     public AjaxResult clean() {
         moniElasticLogService.cleanElasticJobLog();
         return success();
+    }
+
+    /**
+     * 回调
+     *
+     * @return
+     */
+    @Log(title = "Elastic检测任务LOG", businessType = BusinessType.UPDATE)
+    @GetMapping("/callback/{id}")
+    @ResponseBody
+    public AjaxResult callback(@PathVariable("id") Long id) {
+        return toAjax(moniElasticLogService.callback(id));
     }
 }

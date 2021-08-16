@@ -70,4 +70,9 @@ public interface IMoniElasticLogService {
      * 清空任务日志
      */
     public void cleanElasticJobLog();
+
+    /**
+     * 回调
+     */
+    public int callback(Long id);
 }

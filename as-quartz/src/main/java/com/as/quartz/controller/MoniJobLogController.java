@@ -117,7 +117,6 @@ public class MoniJobLogController extends BaseController {
      * @return
      */
     @Log(title = "SQL检测任務LOG", businessType = BusinessType.UPDATE)
-    @RequiresPermissions("monitor:sqlJobLog:callback")
     @GetMapping("/callback/{id}")
     @ResponseBody
     public AjaxResult callback(@PathVariable("id") Long id) {

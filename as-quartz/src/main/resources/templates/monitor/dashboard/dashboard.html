@@ -170,7 +170,7 @@
             showColumns: false,
             onLoadSuccess: sqlLastUpdateTime,
             headerStyle: headerStyle,
-            onClickRow: onClickSqlRow,
+            onClickCell: onClickSqlCell,
             sortName: "startTime",
             sortOrder: "desc",
             modalName: i18n('sql.job.sql.task'),
@@ -179,25 +179,34 @@
                     title : i18n('sql.job.sql.task'),
                     align : 'center',
                     field: '',
-                    colspan : 6
+                    colspan : 7
                 }
                 ],
                 [{
                     field: 'startTime',
                     title: i18n('common.start.time'),
-                    align: 'center'
+                    align: 'center',
+                    cellStyle: {
+                        css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                    }
                 },
                     {
                         field: 'moniJob.chName',
                         title: i18n('sql.job.name_zh'),
                         visible: i18n('locale') !== 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniJob.enName',
                         title: i18n('sql.job.name_en'),
                         visible: i18n('locale') === 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniJob.platform',
@@ -222,6 +231,16 @@
                         formatter: function (value, row, index) {
                             return sqlJobAlertTools(row);
                         },
+                    },
+                    {
+                        field: 'callback',
+                        title: i18n('sql.job.log.callback'),
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="callbackSql(\'' + row.id + '\')"><i class="fa fa-check"></i></a>');
+                            return actions.join('');
+                        }
                     }
                 ]
             ]
@@ -252,30 +271,42 @@
                     title : i18n('export.job'),
                     align : 'center',
                     field: '',
-                    colspan : 6
+                    colspan : 7
                 }
                 ],
                 [{
                     field: 'startTime',
                     title: i18n('common.start.time'),
-                    align: 'center'
+                    align: 'center',
+                    cellStyle: {
+                        css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                    }
                 },
                     {
                         field: 'moniExport.ticketNumber',
                         title: 'Ticket Number',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniExport.chName',
                         title: i18n('sql.job.name_zh'),
                         visible: i18n('locale') !== 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniExport.enName',
                         title: i18n('sql.job.name_en'),
                         visible: i18n('locale') === 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniExport.platform',
@@ -292,6 +323,15 @@
                             return $.table.selectDictLabel(statusDatas, value);
                         },
                         align: 'center',
+                    },
+                    {
+                        title: i18n('sql.job.log.callback'),
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="callbackExport(\'' + row.id + '\')"><i class="fa fa-check"></i></a>');
+                            return actions.join('');
+                        }
                     }
                 ]
             ]
@@ -322,25 +362,34 @@
                     title : i18n('api.job'),
                     align : 'center',
                     field: '',
-                    colspan : 6
+                    colspan : 7
                 }
                 ],
                 [{
                     field: 'startTime',
                     title: i18n('common.start.time'),
-                    align: 'center'
+                    align: 'center',
+                    cellStyle: {
+                        css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                    }
                 },
                     {
                         field: 'moniApi.chName',
                         title: i18n('sql.job.name_zh'),
                         visible: i18n('locale') !== 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniApi.enName',
                         title: i18n('sql.job.name_en'),
                         visible: i18n('locale') === 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniApi.platform',
@@ -365,6 +414,15 @@
                         formatter: function (value, row, index) {
                             return apiJobAlertTools(row);
                         },
+                    },
+                    {
+                        title: i18n('sql.job.log.callback'),
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="callbackApi(\'' + row.id + '\')"><i class="fa fa-check"></i></a>');
+                            return actions.join('');
+                        }
                     }
                 ]
             ]
@@ -394,25 +452,34 @@
                     title : i18n('elastic.job'),
                     align : 'center',
                     field: '',
-                    colspan : 6
+                    colspan : 7
                 }
                 ],
                 [{
                     field: 'startTime',
                     title: i18n('common.start.time'),
-                    align: 'center'
+                    align: 'center',
+                    cellStyle: {
+                        css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                    }
                 },
                     {
                         field: 'moniElastic.chName',
                         title: i18n('sql.job.name_zh'),
                         visible: i18n('locale') !== 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniElastic.enName',
                         title: i18n('sql.job.name_en'),
                         visible: i18n('locale') === 'en-US',
                         align: 'center',
+                        cellStyle: {
+                            css:{"background-color":"rgba(220,38,38,0.2)","font-weight": 700,"color":"red"}
+                        }
                     },
                     {
                         field: 'moniElastic.platform',
@@ -437,6 +504,15 @@
                         formatter: function (value, row, index) {
                             return elasticJobAlertTools(row);
                         },
+                    },
+                    {
+                        title: i18n('sql.job.log.callback'),
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="callbackElastic(\'' + row.id + '\')"><i class="fa fa-check"></i></a>');
+                            return actions.join('');
+                        }
                     }
                 ]
             ]
@@ -508,8 +584,82 @@
         checkAlert()
     }
 
-    function onClickSqlRow(row, $element){
-        $.operate.detail(row.id);
+    function onClickSqlCell(field, value, row, $element){
+        if (field !== 'callback' && field !== 'alertStatus'){
+            $.operate.detail(row.id);
+        }
+    }
+
+    function callbackSql(id){
+        $.ajax({
+            type:"GET",
+            url:ctx + "monitor/sqlJobLog/callback/" + id,
+            success : function(data) {
+                if(data.code === 0){
+                    $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
+                    $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
+                } else {
+                    $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
+                }
+            },
+            error : function (){
+                $.modal.msgError(i18n('common.sys.error'));
+            }
+        });
+    }
+
+    function callbackExport(id){
+        $.ajax({
+            type:"GET",
+            url:ctx + "monitor/exportJobLog/callback/" + id,
+            success : function(data) {
+                if(data.code === 0){
+                    $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
+                    $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
+                } else {
+                    $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
+                }
+            },
+            error : function (){
+                $.modal.msgError(i18n('common.sys.error'));
+            }
+        });
+    }
+
+    function callbackApi(id){
+        $.ajax({
+            type:"GET",
+            url:ctx + "monitor/apiJobLog/callback/" + id,
+            success : function(data) {
+                if(data.code === 0){
+                    $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
+                    $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-api']);
+                } else {
+                    $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
+                }
+            },
+            error : function (){
+                $.modal.msgError(i18n('common.sys.error'));
+            }
+        });
+    }
+
+    function callbackElastic(id){
+        $.ajax({
+            type:"GET",
+            url:ctx + "monitor/elasticJobLog/callback/" + id,
+            success : function(data) {
+                if(data.code === 0){
+                    $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
+                    $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-elastic']);
+                } else {
+                    $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
+                }
+            },
+            error : function (){
+                $.modal.msgError(i18n('common.sys.error'));
+            }
+        });
     }
 
     function headerStyle(column) {

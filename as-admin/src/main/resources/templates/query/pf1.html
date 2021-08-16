@@ -46,6 +46,7 @@
 <script th:src="@{/js/shortcut.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 	var prefix = ctx + "query/db";
+	var tempScript;
 
 	// 动态获取列
 	function ajaxColumns() {
@@ -55,6 +56,7 @@
 		if (selectedScript){
 			dataParam['script'] = selectedScript;
 		}
+		tempScript = dataParam['script']
 		$.modal.loading(i18n('common.query.loading'));
 		$.post(url, dataParam, function(result) {
 			if (result.code == web_status.SUCCESS) {
@@ -106,16 +108,19 @@
 				};
 				var dataParam = $.common.formToJSON("form-pf1-query")
 
-				var selectedScript = window.getSelection().toString();
-				if (selectedScript){
-					dataParam['script'] = selectedScript;
+				if (tempScript){
+					dataParam['script'] = tempScript;
 				}
 				return $.extend(curParams, dataParam);
 			},
 			firstLoad: false,
 			showExport: true,
 			striped: true,
+			pageSize: 200,
+			pageNumber: 1,
+			pageList: [200, 500, 1000,'all'],
 			modalName: 'PF1 DB Query',
+			height: getTableHeight(),
 			headerStyle: headerStyle,
 			columns: columns
 		};
@@ -132,6 +137,10 @@
 		return {
 			css: { background: '#3c8dbc','font-size': '13px',color:'white','font-weight': 'bolder' }
 		}
+	}
+
+	function getTableHeight() {
+		return  $(window).height();
 	}
 
 	//快捷键

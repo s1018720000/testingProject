@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniJobLogListNoSuccess" resultMap="MoniJobLogResult">
         <include refid="selectMoniJobLogVo"/>
-        where MJL.STATUS != '0' and MJL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR)
+        where MJL.STATUS != '0' and MJL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system'
     </select>
     
     <select id="selectMoniJobLogById" parameterType="Long" resultMap="MoniJobLogResult">
@@ -126,7 +126,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="callbackMoniJobLog" parameterType="MoniJobLog">
         update moni_job_log
         <trim prefix="SET" suffixOverrides=",">
-            <if test="status != null">STATUS = #{status},</if>
             <if test="alertStatus != null">ALERT_STATUS = #{alertStatus},</if>
             <if test="operator != null">OPERATOR = #{operator},</if>
         </trim>

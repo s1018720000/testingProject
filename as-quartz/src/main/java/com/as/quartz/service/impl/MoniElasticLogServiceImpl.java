@@ -1,11 +1,15 @@
 package com.as.quartz.service.impl;
 
+import com.as.common.constant.Constants;
 import com.as.common.core.text.Convert;
+import com.as.common.utils.ShiroUtils;
 import com.as.quartz.domain.MoniElasticLog;
+import com.as.quartz.domain.MoniExportLog;
 import com.as.quartz.mapper.MoniElasticLogMapper;
 import com.as.quartz.service.IMoniElasticLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -102,5 +106,20 @@ public class MoniElasticLogServiceImpl implements IMoniElasticLogService {
     @Override
     public void cleanElasticJobLog() {
         moniElasticLogMapper.cleanElasticJobLog();
+    }
+
+    /**
+     * 回调
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public int callback(Long id) {
+        MoniElasticLog moniElasticLog = moniElasticLogMapper.selectMoniElasticLogById(id);
+        moniElasticLog.setAlertStatus(Constants.FAIL);
+        moniElasticLog.setOperator(ShiroUtils.getSysUser().getLoginName());
+        return moniElasticLogMapper.callbackElasticLog(moniElasticLog);
     }
 }

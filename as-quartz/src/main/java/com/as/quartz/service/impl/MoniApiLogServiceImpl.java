@@ -1,11 +1,15 @@
 package com.as.quartz.service.impl;
 
+import com.as.common.constant.Constants;
 import com.as.common.core.text.Convert;
+import com.as.common.utils.ShiroUtils;
 import com.as.quartz.domain.MoniApiLog;
+import com.as.quartz.domain.MoniElasticLog;
 import com.as.quartz.mapper.MoniApiLogMapper;
 import com.as.quartz.service.IMoniApiLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -103,5 +107,20 @@ public class MoniApiLogServiceImpl implements IMoniApiLogService {
     @Override
     public void cleanApiJobLog() {
         moniApiLogMapper.cleanApiJobLog();
+    }
+
+    /**
+     * 回调
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public int callback(Long id) {
+        MoniApiLog moniApiLog = moniApiLogMapper.selectMoniApiLogById(id);
+        moniApiLog.setAlertStatus(Constants.FAIL);
+        moniApiLog.setOperator(ShiroUtils.getSysUser().getLoginName());
+        return moniApiLogMapper.callbackMoniApiLog(moniApiLog);
     }
 }

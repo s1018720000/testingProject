@@ -148,6 +148,7 @@
                 // pagination: false,
                 striped: true,
                 headerStyle: headerStyle,
+                height: getTableHeight(),
                 modalName: i18n('funds.model'),
                 columns: [
                     [{
@@ -328,6 +329,10 @@
         function refreshTable() {
             $("#" + table.config['bootstrap-table-total'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-total']);
             $("#" + table.config['bootstrap-table-detail'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-detail']);
+        }
+
+        function getTableHeight() {
+            return  $(window).height();
         }
 
         function headerStyle(column) {

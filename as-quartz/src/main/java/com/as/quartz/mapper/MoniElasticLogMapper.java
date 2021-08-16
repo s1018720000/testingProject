@@ -1,6 +1,7 @@
 package com.as.quartz.mapper;
 
 import com.as.quartz.domain.MoniElasticLog;
+import com.as.quartz.domain.MoniExportLog;
 
 import java.util.List;
 
@@ -70,4 +71,12 @@ public interface MoniElasticLogMapper {
      * @return ElasticSearch任务LOG集合
      */
     public List<MoniElasticLog> selectMoniElasticLogListNoSuccess();
+
+    /**
+     * 回调
+     *
+     * @param moniElasticLog
+     * @return
+     */
+    public int callbackElasticLog(MoniElasticLog moniElasticLog);
 }

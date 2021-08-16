@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniExportLogListNoSuccess" resultMap="MoniExportLogResult">
         <include refid="selectMoniExportLogVo"/>
-        where MEL.STATUS != '0' and MEL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 2 HOUR)
+        where MEL.STATUS != '0' and MEL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system'
     </select>
 
     <update id="cleanExportJobLog">
@@ -110,5 +110,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <update id="callbackExportJobLog" parameterType="MoniExportLog">
+        update moni_export_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operator != null">OPERATOR = #{operator},</if>
+        </trim>
+        where ID = #{id}
+    </update>
 
 </mapper>

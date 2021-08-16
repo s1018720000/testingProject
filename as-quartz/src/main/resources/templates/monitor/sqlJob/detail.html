@@ -49,7 +49,7 @@
 		<pre style="overflow-y:auto;" th:text="${jobLog.exceptionLog}"></pre>
 	</div>
 
-	<div style="text-align: center;" shiro:hasPermission="monitor:sqlJobLog:callback">
+	<div style="text-align: center;">
 		<button id="callbackBtn" type="button" class="btn btn-w-m btn-warning"
 				th:data-loading-text="'<i class=\'fa fa-hourglass-2\'></i> '+#{sql.job.log.callback.loading}"
 				th:data-error-text="'<i class=\'fa fa-exclamation-circle\'></i> '+#{home.server.error}"

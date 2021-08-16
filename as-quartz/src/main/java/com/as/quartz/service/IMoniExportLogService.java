@@ -72,4 +72,9 @@ public interface IMoniExportLogService
      * @return Export任務集合
      */
     List<MoniExportLog> selectMoniExportLogListNoSuccess();
+
+    /**
+     * 回调
+     */
+    public int callback(Long id);
 }
