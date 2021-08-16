@@ -303,7 +303,7 @@
             var tabName = i18n('sql.job.sql.task.log');
             if ($.common.isNotEmpty(jobId)) {
                 url += '?jobId=' + jobId;
-                tabName = i18n('sql.job.sql.task.log') + "(" + jobId + ")";
+                tabName = i18n('api.job.log') + "(" + jobId + ")";
             }
             $.modal.openTab(tabName, url);
         }

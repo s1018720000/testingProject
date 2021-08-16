@@ -142,11 +142,17 @@
                     field: 'executeResult',
                     title: i18n('sql.job.execution.result'),
                     formatter: function (value, row, index) {
+                        var cla;
                         var result = row.executeResult
                         if (!result) {
                             result = 'NO RESULT'
                         }
-                        return '<p><span class="label label-warning">' + result + '</span></p>'
+                        if (row.status === '0'){
+                            cla = 'label label-success'
+                        } else {
+                            cla = 'label label-warning'
+                        }
+                        return '<p><span class="' + cla + '">' + result + '</span></p>'
 
                     },
                     sortable: true
