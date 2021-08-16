@@ -287,10 +287,10 @@
         /* 调度日志查询 */
         function jobLog(jobId) {
             var url = ctx + 'monitor/elasticJobLog';
-            var tabName = i18n('sql.job.sql.task.log');
+            var tabName = i18n('elastic.job.log');
             if ($.common.isNotEmpty(jobId)) {
                 url += '?jobId=' + jobId;
-                tabName = i18n('sql.job.sql.task.log') + "(" + jobId + ")";
+                tabName = i18n('elastic.job.log') + "(" + jobId + ")";
             }
             $.modal.openTab(tabName, url);
         }

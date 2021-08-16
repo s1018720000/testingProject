@@ -300,7 +300,7 @@
         /* 调度日志查询 */
         function jobLog(jobId) {
             var url = ctx + 'monitor/apiJobLog';
-            var tabName = i18n('sql.job.sql.task.log');
+            var tabName = i18n('api.job.log');
             if ($.common.isNotEmpty(jobId)) {
                 url += '?jobId=' + jobId;
                 tabName = i18n('api.job.log') + "(" + jobId + ")";
