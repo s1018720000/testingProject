@@ -276,6 +276,7 @@
 						var parent = window.parent;
 						parent.$.table.refresh();
 						callbackSuccess()
+						setTimeout(() => $.modal.close(), 1000)
 					} else {
 						callbackFailure()
 					}

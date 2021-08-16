@@ -39,6 +39,14 @@
                             </select>
                         </li>
                         <li>
+                            <label>[[#{sql.job.priority}]]：</label>
+                            <select name="priority" th:with="type=${@dict.getType('job_priority_list')}">
+                                <option value="">[[#{user.list.all}]]</option>
+                                <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
                             <label>[[#{sql.job.alert}]]：</label>
                             <select name="telegramAlert" th:with="type=${@dict.getType('sys_normal_disable')}">
                                 <option value="">[[#{user.list.all}]]</option>

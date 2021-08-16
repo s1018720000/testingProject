@@ -23,11 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="enName"    column="EN_NAME"    />
         <result property="chName"    column="CH_NAME"    />
         <result property="platform"    column="PLATFORM"    />
+        <result property="priority"    column="PRIORITY"    />
     </resultMap>
 
     <sql id="selectMoniElasticLogVo">
         select MEL.ID, MEL.ELASTIC_ID, MEL.START_TIME, MEL.END_TIME, MEL.EXPECTED_RESULT, MEL.EXECUTE_RESULT, MEL.EXCEPTION_LOG, MEL.EXECUTE_TIME, MEL.STATUS, MEL.ALERT_STATUS, MEL.OPERATOR,
-        ME.EN_NAME, ME.CH_NAME, ME.PLATFORM
+        ME.EN_NAME, ME.CH_NAME, ME.PLATFORM, ME.PRIORITY
         from moni_elastic_log MEL
         left join moni_elastic ME on MEL.ELASTIC_ID = ME.ID
     </sql>
@@ -37,6 +38,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="params.jobName != null "> and (ME.CH_NAME like concat('%', #{params.jobName}, '%') or ME.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="elasticId != null "> and MEL.ELASTIC_ID = #{elasticId}</if>
+            <if test="params.priority != null and params.priority != ''"> and ME.PRIORITY = #{params.priority}</if>
+            <if test="params.platform != null and params.platform != ''"> and ME.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
                 AND date_format(MEL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
             </if>

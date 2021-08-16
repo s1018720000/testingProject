@@ -23,11 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="enName"    column="EN_NAME"    />
         <result property="chName"    column="CH_NAME"    />
         <result property="platform"    column="PLATFORM"    />
+        <result property="priority"    column="PRIORITY"    />
     </resultMap>
 
     <sql id="selectMoniApiLogVo">
         select MAL.ID, MAL.API_ID, MAL.START_TIME, MAL.END_TIME, MAL.EXPECTED_CODE, MAL.EXECUTE_RESULT, MAL.EXCEPTION_LOG, MAL.EXECUTE_TIME, MAL.STATUS, MAL.ALERT_STATUS, MAL.OPERATOR,
-        MA.EN_NAME, MA.CH_NAME, MA.PLATFORM
+        MA.EN_NAME, MA.CH_NAME, MA.PLATFORM, MA.PRIORITY
         from moni_api_log MAL
         left join moni_api MA on MAL.API_ID = MA.ID
     </sql>
@@ -37,6 +38,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="params.jobName != null "> and (MA.CH_NAME like concat('%', #{params.jobName}, '%') or MA.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="apiId != null "> and MAL.API_ID = #{apiId}</if>
+            <if test="params.priority != null and params.priority != ''"> and MA.PRIORITY = #{params.priority}</if>
+            <if test="params.platform != null params.platform != ''"> and MA.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
                 AND date_format(MAL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
             </if>

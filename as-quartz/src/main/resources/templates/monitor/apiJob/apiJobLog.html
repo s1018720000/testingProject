@@ -19,6 +19,22 @@
                             <input type="text" name="params[jobName]"/>
                         </li>
                         <li>
+                            <label>[[#{sql.job.platform}]]：</label>
+                            <select name="params[platform]" th:with="type=${@dict.getType('ub8_platform_type')}">
+                                <option value="">[[#{user.list.all}]]</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>[[#{sql.job.priority}]]：</label>
+                            <select name="params[priority]" th:with="type=${@dict.getType('job_priority_list')}">
+                                <option value="">[[#{user.list.all}]]</option>
+                                <option th:each="dict : ${type}" th:text="#{${dict.dictLabel}}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
                             <label>[[#{sql.job.execute.status}]]：</label>
                             <select name="status" th:with="type=${@dict.getType('sys_common_status')}">
                                 <option value="">[[#{user.list.all}]]</option>
@@ -68,6 +84,8 @@
     var detailFlag = [[${@permission.hasPermi('monitor:apiJobLog:list')}]];
     var removeFlag = [[${@permission.hasPermi('monitor:apiJob:remove')}]];
     var statusDatas = [[${@dict.getType('sys_common_status')}]];
+    var priorityDatas = [[${@dict.getType('job_priority_list')}]];
+    var platformDatas = [[${@dict.getType('ub8_platform_type')}]];
     var alertStatusDatas = [[${@dict.getType('sys_normal_disable')}]];
     var prefix = ctx + "monitor/apiJobLog";
 
@@ -109,6 +127,20 @@
                     field: 'moniApi.enName',
                     title: i18n('sql.job.name_en'),
                     visible: i18n('locale') === 'en-US'
+                },
+                {
+                    field: 'moniApi.platform',
+                    title: i18n('sql.job.platform'),
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(platformDatas, value);
+                    },
+                },
+                {
+                    field: 'moniApi.priority',
+                    title: i18n('sql.job.priority'),
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(priorityDatas, value);
+                    },
                 },
                 {
                     field: 'startTime',

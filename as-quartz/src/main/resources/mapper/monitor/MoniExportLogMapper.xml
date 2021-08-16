@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="params.jobName != null "> and (ME.CH_NAME like concat('%', #{params.jobName}, '%') or ME.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
             <if test="exportId != null "> and MEL.EXPORT_ID = #{exportId}</if>
+            <if test="params.platform != null and params.platform != ''"> and ME.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->
                 AND date_format(MEL.START_TIME,'%y%m%d') &gt;= date_format(#{params.beginStartTime},'%y%m%d')
             </if>

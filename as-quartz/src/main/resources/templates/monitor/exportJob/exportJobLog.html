@@ -19,6 +19,14 @@
                                 <input type="text" name="params[jobName]"/>
                             </li>
                             <li>
+                                <label>[[#{sql.job.platform}]]：</label>
+                                <select name="params[platform]" th:with="type=${@dict.getType('ub8_platform_type')}">
+                                    <option value="">[[#{user.list.all}]]</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                            th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
                                 <label>[[#{sql.job.execute.status}]]：</label>
                                 <select name="status" th:with="type=${@dict.getType('sys_common_status')}">
                                     <option value="">[[#{user.list.all}]]</option>
@@ -59,6 +67,7 @@
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var statusDatas = [[${@dict.getType('sys_common_status')}]];
+        var platformDatas = [[${@dict.getType('ub8_platform_type')}]];
         var prefix = ctx + "monitor/exportJobLog";
 
         $(function() {
@@ -98,6 +107,13 @@
                     field: 'moniExport.enName',
                     title: i18n('sql.job.name_en'),
                     visible: i18n('locale') === 'en-US'
+                },
+                {
+                    field: 'moniExport.platform',
+                    title: i18n('sql.job.platform'),
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(platformDatas, value);
+                    },
                 },
                 {
                     field: 'startTime',

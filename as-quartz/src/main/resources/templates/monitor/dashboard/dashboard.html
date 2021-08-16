@@ -158,6 +158,7 @@
     $(function(){
         var options = {
             url: prefix + "/updateSqlJob",
+            detailUrl: ctx + 'monitor/sqlJobLog/detail/{id}"',
             id:'bootstrap-table-sql',
             pageSize: 100,
             pageNumber: 1,
@@ -169,6 +170,7 @@
             showColumns: false,
             onLoadSuccess: sqlLastUpdateTime,
             headerStyle: headerStyle,
+            onClickRow: onClickSqlRow,
             sortName: "startTime",
             sortOrder: "desc",
             modalName: i18n('sql.job.sql.task'),
@@ -504,6 +506,10 @@
     function elasticJobAlertStart(jobId) {
         $.operate.post(prefix + "/startElasticJobAlert", {"id": jobId, "alertStatus": 0});
         checkAlert()
+    }
+
+    function onClickSqlRow(row, $element){
+        $.operate.detail(row.id);
     }
 
     function headerStyle(column) {
