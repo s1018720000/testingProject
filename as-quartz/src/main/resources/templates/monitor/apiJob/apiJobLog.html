@@ -149,8 +149,10 @@
                         }
                         if (row.status === '0'){
                             cla = 'label label-success'
-                        } else {
+                        } else if(row.status === '1') {
                             cla = 'label label-warning'
+                        } else {
+                            cla = 'label label-danger'
                         }
                         return '<p><span class="' + cla + '">' + result + '</span></p>'
 
