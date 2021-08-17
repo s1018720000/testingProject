@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('仪表盘')"/>
+    <th:block th:include="include :: bootstrap-switch-css"/>
 </head>
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight">
@@ -23,7 +24,22 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
+                                    <div class="pull-right" id="toolbarSql" role="group">
+                                        <label class="label">[[#{monitor.auto.refresh}]]：</label>
+                                        <input type="checkbox" data-size="mini" id="suspendRefreshSql">
+                                        <label class="label">[[#{monitor.auto.refresh.time}]]：</label>
+                                        <select id="selectTimeSql"
+                                                style="width:50px;padding:0px 10px;appearance:none;-moz-appearance:none;-webkit-appearance:none;
+                                    background:url(data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjE3MDBDMTIwOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjE3MDBDMTIxOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MTcwMEMxMUU4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MTcwMEMxMUY4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAAyAB4DAREAAhEBAxEB/8QAbgABAQEBAQEAAAAAAAAAAAAABAAHBgUIAQEBAAMAAAAAAAAAAAAAAAAAAwECBBAAAgEDAQYFBQAAAAAAAAAAAQIAAwQFETGyczUGByFhEhMjUTJyYxQRAQADAQEAAAAAAAAAAAAAAAABEQIDMf/aAAwDAQACEQMRAD8A+i8dy+24SbogIgUCgHx3L7bhJuiAiBQKAS0R3xVFEqGk7UFC1VAJUlAAwDArqPMQMA6h7j91MFmbvFXmW0rWrlfV/NagMu1XHxbGUgidEYzMOTXTUTTt+0Gf686juLnI5jImriLYe0lL2aCe7WI1+5Katoi+J0O0jzmnSIjxXlrU+tTklh8dy+24SbogZ93e7d3HUa2WRxVMHJ0nS3rDZ6qFRtAxP6mOv4k/SU57pHrzvx2/TmCs8DhbTFWg+G2QKX00LufF3PmzEmaTNyrnNRT0phkfHcvtuEm6ICIFAoB8dy+24SbogIgUCgHx3L7bhJuiAiBQKB//2Q0K)
+                                    no-repeat right center;background-color: #eee;background-size:20%;" required>
+                                            <option value="5">5s</option>
+                                            <option value="10">10s</option>
+                                            <option value="20">20s</option>
+                                            <option value="30" selected>30s</option>
+                                            <option value="60">60s</option>
+                                        </select>
+                                    </div>
+                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
                                     <div id="sql-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -31,7 +47,22 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
+                                    <div class="pull-right" id="toolbarElastic" role="group">
+                                        <label class="label">[[#{monitor.auto.refresh}]]：</label>
+                                        <input type="checkbox" data-size="mini" id="suspendRefreshElastic">
+                                        <label class="label">[[#{monitor.auto.refresh.time}]]：</label>
+                                        <select id="selectTimeElastic"
+                                                style="width:50px;padding:0px 10px;appearance:none;-moz-appearance:none;-webkit-appearance:none;
+                                    background:url(data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjE3MDBDMTIwOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjE3MDBDMTIxOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MTcwMEMxMUU4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MTcwMEMxMUY4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAAyAB4DAREAAhEBAxEB/8QAbgABAQEBAQEAAAAAAAAAAAAABAAHBgUIAQEBAAMAAAAAAAAAAAAAAAAAAwECBBAAAgEDAQYFBQAAAAAAAAAAAQIAAwQFETGyczUGByFhEhMjUTJyYxQRAQADAQEAAAAAAAAAAAAAAAABEQIDMf/aAAwDAQACEQMRAD8A+i8dy+24SbogIgUCgHx3L7bhJuiAiBQKAS0R3xVFEqGk7UFC1VAJUlAAwDArqPMQMA6h7j91MFmbvFXmW0rWrlfV/NagMu1XHxbGUgidEYzMOTXTUTTt+0Gf686juLnI5jImriLYe0lL2aCe7WI1+5Katoi+J0O0jzmnSIjxXlrU+tTklh8dy+24SbogZ93e7d3HUa2WRxVMHJ0nS3rDZ6qFRtAxP6mOv4k/SU57pHrzvx2/TmCs8DhbTFWg+G2QKX00LufF3PmzEmaTNyrnNRT0phkfHcvtuEm6ICIFAoB8dy+24SbogIgUCgHx3L7bhJuiAiBQKB//2Q0K)
+                                    no-repeat right center;background-color: #eee;background-size:20%;" required>
+                                            <option value="5">5s</option>
+                                            <option value="10">10s</option>
+                                            <option value="20">20s</option>
+                                            <option value="30" selected>30s</option>
+                                            <option value="60">60s</option>
+                                        </select>
+                                    </div>
+                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
                                     <div id="elastic-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -41,7 +72,22 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
+                                    <div class="pull-right" id="toolbarApi" role="group">
+                                        <label class="label">[[#{monitor.auto.refresh}]]：</label>
+                                        <input type="checkbox" data-size="mini" id="suspendRefreshApi">
+                                        <label class="label">[[#{monitor.auto.refresh.time}]]：</label>
+                                        <select id="selectTimeApi"
+                                                style="width:50px;padding:0px 10px;appearance:none;-moz-appearance:none;-webkit-appearance:none;
+                                    background:url(data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjE3MDBDMTIwOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjE3MDBDMTIxOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MTcwMEMxMUU4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MTcwMEMxMUY4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAAyAB4DAREAAhEBAxEB/8QAbgABAQEBAQEAAAAAAAAAAAAABAAHBgUIAQEBAAMAAAAAAAAAAAAAAAAAAwECBBAAAgEDAQYFBQAAAAAAAAAAAQIAAwQFETGyczUGByFhEhMjUTJyYxQRAQADAQEAAAAAAAAAAAAAAAABEQIDMf/aAAwDAQACEQMRAD8A+i8dy+24SbogIgUCgHx3L7bhJuiAiBQKAS0R3xVFEqGk7UFC1VAJUlAAwDArqPMQMA6h7j91MFmbvFXmW0rWrlfV/NagMu1XHxbGUgidEYzMOTXTUTTt+0Gf686juLnI5jImriLYe0lL2aCe7WI1+5Katoi+J0O0jzmnSIjxXlrU+tTklh8dy+24SbogZ93e7d3HUa2WRxVMHJ0nS3rDZ6qFRtAxP6mOv4k/SU57pHrzvx2/TmCs8DhbTFWg+G2QKX00LufF3PmzEmaTNyrnNRT0phkfHcvtuEm6ICIFAoB8dy+24SbogIgUCgHx3L7bhJuiAiBQKB//2Q0K)
+                                    no-repeat right center;background-color: #eee;background-size:20%;" required>
+                                            <option value="5">5s</option>
+                                            <option value="10">10s</option>
+                                            <option value="20">20s</option>
+                                            <option value="30" selected>30s</option>
+                                            <option value="60">60s</option>
+                                        </select>
+                                    </div>
+                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
                                     <div id="api-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -49,7 +95,22 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <div class="col-sm-12 select-table table-bordered">
-                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="15"></table>
+                                    <div class="pull-right" id="toolbarExport" role="group">
+                                        <label class="label">[[#{monitor.auto.refresh}]]：</label>
+                                        <input type="checkbox" data-size="mini" id="suspendRefreshExport">
+                                        <label class="label">[[#{monitor.auto.refresh.time}]]：</label>
+                                        <select id="selectTimeExport"
+                                                style="width:50px;padding:0px 10px;appearance:none;-moz-appearance:none;-webkit-appearance:none;
+                                    background:url(data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjE3MDBDMTIwOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjE3MDBDMTIxOEM1RjExRTY5OURFQjNEMzU1OTYzQzczIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MTcwMEMxMUU4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MTcwMEMxMUY4QzVGMTFFNjk5REVCM0QzNTU5NjNDNzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAAyAB4DAREAAhEBAxEB/8QAbgABAQEBAQEAAAAAAAAAAAAABAAHBgUIAQEBAAMAAAAAAAAAAAAAAAAAAwECBBAAAgEDAQYFBQAAAAAAAAAAAQIAAwQFETGyczUGByFhEhMjUTJyYxQRAQADAQEAAAAAAAAAAAAAAAABEQIDMf/aAAwDAQACEQMRAD8A+i8dy+24SbogIgUCgHx3L7bhJuiAiBQKAS0R3xVFEqGk7UFC1VAJUlAAwDArqPMQMA6h7j91MFmbvFXmW0rWrlfV/NagMu1XHxbGUgidEYzMOTXTUTTt+0Gf686juLnI5jImriLYe0lL2aCe7WI1+5Katoi+J0O0jzmnSIjxXlrU+tTklh8dy+24SbogZ93e7d3HUa2WRxVMHJ0nS3rDZ6qFRtAxP6mOv4k/SU57pHrzvx2/TmCs8DhbTFWg+G2QKX00LufF3PmzEmaTNyrnNRT0phkfHcvtuEm6ICIFAoB8dy+24SbogIgUCgHx3L7bhJuiAiBQKB//2Q0K)
+                                    no-repeat right center;background-color: #eee;background-size:20%;" required>
+                                            <option value="5">5s</option>
+                                            <option value="10">10s</option>
+                                            <option value="20">20s</option>
+                                            <option value="30" selected>30s</option>
+                                            <option value="60">60s</option>
+                                        </select>
+                                    </div>
+                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
                                     <div id="export-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -69,6 +130,7 @@
 
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: bootstrap-table-auto-refresh-js" />
+<th:block th:include="include :: bootstrap-table-switch-js" />
 <script th:inline="javascript">
     var statusDatas = [[${@dict.getType('sys_common_status')}]];
     var PLATFORMDatas = [[${@dict.getType('ub8_platform_type')}]];
@@ -151,14 +213,171 @@
         });
     });
 
+    var sqloptions;
+    var elasticoptions;
+    var apioptions;
+    var exportoptions;
+
+    $('#suspendRefreshSql').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        state:"on",
+        onSwitchChange:function(event,state){
+            if(state==true){
+                if (sqloptions.autoRefresh) {
+                    if (!sqloptions.autoRefreshStatus) {
+                        sqloptions.autoRefreshStatus = true
+                        setupRefreshInterval(sqloptions,'bootstrap-table-sql')
+                    }
+                }
+            }else{
+                if (sqloptions.autoRefresh) {
+                    if (sqloptions.autoRefreshStatus) {
+                        sqloptions.autoRefreshStatus = false
+                        clearInterval(sqloptions.autoRefreshFunction)
+                    }
+                }
+            }
+        }
+    });
+
+    $("#selectTimeSql").change(function(){
+        sqloptions.autoRefreshInterval = $("#selectTimeSql").val()
+        if (sqloptions.autoRefresh) {
+            if (sqloptions.autoRefreshStatus) {
+                clearInterval(sqloptions.autoRefreshFunction)
+                setupRefreshInterval(sqloptions,'bootstrap-table-sql')
+            }
+        }
+     });
+
+    $('#suspendRefreshElastic').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        state:"on",
+        onSwitchChange:function(event,state){
+            if(state==true){
+                if (elasticoptions.autoRefresh) {
+                    if (!elasticoptions.autoRefreshStatus) {
+                        elasticoptions.autoRefreshStatus = true
+                        setupRefreshInterval(elasticoptions,'bootstrap-table-elastic')
+                    }
+                }
+            }else{
+                if (elasticoptions.autoRefresh) {
+                    if (elasticoptions.autoRefreshStatus) {
+                        elasticoptions.autoRefreshStatus = false
+                        clearInterval(elasticoptions.autoRefreshFunction)
+                    }
+                }
+            }
+        }
+    });
+
+    $("#selectTimeElastic").change(function(){
+        elasticoptions.autoRefreshInterval = $("#selectTimeElastic").val()
+        if (elasticoptions.autoRefresh) {
+            if (elasticoptions.autoRefreshStatus) {
+                clearInterval(elasticoptions.autoRefreshFunction)
+                setupRefreshInterval(elasticoptions,'bootstrap-table-elastic')
+            }
+        }
+    });
+
+    $('#suspendRefreshExport').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        state:"on",
+        onSwitchChange:function(event,state){
+            if(state==true){
+                if (exportoptions.autoRefresh) {
+                    if (!exportoptions.autoRefreshStatus) {
+                        exportoptions.autoRefreshStatus = true
+                        setupRefreshInterval(exportoptions,'bootstrap-table-export')
+                    }
+                }
+            }else{
+                if (exportoptions.autoRefresh) {
+                    if (exportoptions.autoRefreshStatus) {
+                        exportoptions.autoRefreshStatus = false
+                        clearInterval(exportoptions.autoRefreshFunction)
+                    }
+                }
+            }
+        }
+    });
+
+    $("#selectTimeExport").change(function(){
+        exportoptions.autoRefreshInterval = $("#selectTimeExport").val()
+        if (exportoptions.autoRefresh) {
+            if (exportoptions.autoRefreshStatus) {
+                clearInterval(exportoptions.autoRefreshFunction)
+                setupRefreshInterval(exportoptions,'bootstrap-table-export')
+            }
+        }
+    });
+
+    $('#suspendRefreshApi').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        state:"on",
+        onSwitchChange:function(event,state){
+            if(state==true){
+                if (apioptions.autoRefresh) {
+                    if (!apioptions.autoRefreshStatus) {
+                        apioptions.autoRefreshStatus = true
+                        setupRefreshInterval(apioptions,'bootstrap-table-api')
+                    }
+                }
+            }else{
+                if (apioptions.autoRefresh) {
+                    if (apioptions.autoRefreshStatus) {
+                        apioptions.autoRefreshStatus = false
+                        clearInterval(apioptions.autoRefreshFunction)
+                    }
+                }
+            }
+        }
+    });
+
+    $("#selectTimeApi").change(function(){
+        apioptions.autoRefreshInterval = $("#selectTimeApi").val()
+        if (apioptions.autoRefresh) {
+            if (apioptions.autoRefreshStatus) {
+                clearInterval(apioptions.autoRefreshFunction)
+                setupRefreshInterval(apioptions,'bootstrap-table-api')
+            }
+        }
+    });
+
+
+    function setupRefreshInterval(op,tableId) {
+        op.autoRefreshFunction = setInterval(() => {
+            if (!op.autoRefresh || !op.autoRefreshStatus) {
+                return
+            }
+            $("#" + table.config[tableId].id).bootstrapTable('refresh',{silent: op.autoRefreshSilent});
+        }, op.autoRefreshInterval * 1000)
+    }
+
     $(function(){
         var options = {
             url: prefix + "/updateSqlJob",
             detailUrl: ctx + 'monitor/sqlJobLog/detail/{id}"',
             id:'bootstrap-table-sql',
-            // pageSize: 100,
-            // pageNumber: 1,
-            // pageList: [100],
+            toolbar:'toolbarSql',
             pagination: false,
             striped: true,
             showSearch: false,
@@ -250,9 +469,7 @@
         var options = {
             url: prefix + "/updateExportJob",
             id:'bootstrap-table-export',
-            // pageSize: 100,
-            // pageNumber: 1,
-            // pageList: [100],
+            toolbar:'toolbarExport',
             pagination: false,
             striped: true,
             showSearch: false,
@@ -342,9 +559,7 @@
         var options = {
             url: prefix + "/updateApiJob",
             id:'bootstrap-table-api',
-            // pageSize: 100,
-            // pageNumber: 1,
-            // pageList: [100],
+            toolbar:'toolbarApi',
             pagination: false,
             striped: true,
             showSearch: false,
@@ -433,9 +648,7 @@
         var options = {
             url: prefix + "/updateElasticJob",
             id:'bootstrap-table-elastic',
-            // pageSize: 100,
-            // pageNumber: 1,
-            // pageList: [100],
+            toolbar:'toolbarElastic',
             pagination: false,
             striped: true,
             showSearch: false,
@@ -661,6 +874,14 @@
             }
         });
     }
+
+    $(function (){
+        $('[name="autoRefresh"]').hide()
+        sqloptions = $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('getOptions',table.config['bootstrap-table-sql'])
+        elasticoptions = $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('getOptions',table.config['bootstrap-table-elastic'])
+        apioptions = $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('getOptions',table.config['bootstrap-table-api'])
+        exportoptions = $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('getOptions',table.config['bootstrap-table-export'])
+    })
 
     function headerStyle(column) {
         return {

@@ -106,14 +106,6 @@
                     title: 'ID'
                 },
                 {
-                    field: 'startTime',
-                    title: i18n('sql.job.sql.log.date'),
-                    formatter: function (value, row, index) {
-                        return $.common.dateFormat(value, 'yyyy-MM-dd')
-                    },
-                    sortable: true
-                },
-                {
                     field: 'elasticId',
                     title: i18n('sql.job.id')
                 },
@@ -145,7 +137,7 @@
                     field: 'startTime',
                     title: i18n('common.start.time'),
                     formatter: function (value, row, index) {
-                        return $.common.dateFormat(value, 'HH:mm:ss')
+                        return $.common.dateFormat(value, 'yyyy-MM-dd HH:mm:ss')
                     },
                     sortable: true
                 },
@@ -153,7 +145,7 @@
                     field: 'endTime',
                     title: i18n('common.end.time'),
                     formatter: function (value, row, index) {
-                        return $.common.dateFormat(value, 'HH:mm:ss')
+                        return $.common.dateFormat(value, 'yyyy-MM-dd HH:mm:ss')
                     },
                     sortable: true
                 },
