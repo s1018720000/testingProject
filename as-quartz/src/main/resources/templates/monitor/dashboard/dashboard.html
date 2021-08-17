@@ -76,12 +76,8 @@
 
     function checkAlert(){
         if (isSwitchOn()){
-            var sqlJobRow = $('#bootstrap-table-sql').bootstrapTable('getOptions').totalRows
-            var apiJobRow = $('#bootstrap-table-api').bootstrapTable('getOptions').totalRows
-            var elasticJobRow = $('#bootstrap-table-elastic').bootstrapTable('getOptions').totalRows
             var switchOnNum = $("table .fa-toggle-on").length
-            var totalRow = sqlJobRow + apiJobRow + elasticJobRow
-            if (totalRow && switchOnNum){
+            if (switchOnNum > 0){
                 if (isPaused()){
                     play()
                 }
@@ -160,9 +156,10 @@
             url: prefix + "/updateSqlJob",
             detailUrl: ctx + 'monitor/sqlJobLog/detail/{id}"',
             id:'bootstrap-table-sql',
-            pageSize: 100,
-            pageNumber: 1,
-            pageList: [100],
+            // pageSize: 100,
+            // pageNumber: 1,
+            // pageList: [100],
+            pagination: false,
             striped: true,
             showSearch: false,
             showRefresh: false,
@@ -253,9 +250,10 @@
         var options = {
             url: prefix + "/updateExportJob",
             id:'bootstrap-table-export',
-            pageSize: 100,
-            pageNumber: 1,
-            pageList: [100],
+            // pageSize: 100,
+            // pageNumber: 1,
+            // pageList: [100],
+            pagination: false,
             striped: true,
             showSearch: false,
             showRefresh: false,
@@ -344,9 +342,10 @@
         var options = {
             url: prefix + "/updateApiJob",
             id:'bootstrap-table-api',
-            pageSize: 100,
-            pageNumber: 1,
-            pageList: [100],
+            // pageSize: 100,
+            // pageNumber: 1,
+            // pageList: [100],
+            pagination: false,
             striped: true,
             showSearch: false,
             showRefresh: false,
@@ -434,9 +433,10 @@
         var options = {
             url: prefix + "/updateElasticJob",
             id:'bootstrap-table-elastic',
-            pageSize: 100,
-            pageNumber: 1,
-            pageList: [100],
+            // pageSize: 100,
+            // pageNumber: 1,
+            // pageList: [100],
+            pagination: false,
             striped: true,
             showSearch: false,
             showRefresh: false,

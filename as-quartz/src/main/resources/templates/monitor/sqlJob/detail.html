@@ -275,6 +275,10 @@
 					if(data.code === 0){
 						var parent = window.parent;
 						parent.$.table.refresh();
+						var sqlTable = parent.table.config['bootstrap-table-sql'];
+						if (sqlTable){
+							$("#" + sqlTable.id).bootstrapTable('refreshOptions',sqlTable);
+						}
 						callbackSuccess()
 						setTimeout(() => $.modal.close(), 1000)
 					} else {
