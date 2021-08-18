@@ -39,7 +39,7 @@
                                             <option value="60">60s</option>
                                         </select>
                                     </div>
-                                    <table id="bootstrap-table-sql" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
+                                    <table id="bootstrap-table-sql"></table>
                                     <div id="sql-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                                             <option value="60">60s</option>
                                         </select>
                                     </div>
-                                    <table id="bootstrap-table-elastic" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
+                                    <table id="bootstrap-table-elastic"></table>
                                     <div id="elastic-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                                             <option value="60">60s</option>
                                         </select>
                                     </div>
-                                    <table id="bootstrap-table-api" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
+                                    <table id="bootstrap-table-api"></table>
                                     <div id="api-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -110,7 +110,7 @@
                                             <option value="60">60s</option>
                                         </select>
                                     </div>
-                                    <table id="bootstrap-table-export" data-auto-refresh="true" data-auto-refresh-interval="30"></table>
+                                    <table id="bootstrap-table-export"></table>
                                     <div id="export-update-time" class="badge badge-success pull-right" style="margin-top: 10px"><span class="title">[[#{common.last.update.time}]]：</span><span class="time"></span></div>
                                 </div>
                             </div>
@@ -129,12 +129,16 @@
 </audio>
 
 <th:block th:include="include :: footer"/>
-<th:block th:include="include :: bootstrap-table-auto-refresh-js" />
 <th:block th:include="include :: bootstrap-table-switch-js" />
 <script th:inline="javascript">
     var statusDatas = [[${@dict.getType('sys_common_status')}]];
     var PLATFORMDatas = [[${@dict.getType('ub8_platform_type')}]];
     var prefix = ctx + "monitor/dashboard";
+
+    var sqloptions;
+    var elasticoptions;
+    var apioptions;
+    var exportoptions;
 
     function checkAlert(){
         if (isSwitchOn()){
@@ -212,165 +216,6 @@
             }
         });
     });
-
-    var sqloptions;
-    var elasticoptions;
-    var apioptions;
-    var exportoptions;
-
-    $('#suspendRefreshSql').bootstrapSwitch({
-        onText:"ON",
-        offText:"OFF",
-        onColor:"success",
-        offColor:"danger",
-        size:"mini",
-        state:"on",
-        onSwitchChange:function(event,state){
-            if(state==true){
-                if (sqloptions.autoRefresh) {
-                    if (!sqloptions.autoRefreshStatus) {
-                        sqloptions.autoRefreshStatus = true
-                        setupRefreshInterval(sqloptions,'bootstrap-table-sql')
-                    }
-                }
-            }else{
-                if (sqloptions.autoRefresh) {
-                    if (sqloptions.autoRefreshStatus) {
-                        sqloptions.autoRefreshStatus = false
-                        clearInterval(sqloptions.autoRefreshFunction)
-                    }
-                }
-            }
-        }
-    });
-
-    $("#selectTimeSql").change(function(){
-        sqloptions.autoRefreshInterval = $("#selectTimeSql").val()
-        if (sqloptions.autoRefresh) {
-            if (sqloptions.autoRefreshStatus) {
-                clearInterval(sqloptions.autoRefreshFunction)
-                setupRefreshInterval(sqloptions,'bootstrap-table-sql')
-            }
-        }
-     });
-
-    $('#suspendRefreshElastic').bootstrapSwitch({
-        onText:"ON",
-        offText:"OFF",
-        onColor:"success",
-        offColor:"danger",
-        size:"mini",
-        state:"on",
-        onSwitchChange:function(event,state){
-            if(state==true){
-                if (elasticoptions.autoRefresh) {
-                    if (!elasticoptions.autoRefreshStatus) {
-                        elasticoptions.autoRefreshStatus = true
-                        setupRefreshInterval(elasticoptions,'bootstrap-table-elastic')
-                    }
-                }
-            }else{
-                if (elasticoptions.autoRefresh) {
-                    if (elasticoptions.autoRefreshStatus) {
-                        elasticoptions.autoRefreshStatus = false
-                        clearInterval(elasticoptions.autoRefreshFunction)
-                    }
-                }
-            }
-        }
-    });
-
-    $("#selectTimeElastic").change(function(){
-        elasticoptions.autoRefreshInterval = $("#selectTimeElastic").val()
-        if (elasticoptions.autoRefresh) {
-            if (elasticoptions.autoRefreshStatus) {
-                clearInterval(elasticoptions.autoRefreshFunction)
-                setupRefreshInterval(elasticoptions,'bootstrap-table-elastic')
-            }
-        }
-    });
-
-    $('#suspendRefreshExport').bootstrapSwitch({
-        onText:"ON",
-        offText:"OFF",
-        onColor:"success",
-        offColor:"danger",
-        size:"mini",
-        state:"on",
-        onSwitchChange:function(event,state){
-            if(state==true){
-                if (exportoptions.autoRefresh) {
-                    if (!exportoptions.autoRefreshStatus) {
-                        exportoptions.autoRefreshStatus = true
-                        setupRefreshInterval(exportoptions,'bootstrap-table-export')
-                    }
-                }
-            }else{
-                if (exportoptions.autoRefresh) {
-                    if (exportoptions.autoRefreshStatus) {
-                        exportoptions.autoRefreshStatus = false
-                        clearInterval(exportoptions.autoRefreshFunction)
-                    }
-                }
-            }
-        }
-    });
-
-    $("#selectTimeExport").change(function(){
-        exportoptions.autoRefreshInterval = $("#selectTimeExport").val()
-        if (exportoptions.autoRefresh) {
-            if (exportoptions.autoRefreshStatus) {
-                clearInterval(exportoptions.autoRefreshFunction)
-                setupRefreshInterval(exportoptions,'bootstrap-table-export')
-            }
-        }
-    });
-
-    $('#suspendRefreshApi').bootstrapSwitch({
-        onText:"ON",
-        offText:"OFF",
-        onColor:"success",
-        offColor:"danger",
-        size:"mini",
-        state:"on",
-        onSwitchChange:function(event,state){
-            if(state==true){
-                if (apioptions.autoRefresh) {
-                    if (!apioptions.autoRefreshStatus) {
-                        apioptions.autoRefreshStatus = true
-                        setupRefreshInterval(apioptions,'bootstrap-table-api')
-                    }
-                }
-            }else{
-                if (apioptions.autoRefresh) {
-                    if (apioptions.autoRefreshStatus) {
-                        apioptions.autoRefreshStatus = false
-                        clearInterval(apioptions.autoRefreshFunction)
-                    }
-                }
-            }
-        }
-    });
-
-    $("#selectTimeApi").change(function(){
-        apioptions.autoRefreshInterval = $("#selectTimeApi").val()
-        if (apioptions.autoRefresh) {
-            if (apioptions.autoRefreshStatus) {
-                clearInterval(apioptions.autoRefreshFunction)
-                setupRefreshInterval(apioptions,'bootstrap-table-api')
-            }
-        }
-    });
-
-
-    function setupRefreshInterval(op,tableId) {
-        op.autoRefreshFunction = setInterval(() => {
-            if (!op.autoRefresh || !op.autoRefreshStatus) {
-                return
-            }
-            $("#" + table.config[tableId].id).bootstrapTable('refresh',{silent: op.autoRefreshSilent});
-        }, op.autoRefreshInterval * 1000)
-    }
 
     $(function(){
         var options = {
@@ -462,7 +307,7 @@
             ]
         };
         $.table.init(options);
-        switchOn()
+        sqloptions = options;
     })
 
     $(function(){
@@ -552,6 +397,7 @@
             ]
         };
         $.table.init(options);
+        exportoptions = options;
     })
 
 
@@ -642,6 +488,7 @@
             ]
         };
         $.table.init(options);
+        apioptions = options;
     })
 
     $(function(){
@@ -731,6 +578,7 @@
             ]
         };
         $.table.init(options);
+        elasticoptions = options;
     })
 
 
@@ -810,7 +658,7 @@
             success : function(data) {
                 if(data.code === 0){
                     $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
-                    $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-sql']);
+                    $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('refresh',{silent: true});
                 } else {
                     $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
                 }
@@ -828,7 +676,7 @@
             success : function(data) {
                 if(data.code === 0){
                     $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
-                    $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-export']);
+                    $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('refresh',{silent: true});
                 } else {
                     $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
                 }
@@ -846,7 +694,7 @@
             success : function(data) {
                 if(data.code === 0){
                     $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
-                    $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-api']);
+                    $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('refresh',{silent: true});
                 } else {
                     $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
                 }
@@ -864,7 +712,7 @@
             success : function(data) {
                 if(data.code === 0){
                     $.modal.msgSuccess(i18n('sql.job.log.callback.success'));
-                    $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('refreshOptions',table.config['bootstrap-table-elastic']);
+                    $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('refresh',{silent: true});
                 } else {
                     $.modal.msgWarning(i18n('sql.job.log.callback.failure'));
                 }
@@ -875,13 +723,108 @@
         });
     }
 
-    $(function (){
-        $('[name="autoRefresh"]').hide()
-        sqloptions = $("#" + table.config['bootstrap-table-sql'].id).bootstrapTable('getOptions',table.config['bootstrap-table-sql'])
-        elasticoptions = $("#" + table.config['bootstrap-table-elastic'].id).bootstrapTable('getOptions',table.config['bootstrap-table-elastic'])
-        apioptions = $("#" + table.config['bootstrap-table-api'].id).bootstrapTable('getOptions',table.config['bootstrap-table-api'])
-        exportoptions = $("#" + table.config['bootstrap-table-export'].id).bootstrapTable('getOptions',table.config['bootstrap-table-export'])
-    })
+    $('#suspendRefreshSql').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        onSwitchChange:function(event,state){
+            if(state===true){
+                setupRefreshInterval(sqloptions,'bootstrap-table-sql','Sql')
+            }else{
+                clearInterval(sqloptions.autoRefreshFunction)
+            }
+        }
+    });
+
+    $("#selectTimeSql").change(function(){
+        var state = $('#suspendRefreshSql').bootstrapSwitch('state');
+        if (state) {
+            clearInterval(sqloptions.autoRefreshFunction)
+            setupRefreshInterval(sqloptions,'bootstrap-table-sql','Sql')
+        }
+    });
+
+    $('#suspendRefreshElastic').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        onSwitchChange:function(event,state){
+            if(state===true){
+                setupRefreshInterval(elasticoptions,'bootstrap-table-elastic','Elastic')
+            }else{
+                clearInterval(elasticoptions.autoRefreshFunction)
+            }
+        }
+    });
+
+    $("#selectTimeElastic").change(function(){
+        var state = $('#suspendRefreshElastic').bootstrapSwitch('state');
+        if (state) {
+            clearInterval(elasticoptions.autoRefreshFunction)
+            setupRefreshInterval(elasticoptions,'bootstrap-table-elastic','Elastic')
+        }
+    });
+
+    $('#suspendRefreshExport').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        onSwitchChange:function(event,state){
+            if(state===true){
+                setupRefreshInterval(exportoptions,'bootstrap-table-export','Export')
+            }else{
+                clearInterval(exportoptions.autoRefreshFunction)
+            }
+        }
+    });
+
+    $("#selectTimeExport").change(function(){
+        var state = $('#suspendRefreshExport').bootstrapSwitch('state');
+        if (state) {
+            clearInterval(exportoptions.autoRefreshFunction)
+            setupRefreshInterval(exportoptions,'bootstrap-table-export','Export')
+        }
+    });
+
+    $('#suspendRefreshApi').bootstrapSwitch({
+        onText:"ON",
+        offText:"OFF",
+        onColor:"success",
+        offColor:"danger",
+        size:"mini",
+        onSwitchChange:function(event,state){
+            if(state===true){
+                setupRefreshInterval(apioptions,'bootstrap-table-api','Api')
+            }else{
+                clearInterval(apioptions.autoRefreshFunction)
+            }
+        }
+    });
+
+    $("#selectTimeApi").change(function(){
+        var state = $('#suspendRefreshApi').bootstrapSwitch('state');
+        if (state) {
+            clearInterval(apioptions.autoRefreshFunction)
+            setupRefreshInterval(apioptions,'bootstrap-table-api','Api')
+        }
+    });
+
+
+    function setupRefreshInterval(op,tableId,which) {
+        op.autoRefreshFunction = setInterval(() => {
+            var state = $('#suspendRefresh' + which).bootstrapSwitch('state');
+            if (!state) {
+                return
+            }
+            $("#" + table.config[tableId].id).bootstrapTable('refresh',{silent: true});
+        }, $('#selectTime' + which).val() * 1000)
+    }
 
     function headerStyle(column) {
         return {
@@ -890,6 +833,14 @@
             }
         }[column.field]
     }
+
+    $(function (){
+        $('#suspendRefreshSql').bootstrapSwitch('state',true);
+        $('#suspendRefreshElastic').bootstrapSwitch('state',true);
+        $('#suspendRefreshApi').bootstrapSwitch('state',true);
+        $('#suspendRefreshExport').bootstrapSwitch('state',true);
+        switchOn()
+    })
 </script>
 </body>
 </html>

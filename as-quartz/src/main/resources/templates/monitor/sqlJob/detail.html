@@ -277,7 +277,7 @@
 						parent.$.table.refresh();
 						var sqlTable = parent.table.config['bootstrap-table-sql'];
 						if (sqlTable){
-							$("#" + sqlTable.id).bootstrapTable('refreshOptions',sqlTable);
+							$("#" + sqlTable.id).bootstrapTable('refresh',{silent: true});
 						}
 						callbackSuccess()
 						setTimeout(() => $.modal.close(), 1000)
