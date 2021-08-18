@@ -14,11 +14,8 @@ import com.as.quartz.service.IMoniApiLogService;
 import com.as.quartz.service.IMoniApiService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.ScheduleUtils;
-import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -201,10 +198,11 @@ public class MoniApiExecution extends AbstractQuartzJob {
                     .replace("{zh_name}", moniApi.getChName())
                     .replace("{en_name}", moniApi.getEnName())
                     .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniApi.getPlatform()))
-                    .replace("{descr}", moniApi.getDescr())
+                    .replace("{descr}", StringUtils.isNotEmpty(moniApi.getDescr()) ? moniApi.getDescr() : "")
                     .replace("{url}", moniApi.getUrl())
-                    .replace("{result}", moniApiLog.getExecuteResult())
-                    .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+                    .replace("{result}", StringUtils.isNotEmpty(moniApiLog.getExecuteResult()) ? moniApiLog.getExceptionLog() : "")
+                    .replace("{env}", StringUtils.isNotEmpty(SpringUtils.getActiveProfile()) ? Objects.requireNonNull(SpringUtils.getActiveProfile()) : "")
+                    .replace("{export}", "");
         } else {
             telegramInfo = "API Monitor ID(" + moniApi.getId() + "),Notification content is not set";
         }

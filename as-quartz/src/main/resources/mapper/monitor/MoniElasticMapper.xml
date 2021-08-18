@@ -32,10 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="UPDATE_TIME"    />
         <result property="lastAlert"    column="LAST_ALERT"    />
         <result property="ignoreAlert"    column="IGNORE_ALERT"    />
+        <result property="exportField"    column="EXPORT_FIELD"    />
     </resultMap>
 
     <sql id="selectMoniElasticVo">
-        select ID, ASID, TICKET_NUMBER, EN_NAME, CH_NAME, STATUS, PLATFORM, CRON_EXPRESSION, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, REQUESTER, PRIORITY, ACTION_ITEM, DESCR, `INDEX`, QUERY, TIME_FROM, TIME_TO, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, LAST_ALERT, IGNORE_ALERT from moni_elastic
+        select ID, ASID, TICKET_NUMBER, EN_NAME, CH_NAME, STATUS, PLATFORM, CRON_EXPRESSION, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, REQUESTER, PRIORITY, ACTION_ITEM, DESCR, `INDEX`, QUERY, TIME_FROM, TIME_TO, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, LAST_ALERT, IGNORE_ALERT, EXPORT_FIELD from moni_elastic
     </sql>
 
     <select id="selectMoniElasticList" parameterType="MoniElastic" resultMap="MoniElasticResult">
@@ -97,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">UPDATE_TIME,</if>
             <if test="lastAlert != null">LAST_ALERT,</if>
             <if test="ignoreAlert != null and ignoreAlert != ''">IGNORE_ALERT,</if>
+            <if test="exportField != null">EXPORT_FIELD,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="asid != null and asid != ''">#{asid},</if>
@@ -125,6 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="lastAlert != null">#{lastAlert},</if>
             <if test="ignoreAlert != null and ignoreAlert != ''">#{ignoreAlert},</if>
+            <if test="exportField != null">#{exportField},</if>
          </trim>
     </insert>
 
@@ -157,6 +160,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="lastAlert != null">LAST_ALERT = #{lastAlert},</if>
             <if test="ignoreAlert != null and ignoreAlert != ''">IGNORE_ALERT = #{ignoreAlert},</if>
+            <if test="exportField != null">EXPORT_FIELD = #{exportField},</if>
         </trim>
         where ID = #{id}
     </update>

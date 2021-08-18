@@ -169,13 +169,16 @@
                     field: 'executeResult',
                     title: i18n('sql.job.execution.result'),
                     formatter: function (value, row, index) {
-                        // var array = $.common.split(value,';',null)
                         if (value){
                             var array = value.toString().split(';')
                             if (array.length === 2){
                                 return '<p><span class="label label-warning" data-toggle="tooltip" data-placement="left" title="' + array[1] + '">' + array[0] + '</span></p>'
                             }
-                            return '<p><span class="label label-warning" data-toggle="tooltip" data-placement="left" title="' + array[0] + '">' + array[0] + '</span></p>'
+                            var exportResult = row.exportResult
+                            if (!exportResult){
+                                exportResult = array[0]
+                            }
+                            return '<p><span class="label label-warning" data-toggle="tooltip" data-placement="left" title="' + exportResult + '">' + array[0] + '</span></p>'
                         }
                         return '<p><span class="label label-warning">NO RESULT</span></p>'
                     }

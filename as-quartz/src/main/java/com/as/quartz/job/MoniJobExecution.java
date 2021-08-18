@@ -389,9 +389,10 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     .replace("{zh_name}", moniJob.getChName())
                     .replace("{en_name}", moniJob.getEnName())
                     .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniJob.getPlatform()))
-                    .replace("{descr}", moniJob.getDescr())
+                    .replace("{descr}", StringUtils.isNotEmpty(moniJob.getDescr()) ? moniJob.getDescr() : "")
                     .replace("{result}", "")
-                    .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+                    .replace("{env}", StringUtils.isNotEmpty(SpringUtils.getActiveProfile()) ? Objects.requireNonNull(SpringUtils.getActiveProfile()) : "")
+                    .replace("{export}", "");
         } else {
             telegramInfo = "DB Monitor ID(" + moniJob.getId() + "),Notification content is not set";
         }

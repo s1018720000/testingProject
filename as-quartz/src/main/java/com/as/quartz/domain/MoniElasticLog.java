@@ -87,6 +87,12 @@ public class MoniElasticLog extends BaseEntity {
     @Excel(name = "操作者,系统则为system")
     private String operator;
 
+    /**
+     * 导出内容
+     */
+    @Excel(name = "导出内容")
+    private String exportResult;
+
     private MoniElastic moniElastic;
 
     @Override
@@ -103,6 +109,7 @@ public class MoniElasticLog extends BaseEntity {
                 .append("status", getStatus())
                 .append("alertStatus", getAlertStatus())
                 .append("operator", getOperator())
+                .append("exportResult", getExportResult())
                 .toString();
     }
 }

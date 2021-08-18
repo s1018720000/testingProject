@@ -178,6 +178,12 @@ public class MoniElastic extends BaseEntity {
     @Excel(name = "忽略x分钟内告警")
     private Integer ignoreAlert;
 
+    /**
+     * 导出字段
+     */
+    @Excel(name = "导出字段")
+    private String exportField;
+
     public Date getNextValidTime() {
         if (StringUtils.isNotEmpty(cronExpression)) {
             return CronUtils.getNextExecution(cronExpression);
@@ -215,6 +221,7 @@ public class MoniElastic extends BaseEntity {
                 .append("updateTime", getUpdateTime())
                 .append("lastAlert", getLastAlert())
                 .append("ignoreAlert", getIgnoreAlert())
+                .append("exportField", getExportField())
                 .toString();
     }
 }

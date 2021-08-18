@@ -1,5 +1,7 @@
 package com.as.quartz.job;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.as.common.config.ASConfig;
 import com.as.common.constant.Constants;
 import com.as.common.constant.DictTypeConstants;
@@ -15,11 +17,8 @@ import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.ScheduleUtils;
-import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -74,6 +73,9 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             moniElasticLog.setStatus(Constants.SUCCESS);
             moniElasticLog.setAlertStatus(Constants.FAIL);
         } else if (doMatch(hits)) {
+            //处理需要导出某字段信息
+            saveExportField(hits);
+
             Map<String, String> compareResult = null;
             if (hits.length > 0 && hits[0].getSourceAsString().contains("win info")) {
                 compareResult = SpringUtils.getBean(IMoniElasticService.class).doPf1DrawCompare(hits);
@@ -97,6 +99,32 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             moniElasticLog.setAlertStatus(Constants.FAIL);
         }
 
+    }
+
+    private void saveExportField(SearchHit[] hits) {
+        String exportField = moniElastic.getExportField();
+        if (hits.length > 0 && StringUtils.isNotEmpty(exportField)) {
+            String sourceAsString = hits[0].getSourceAsString();
+            JSONObject jsonObject = JSON.parseObject(sourceAsString);
+            JSONObject jsonObjectTmp = jsonObject;
+            String[] split = exportField.split("\\.");
+            for (int i = 0; i < split.length - 1; i++) {
+                if (StringUtils.isNull(jsonObjectTmp)) {
+                    break;
+                }
+                jsonObjectTmp = jsonObjectTmp.getJSONObject(split[i]);
+            }
+            if (StringUtils.isNotNull(jsonObjectTmp)) {
+                String exportResult = jsonObjectTmp.getString(split[split.length - 1]);
+                if (StringUtils.isNotNull(exportResult)) {
+                    moniElasticLog.setExportResult(exportField + ":" + exportResult);
+                } else {
+                    moniElasticLog.setExportResult("No results found for \"" + exportField + "\"");
+                }
+            } else {
+                moniElasticLog.setExportResult("No results found for \"" + exportField + "\"");
+            }
+        }
     }
 
     /**
@@ -286,9 +314,10 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     .replace("{zh_name}", moniElastic.getChName())
                     .replace("{en_name}", moniElastic.getEnName())
                     .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniElastic.getPlatform()))
-                    .replace("{descr}", moniElastic.getDescr())
+                    .replace("{descr}", StringUtils.isNotEmpty(moniElastic.getDescr()) ? moniElastic.getDescr() : "")
                     .replace("{result}", moniElasticLog.getExecuteResult().replace(";", ""))
-                    .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+                    .replace("{env}", StringUtils.isNotEmpty(SpringUtils.getActiveProfile()) ? Objects.requireNonNull(SpringUtils.getActiveProfile()) : "")
+                    .replace("{export}", StringUtils.isNotEmpty(moniElasticLog.getExportResult()) ? moniElasticLog.getExportResult() : "");
         } else {
             telegramInfo = "LOG Monitor ID(" + moniElastic.getId() + "),Notification content is not set";
         }
