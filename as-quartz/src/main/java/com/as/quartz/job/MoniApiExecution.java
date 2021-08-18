@@ -13,6 +13,7 @@ import com.as.quartz.domain.MoniApiLog;
 import com.as.quartz.service.IMoniApiLogService;
 import com.as.quartz.service.IMoniApiService;
 import com.as.quartz.util.AbstractQuartzJob;
+import com.as.quartz.util.ScheduleUtils;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
@@ -189,39 +190,29 @@ public class MoniApiExecution extends AbstractQuartzJob {
 
 
     private SendResponse sendTelegram() throws Exception {
-        String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniApi.getTelegramConfig());
-        if (StringUtils.isEmpty(telegramConfig)) {
-            //若是沒有设置telegram通知群组,则抛出例外
-            throw new Exception("Cant find any telegram group setting");
-        }
-        String[] tgData = telegramConfig.split(";");
-        if (tgData.length != 2) {
-            //若是数量不等于2，则配置错误
-            throw new Exception("telegram group Configuration error, please check");
-        }
+        String[] tgData = ScheduleUtils.getTgData(moniApi.getTelegramConfig());
         String bot = tgData[0];
         String chatId = tgData[1];
-        if (!"prod".equals(SpringUtils.getActiveProfile())) {
-            chatId = "-532553117";
-        }
         String telegramInfo = moniApi.getTelegramInfo();
-        telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniApiLog.getApiId()))
-                .replace("{asid}", moniApi.getAsid())
-                .replace("{priority}", "1".equals(moniApi.getPriority()) ? "NU" : "URG")
-                .replace("{zh_name}", moniApi.getChName())
-                .replace("{en_name}", moniApi.getEnName())
-                .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniApi.getPlatform()))
-                .replace("{descr}", moniApi.getDescr())
-                .replace("{url}", moniApi.getUrl())
-                .replace("{result}", moniApiLog.getExecuteResult())
-                .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
-        TelegramBot telegramBot = new TelegramBot(bot);
+        if (StringUtils.isNotEmpty(telegramInfo)) {
+            telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniApi.getId()))
+                    .replace("{asid}", moniApi.getAsid())
+                    .replace("{priority}", "1".equals(moniApi.getPriority()) ? "NU" : "URG")
+                    .replace("{zh_name}", moniApi.getChName())
+                    .replace("{en_name}", moniApi.getEnName())
+                    .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniApi.getPlatform()))
+                    .replace("{descr}", moniApi.getDescr())
+                    .replace("{url}", moniApi.getUrl())
+                    .replace("{result}", moniApiLog.getExecuteResult())
+                    .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        } else {
+            telegramInfo = "API Monitor ID(" + moniApi.getId() + "),Notification content is not set";
+        }
 
-        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniApi.getId()))));
-        sendMessage.replyMarkup(inlineKeyboard);
-        return telegramBot.execute(sendMessage);
+
+        return ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
     }
 
     /**

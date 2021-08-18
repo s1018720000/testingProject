@@ -71,8 +71,10 @@
                 <label class="col-sm-3 control-label">[[#{sql.job.related.export}]]：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                        <input name="relExport" onclick="selectExport()" id="relExport" readonly="true" class="form-control" type="text">
-                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        <input name="relExport" id="relExport" class="form-control" type="text">
+                        <span class="input-group-btn" onclick="selectExport()">
+                        <button type="button" class="btn btn-default" style="padding-bottom: 3px;"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -98,11 +100,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.group}]]：</label>
                 <div class="col-sm-8">
-                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}">
-                        <option value="">--[[#{dict.data.select}]]--</option>
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'} ? true : false"></option>
                     </select>
                 </div>
             </div>

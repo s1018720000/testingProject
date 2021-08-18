@@ -77,9 +77,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="mailBcc != null">MAIL_BCC,</if>
             <if test="mailSubject != null and mailSubject != ''">MAIL_SUBJECT,</if>
             <if test="mailContent != null">MAIL_CONTENT,</if>
-            <if test="createBy != null">CREATE_BY,</if>
+            <if test="createBy != null and createBy != ''">CREATE_BY,</if>
             <if test="createTime != null">CREATE_TIME,</if>
-            <if test="updateBy != null">UPDATE_BY,</if>
+            <if test="updateBy != null and updateBy != ''">UPDATE_BY,</if>
             <if test="updateTime != null">UPDATE_TIME,</if>
             <if test="requester != null and requester != ''">REQUESTER,</if>
             <if test="lastExport != null">LAST_EXPORT,</if>
@@ -99,9 +99,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="mailBcc != null">#{mailBcc},</if>
             <if test="mailSubject != null and mailSubject != ''">#{mailSubject},</if>
             <if test="mailContent != null">#{mailContent},</if>
-            <if test="createBy != null">#{createBy},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="requester != null and requester != ''">#{requester},</if>
             <if test="lastExport != null">#{lastExport},</if>
@@ -125,9 +125,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="mailBcc != null">MAIL_BCC = #{mailBcc},</if>
             <if test="mailSubject != null and mailSubject != ''">MAIL_SUBJECT = #{mailSubject},</if>
             <if test="mailContent != null">MAIL_CONTENT = #{mailContent},</if>
-            <if test="createBy != null">CREATE_BY = #{createBy},</if>
+            <if test="createBy != null and createBy != ''">CREATE_BY = #{createBy},</if>
             <if test="createTime != null">CREATE_TIME = #{createTime},</if>
-            <if test="updateBy != null">UPDATE_BY = #{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">UPDATE_BY = #{updateBy},</if>
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="requester != null and requester != ''">REQUESTER = #{requester},</if>
             <if test="lastExport != null">LAST_EXPORT = #{lastExport},</if>

@@ -80,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cronExpression != null and cronExpression != ''">CRON_EXPRESSION,</if>
             <if test="telegramAlert != null and telegramAlert != ''">TELEGRAM_ALERT,</if>
             <if test="telegramInfo != null">TELEGRAM_INFO,</if>
-            <if test="telegramConfig != null">TELEGRAM_CONFIG,</if>
+            <if test="telegramConfig != null and telegramConfig != ''">TELEGRAM_CONFIG,</if>
             <if test="requester != null and requester != ''">REQUESTER,</if>
             <if test="priority != null and priority != ''">PRIORITY,</if>
             <if test="actionItem != null and actionItem != ''">ACTION_ITEM,</if>
@@ -90,13 +90,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeFrom != null and timeFrom != ''">TIME_FROM,</if>
             <if test="timeTo != null and timeTo != ''">TIME_TO,</if>
             <if test="autoMatch != null and autoMatch != ''">AUTO_MATCH,</if>
-            <if test="expectedResult != null and expectedResult != ''">EXPECTED_RESULT,</if>
+            <if test="expectedResult != null">EXPECTED_RESULT,</if>
             <if test="createBy != null and createBy != ''">CREATE_BY,</if>
             <if test="createTime != null">CREATE_TIME,</if>
-            <if test="updateBy != null">UPDATE_BY,</if>
+            <if test="updateBy != null and updateBy != ''">UPDATE_BY,</if>
             <if test="updateTime != null">UPDATE_TIME,</if>
             <if test="lastAlert != null">LAST_ALERT,</if>
-            <if test="ignoreAlert != null">IGNORE_ALERT,</if>
+            <if test="ignoreAlert != null and ignoreAlert != ''">IGNORE_ALERT,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="asid != null and asid != ''">#{asid},</if>
@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
             <if test="telegramAlert != null and telegramAlert != ''">#{telegramAlert},</if>
             <if test="telegramInfo != null">#{telegramInfo},</if>
-            <if test="telegramConfig != null">#{telegramConfig},</if>
+            <if test="telegramConfig != null and telegramConfig != ''">#{telegramConfig},</if>
             <if test="requester != null and requester != ''">#{requester},</if>
             <if test="priority != null and priority != ''">#{priority},</if>
             <if test="actionItem != null and actionItem != ''">#{actionItem},</if>
@@ -118,13 +118,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeFrom != null and timeFrom != ''">#{timeFrom},</if>
             <if test="timeTo != null and timeTo != ''">#{timeTo},</if>
             <if test="autoMatch != null and autoMatch != ''">#{autoMatch},</if>
-            <if test="expectedResult != null and expectedResult != ''">#{expectedResult},</if>
+            <if test="expectedResult != null">#{expectedResult},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="lastAlert != null">#{lastAlert},</if>
-            <if test="ignoreAlert != null">#{ignoreAlert},</if>
+            <if test="ignoreAlert != null and ignoreAlert != ''">#{ignoreAlert},</if>
          </trim>
     </insert>
 
@@ -140,7 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cronExpression != null and cronExpression != ''">CRON_EXPRESSION = #{cronExpression},</if>
             <if test="telegramAlert != null and telegramAlert != ''">TELEGRAM_ALERT = #{telegramAlert},</if>
             <if test="telegramInfo != null">TELEGRAM_INFO = #{telegramInfo},</if>
-            <if test="telegramConfig != null">TELEGRAM_CONFIG = #{telegramConfig},</if>
+            <if test="telegramConfig != null and telegramConfig != ''">TELEGRAM_CONFIG = #{telegramConfig},</if>
             <if test="requester != null and requester != ''">REQUESTER = #{requester},</if>
             <if test="priority != null and priority != ''">PRIORITY = #{priority},</if>
             <if test="actionItem != null and actionItem != ''">ACTION_ITEM = #{actionItem},</if>
@@ -150,13 +150,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeFrom != null and timeFrom != ''">TIME_FROM = #{timeFrom},</if>
             <if test="timeTo != null and timeTo != ''">TIME_TO = #{timeTo},</if>
             <if test="autoMatch != null and autoMatch != ''">AUTO_MATCH = #{autoMatch},</if>
-            <if test="expectedResult != null and expectedResult != ''">EXPECTED_RESULT = #{expectedResult},</if>
+            <if test="expectedResult != null">EXPECTED_RESULT = #{expectedResult},</if>
             <if test="createBy != null and createBy != ''">CREATE_BY = #{createBy},</if>
             <if test="createTime != null">CREATE_TIME = #{createTime},</if>
-            <if test="updateBy != null">UPDATE_BY = #{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">UPDATE_BY = #{updateBy},</if>
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="lastAlert != null">LAST_ALERT = #{lastAlert},</if>
-            <if test="ignoreAlert != null">IGNORE_ALERT = #{ignoreAlert},</if>
+            <if test="ignoreAlert != null and ignoreAlert != ''">IGNORE_ALERT = #{ignoreAlert},</if>
         </trim>
         where ID = #{id}
     </update>

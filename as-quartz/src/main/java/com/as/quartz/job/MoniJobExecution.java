@@ -18,12 +18,9 @@ import com.as.quartz.service.IMoniJobService;
 import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.HtmlTemplateUtil;
-import com.pengrad.telegrambot.TelegramBot;
+import com.as.quartz.util.ScheduleUtils;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import gui.ava.html.image.generator.HtmlImageGenerator;
 import org.quartz.DisallowConcurrentExecution;
@@ -381,50 +378,36 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private SendResponse sendTelegram() throws Exception {
-        String telegramConfig = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, moniJob.getTelegramConfig());
-        if (StringUtils.isEmpty(telegramConfig)) {
-            //若是沒有设置telegram通知群组,则抛出例外
-            throw new Exception("Cant find any telegram group setting");
-        }
-        String[] tgData = telegramConfig.split(";");
-        if (tgData.length != 2) {
-            //若是数量不等于2，则配置错误
-            throw new Exception("telegram group Configuration error, please check");
-        }
+        String[] tgData = ScheduleUtils.getTgData(moniJob.getTelegramConfig());
         String bot = tgData[0];
         String chatId = tgData[1];
-        if (!"prod".equals(SpringUtils.getActiveProfile())) {
-            chatId = "-532553117";
-        }
         String telegramInfo = moniJob.getTelegramInfo();
-        telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniJobLog.getJobId()))
-                .replace("{asid}", moniJob.getAsid())
-                .replace("{priority}", "1".equals(moniJob.getPriority()) ? "NU" : "URG")
-                .replace("{zh_name}", moniJob.getChName())
-                .replace("{en_name}", moniJob.getEnName())
-                .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniJob.getPlatform()))
-                .replace("{descr}", moniJob.getDescr())
-                .replace("{result}", "Execution Results do not match expected result")
-                .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        if (StringUtils.isNotEmpty(telegramInfo)) {
+            telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniJob.getId()))
+                    .replace("{asid}", moniJob.getAsid())
+                    .replace("{priority}", "1".equals(moniJob.getPriority()) ? "NU" : "URG")
+                    .replace("{zh_name}", moniJob.getChName())
+                    .replace("{en_name}", moniJob.getEnName())
+                    .replace("{platform}", DictUtils.getDictLabel(DictTypeConstants.UB8_PLATFORM_TYPE, moniJob.getPlatform()))
+                    .replace("{descr}", moniJob.getDescr())
+                    .replace("{result}", "")
+                    .replace("{env}", Objects.requireNonNull(SpringUtils.getActiveProfile()));
+        } else {
+            telegramInfo = "DB Monitor ID(" + moniJob.getId() + "),Notification content is not set";
+        }
 
-        SendMessage sendMessage = new SendMessage(chatId, telegramInfo + "\n\n`Failed to send picture\nplz click 'LOG Details' to view details`").parseMode(ParseMode.Markdown);
         String imgPath = createImg();
-        SendPhoto sendPhoto = new SendPhoto(chatId, new File(imgPath));
-        sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
+
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
                 new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
-        sendPhoto.replyMarkup(inlineKeyboard);
-        sendMessage.replyMarkup(inlineKeyboard);
 
         SendResponse execute;
         try {
-            TelegramBot photoBot = new TelegramBot(bot);
-            execute = photoBot.execute(sendPhoto);
+            execute = ScheduleUtils.sendPhoto(bot, chatId, telegramInfo, inlineKeyboard, new File(imgPath));
         } catch (Exception e) {
             //图片发送异常则发送文字告警
-            TelegramBot messageBot = new TelegramBot(bot);
-            execute = messageBot.execute(sendMessage);
+            execute = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
         }
         return execute;
     }

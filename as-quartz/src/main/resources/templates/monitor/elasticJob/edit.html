@@ -84,9 +84,9 @@
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.group}]]：</label>
                 <div class="col-sm-8">
-                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}">
+                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}" required>
                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{telegramConfig}"></option>
                     </select>
                 </div>

@@ -1,9 +1,19 @@
 package com.as.quartz.util;
 
+import com.as.common.constant.DictTypeConstants;
 import com.as.common.constant.ScheduleConstants;
+import com.as.common.utils.DictUtils;
+import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
-import com.as.quartz.service.ISysJobService;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.SendResponse;
 import org.quartz.*;
+
+import java.io.File;
 
 /**
  * 定时任务工具类
@@ -69,5 +79,54 @@ public class ScheduleUtils {
             scheduler.pauseJob(ScheduleUtils.getJobKey(jobCode, jobGroup));
         }
     }
+
+
+    /**
+     * 获取TG配置
+     */
+    public static String[] getTgData(String telegramConfig) throws Exception {
+        String[] tgData;
+        //如果不是生产环境则返回测试群组
+        if (!"prod".equals(SpringUtils.getActiveProfile())) {
+            tgData = new String[2];
+            tgData[0] = "1937111623:AAHDVpT1bezDDJ_Lf7HmyYCRd8mZeSlHCwM";
+            tgData[1] = "-532553117";
+            return tgData;
+        }
+
+        String config = DictUtils.getDictRemark(DictTypeConstants.TELEGRAM_NOTICE_GROUP, telegramConfig);
+        if (StringUtils.isEmpty(config)) {
+            //若是沒有设置telegram通知群组,则抛出例外
+            throw new Exception("Cant find any telegram group setting");
+        }
+        tgData = config.split(";");
+        if (tgData.length != 2) {
+            //若是数量不等于2，则配置错误
+            throw new Exception("telegram group Configuration error, please check");
+        }
+        return tgData;
+    }
+
+    /**
+     * 发送tg告警 文字
+     */
+    public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
+        TelegramBot messageBot = new TelegramBot(bot);
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        sendMessage.replyMarkup(inlineKeyboard);
+        return messageBot.execute(sendMessage);
+    }
+
+    /**
+     * 发送tg告警 图片
+     */
+    public static SendResponse sendPhoto(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
+        TelegramBot photoBot = new TelegramBot(bot);
+        SendPhoto sendPhoto = new SendPhoto(chatId, file);
+        sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
+        sendPhoto.replyMarkup(inlineKeyboard);
+        return photoBot.execute(sendPhoto);
+    }
+
 
 }

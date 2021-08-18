@@ -83,11 +83,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">[[#{sql.job.tg.group}]]：</label>
+                <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.group}]]：</label>
                 <div class="col-sm-8">
-                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}">
-                        <option value="">--[[#{dict.data.select}]]--</option>
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    <select name="telegramConfig" class="form-control m-b" th:with="type=${@dict.getType('telegram_notice_group')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'} ? true : false"></option>
                     </select>
                 </div>
             </div>
@@ -144,7 +143,7 @@
                 <label class="col-sm-3 control-label">[[#{api.job.content.type}]]：</label>
                 <div class="col-sm-8">
                     <select name="contentType" class="form-control m-b" th:with="type=${@dict.getType('api_job_content')}">
-                        <option value="">--[[#{dict.data.select}]]--</option>
+                        <option value="">--[[#{dict.data.none}]]--</option>
                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                     </select>
                 </div>
