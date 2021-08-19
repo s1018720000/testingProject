@@ -310,8 +310,8 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         if (StringUtils.isNotEmpty(telegramInfo)) {
             String exportResult = moniElasticLog.getExportResult();
             if (StringUtils.isNotEmpty(exportResult)) {
-                if (exportResult.length() > 1000){
-                    exportResult = exportResult.substring(0, 1000) + "\n... more";
+                if (exportResult.length() > 500){
+                    exportResult = exportResult.substring(0, 500) + "\n... more";
                 }
             } else {
                 exportResult = "";
