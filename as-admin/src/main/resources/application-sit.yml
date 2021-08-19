@@ -12,13 +12,13 @@ elastic:
     #pf1
     pf1:
         #url
-        url: kibana2.pf1prod.com
+        url: kibana2.pf1sit1-oob.com
         #端口
         port: 9200
     #pf2
     pf2:
         #url
-        Url: log-kafka1.pf2prod.com
+        Url: log-kafka1.pf2sit1-oob.com
         #端口
         port: 9200
 
@@ -54,17 +54,17 @@ spring:
                 main:
                     # enabled 数据源开关
                     enabled: true
-                    url: jdbc:oracle:thin:@DB.pf1prod.com:1521:LOTTERY
-                    username: AS_MONITOR
-                    password: MS_839qaz0okm
+                    url: jdbc:oracle:thin:@DB.PF1SIT1-OOB.COM:1521/LOTTERY
+                    username: LOTT_NEW_A3D1
+                    password: Ljdeis_ei384
                     driverClassName: oracle.jdbc.driver.OracleDriver
                 # pf1 lottery sec
                 sec:
                     # enabled 数据源开关
                     enabled: true
-                    url: jdbc:oracle:thin:@DB-S.pf1prod.com:1521:LOTTERY
-                    username: AS_MONITOR
-                    password: MS_839qaz0okm
+                    url: jdbc:oracle:thin:@DB.PF1SIT1-OOB.COM:1521/LOTTERY
+                    username: LOTT_NEW_A3D1
+                    password: Ljdeis_ei384
                     driverClassName: oracle.jdbc.driver.OracleDriver
             # pf2 core sit
             pf2-core:
@@ -72,42 +72,43 @@ spring:
                 main:
                     # enabled 数据源开关
                     enabled: true
-                    url: jdbc:oracle:thin:@DB.pf2prod.com:1521/UB8.pf2prod.com
-                    username: AS_MONITOR
-                    password: M0nI7to8S
+                    url: jdbc:oracle:thin:@DB.PF2SIT1-OOB.COM:1521/UB8.pf2sit1.com
+                    username: core
+                    password: adhweqUDaj22
                     driverClassName: oracle.jdbc.driver.OracleDriver
                 # pf2 core sec
                 sec:
                     # enabled 数据源开关
                     enabled: true
-                    url: jdbc:oracle:thin:@DB-S.pf2prod.com:1521/UB8.pf2prod.com
-                    username: AS_MONITOR
-                    password: M0nI7to8S
+                    url: jdbc:oracle:thin:@DB.PF2SIT1-OOB.COM:1521/UB8.pf2sit1.com
+                    username: core
+                    password: adhweqUDaj22
                     driverClassName: oracle.jdbc.driver.OracleDriver
             # pf2 draw sit
             pf2-draw:
                 # enabled 数据源开关
                 enabled: true
-                url: jdbc:oracle:thin:@DB-S.pf2prod.com:1521/UB8.pf2prod.com
-                username: AS_MONITOR
-                password: M0nI7to8S
+                url: jdbc:oracle:thin:@DB.PF2SIT1-OOB.COM:1521/UB8.pf2sit1.com
+                username: draw
+                password: Draw12800sdjj
                 driverClassName: oracle.jdbc.driver.OracleDriver
             # pf2 dw sit
             pf2-dw:
                 # enabled 数据源开关
+                # remark 測試環境共用
                 enabled: true
-                url:  jdbc:oracle:thin:@DWDB.pf2prod.com:1521/DWDB.pf2prod.com
+                url:  jdbc:oracle:thin:@DWDB.pf2dev1-oob.com:1521/DW.pf2dev1.com
                 username: AS_MONITOR
-                password: Jn3Ms9qoOc
+                password: BBdsk_1720ij
                 driverClassName: oracle.jdbc.driver.OracleDriver
             # pf2 ods sit
-            pf2-ods:
+            #pf2-ods:
                 # enabled 数据源开关
-                enabled: true
-                url: jdbc:oracle:thin:@ODS-S.pf2prod.com:1521/ODS.pf2prod.com
-                username: AS_MONITOR
-                password: M0nI7to8S
-                driverClassName: oracle.jdbc.driver.OracleDriver
+                #enabled: true
+                #url: jdbc:oracle:thin:@ODS-S.pf2prod.com:1521/ODS.pf2prod.com
+                #username: AS_MONITOR
+                #password: M0nI7to8S
+                #driverClassName: oracle.jdbc.driver.OracleDriver
 
 
             # 初始连接数
