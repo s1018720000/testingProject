@@ -308,6 +308,14 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         String chatId = tgData[1];
         String telegramInfo = moniElastic.getTelegramInfo();
         if (StringUtils.isNotEmpty(telegramInfo)) {
+            String exportResult = moniElasticLog.getExportResult();
+            if (StringUtils.isNotEmpty(exportResult)) {
+                if (exportResult.length() > 1000){
+                    exportResult = exportResult.substring(0, 1000) + "\n... more";
+                }
+            } else {
+                exportResult = "";
+            }
             telegramInfo = telegramInfo.replace("{id}", String.valueOf(moniElastic.getId()))
                     .replace("{asid}", moniElastic.getAsid())
                     .replace("{priority}", "1".equals(moniElastic.getPriority()) ? "NU" : "URG")
@@ -317,7 +325,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     .replace("{descr}", StringUtils.isNotEmpty(moniElastic.getDescr()) ? moniElastic.getDescr() : "")
                     .replace("{result}", moniElasticLog.getExecuteResult().replace(";", ""))
                     .replace("{env}", StringUtils.isNotEmpty(SpringUtils.getActiveProfile()) ? Objects.requireNonNull(SpringUtils.getActiveProfile()) : "")
-                    .replace("{export}", StringUtils.isNotEmpty(moniElasticLog.getExportResult()) ? moniElasticLog.getExportResult() : "");
+                    .replace("{export}", StringUtils.isNotEmpty(exportResult) ? exportResult : "");
         } else {
             telegramInfo = "LOG Monitor ID(" + moniElastic.getId() + "),Notification content is not set";
         }

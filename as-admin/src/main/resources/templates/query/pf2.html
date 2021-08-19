@@ -35,6 +35,9 @@
 				</div>
 			</form>
 		</div>
+		<div class="btn-group-sm" id="toolbar" role="group" style="display: none">
+			<span id="execute-time" class="label label-warning">[[#{sql.job.execution.time}]]：<span class="time"></span></span>
+		</div>
 		<div class="col-sm-12 select-table table-bordered">
 			<table id="bootstrap-table"></table>
 		</div>
@@ -48,6 +51,8 @@
 	var prefix = ctx + "query/db";
 
 	var tempScript;
+
+	var beforeTime;
 
 	// 动态获取列
 	function ajaxColumns() {
@@ -87,6 +92,8 @@
 		} else {
 			refreshTable(columns);
 		}
+		beforeTime = new Date().getTime().toString()
+		$('#toolbar').hide()
 	}
 	// 刷新表格
 	function refreshTable(columns) {
@@ -102,6 +109,9 @@
 			firstLoad: false,
 			showExport: true,
 			striped: true,
+			showRefresh : false,
+			showToggle: false,
+			onLoadSuccess: onLoadSuccess,
 			queryParams: function (params) {
 				var curParams = {
 					// 传递参数查询参数
@@ -133,6 +143,13 @@
 		if ($.validate.form()){
 			ajaxColumns();
 		}
+	}
+
+	function onLoadSuccess(){
+		var afterTime = new Date().getTime().toString()
+		executeTime = (parseFloat(afterTime) - parseFloat(beforeTime)) / 1000.0
+		$('#execute-time .time').text(executeTime.toFixed(3) + 's')
+		$('#toolbar').show()
 	}
 
 	function headerStyle(column) {
