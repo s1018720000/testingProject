@@ -88,7 +88,7 @@
 		});
 		if(!table.get(table.options.id)){
 			initTable(columns);
-			refreshTable(columns);
+			// refreshTable(columns);
 		} else {
 			refreshTable(columns);
 		}
@@ -106,7 +106,7 @@
 	function initTable(columns){
 		var options = {
 			url: prefix + "/query",
-			firstLoad: false,
+			firstLoad: true,
 			showExport: true,
 			striped: true,
 			showRefresh : false,
@@ -125,6 +125,9 @@
 
 				if (tempScript){
 					dataParam['script'] = tempScript;
+				}
+				if (beforeTime === 0) {
+					beforeTime = new Date().getTime().toString()
 				}
 				return $.extend(curParams, dataParam);
 			},
@@ -150,6 +153,7 @@
 		executeTime = (parseFloat(afterTime) - parseFloat(beforeTime)) / 1000.0
 		$('#execute-time .time').text(executeTime.toFixed(3) + 's')
 		$('#toolbar').show()
+		beforeTime = 0
 	}
 
 	function headerStyle(column) {

@@ -118,6 +118,9 @@
 					if (tempScript){
 						dataParam['script'] = tempScript;
 					}
+					if (beforeTime === 0) {
+						beforeTime = new Date().getTime().toString()
+					}
 					return $.extend(curParams, dataParam);
 				},
 				firstLoad: true,
@@ -149,6 +152,7 @@
 			executeTime = (parseFloat(afterTime) - parseFloat(beforeTime)) / 1000.0
 			$('#execute-time .time').text(executeTime.toFixed(3) + 's')
 			$('#toolbar').show()
+			beforeTime = 0
 		}
 
 		function headerStyle(column) {

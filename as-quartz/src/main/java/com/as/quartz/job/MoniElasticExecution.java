@@ -310,7 +310,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         if (StringUtils.isNotEmpty(telegramInfo)) {
             String exportResult = moniElasticLog.getExportResult();
             if (StringUtils.isNotEmpty(exportResult)) {
-                if (exportResult.length() > 500){
+                if (exportResult.length() > 500) {
                     exportResult = exportResult.substring(0, 500) + "\n... more";
                 }
             } else {
@@ -325,7 +325,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     .replace("{descr}", StringUtils.isNotEmpty(moniElastic.getDescr()) ? moniElastic.getDescr() : "")
                     .replace("{result}", moniElasticLog.getExecuteResult().replace(";", ""))
                     .replace("{env}", StringUtils.isNotEmpty(SpringUtils.getActiveProfile()) ? Objects.requireNonNull(SpringUtils.getActiveProfile()) : "")
-                    .replace("{export}", StringUtils.isNotEmpty(exportResult) ? exportResult : "");
+                    .replace("{export}", exportResult);
         } else {
             telegramInfo = "LOG Monitor ID(" + moniElastic.getId() + "),Notification content is not set";
         }
