@@ -1,0 +1,151 @@
+#项目相关配置
+as:
+    # 实例演示开关
+    demoEnabled: false
+    # 文件路径 示例（ Windows配置D:/as/uploadPath，Linux配置 /home/as/uploadPath）
+    #所有文件都会保存在里面(telegram photo、export excel等)，路径不存在会自动创建，不需要手工创建
+    profile: /usr/local/backend/uploadPath
+    # 项目域名(仅在telegram推送告警时使用，别无他用)
+    asDomain: https://asportal.nuttli.com
+
+elastic:
+    #pf1
+    pf1:
+        #url
+        url: kibana2.pf1prod.com
+        #端口
+        port: 9200
+    #pf2
+    pf2:
+        #url
+        Url: log-kafka1.pf2prod.com
+        #端口
+        port: 9200
+
+# 生产环境配置
+server:
+    # 服务器的HTTP端口，默认为80
+    port: 8099
+    servlet:
+        # 应用的访问路径
+        context-path: /
+    tomcat:
+        # tomcat的URI编码
+        uri-encoding: UTF-8
+        # tomcat最大线程数，默认为200
+        max-threads: 800
+        # Tomcat启动初始化的线程数，默认值25
+        min-spare-threads: 30
+
+# 数据源配置
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+            # AS Portal mysql sit
+            master:
+                url: jdbc:mysql://localhost:3306/asmonitor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: asmysqladmin
+                password: DF6m#UF@
+                driverClassName: com.mysql.cj.jdbc.Driver
+            # pf1 lottery sit
+            pf1:
+                # pf1 lottery
+                main:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.pf1prod.com:1521:LOTTERY
+                    username: AS_MONITOR
+                    password: MS_839qaz0okm
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+                # pf1 lottery sec
+                sec:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB-S.pf1prod.com:1521:LOTTERY
+                    username: AS_MONITOR
+                    password: MS_839qaz0okm
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 core sit
+            pf2-core:
+                # pf2 core
+                main:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB.pf2prod.com:1521/UB8.pf2prod.com
+                    username: AS_MONITOR
+                    password: M0nI7to8S
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+                # pf2 core sec
+                sec:
+                    # enabled 数据源开关
+                    enabled: true
+                    url: jdbc:oracle:thin:@DB-S.pf2prod.com:1521/UB8.pf2prod.com
+                    username: AS_MONITOR
+                    password: M0nI7to8S
+                    driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 draw sit
+            pf2-draw:
+                # enabled 数据源开关
+                enabled: true
+                url: jdbc:oracle:thin:@DB-S.pf2prod.com:1521/UB8.pf2prod.com
+                username: AS_MONITOR
+                password: M0nI7to8S
+                driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 dw sit
+            pf2-dw:
+                # enabled 数据源开关
+                enabled: true
+                url:  jdbc:oracle:thin:@DWDB.pf2prod.com:1521/DWDB.pf2prod.com
+                username: AS_MONITOR
+                password: Jn3Ms9qoOc
+                driverClassName: oracle.jdbc.driver.OracleDriver
+            # pf2 ods sit
+            pf2-ods:
+                # enabled 数据源开关
+                enabled: true
+                url: jdbc:oracle:thin:@ODS-S.pf2prod.com:1521/ODS.pf2prod.com
+                username: AS_MONITOR
+                password: M0nI7to8S
+                driverClassName: oracle.jdbc.driver.OracleDriver
+
+
+            # 初始连接数
+            initialSize: 5
+            # 最小连接池数量
+            minIdle: 10
+            # 最大连接池数量
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            # 配置一个连接在池中最大生存的时间，单位是毫秒
+            maxEvictableIdleTimeMillis: 900000
+            # 配置检测连接是否有效
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            webStatFilter:
+                enabled: true
+            statViewServlet:
+                enabled: true
+                # 设置白名单，不填则允许所有访问
+                allow:
+                url-pattern: /druid/*
+                # 控制台管理用户名和密码
+                login-username: admin
+                login-password: 123456
+            filter:
+                stat:
+                    enabled: true
+                    # 慢SQL记录
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: true
+                wall:
+                    config:
+                        multi-statement-allow: true
