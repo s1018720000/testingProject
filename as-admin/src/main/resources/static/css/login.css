@@ -2,8 +2,8 @@ html {
 	height:100%
 }
 body.signin {
-	height:auto;
-	background:url(../img/login-background.jpg) no-repeat center fixed;
+	/*height:auto;*/
+	/*background:url(../img/login-background.jpg) no-repeat center fixed;*/
 	-webkit-background-size:cover;
 	-moz-background-size:cover;
 	-o-background-size:cover;
@@ -158,4 +158,12 @@ body.signin {
 
 .form-control:focus{
     border-color: #1ab394 !important;
+}
+
+a {
+	color: #fff;
+}
+
+a:hover {
+	color: #FFC107;
 }

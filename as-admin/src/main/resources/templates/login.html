@@ -10,6 +10,7 @@
     <link href="../static/css/style.min.css" th:href="@{/css/style.min.css}" rel="stylesheet"/>
     <link href="../static/css/login.min.css" th:href="@{/css/login.min.css}" rel="stylesheet"/>
     <link href="../static/ruoyi/css/ry-ui.css" th:href="@{/ruoyi/css/ry-ui.css?v=4.6.1}" rel="stylesheet"/>
+    <link href="../static/css/particleground.css" th:href="@{/css/particleground.css}" rel="stylesheet"/>
     <!-- 360浏览器急速模式 -->
     <meta name="renderer" content="webkit">
     <!-- 避免IE使用兼容模式 -->
@@ -21,6 +22,8 @@
     </script>
 </head>
 <body class="signin">
+<div id="particles">
+    <div class="intro">
     <div class="signinpanel">
         <div class="row">
             <div class="col-sm-7">
@@ -49,7 +52,7 @@
 						</div>
 					</div>
                     <div class="checkbox-custom" th:classappend="${captchaEnabled==false} ? 'm-t'">
-                        <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme" style="color: #2196f3">[[#{user.login.remember}]]</label>
+                        <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">[[#{user.login.remember}]]</label>
 				    </div>
                     <button class="btn btn-success btn-block" id="btnSubmit" th:data-loading="#{user.login.verification}">[[#{user.login.submit}]]</button>
                     <div class="row m-t">
@@ -72,10 +75,13 @@
             </div>
         </div>
     </div>
+    </div>
+</div>
 <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]];</script>
 <!--[if lte IE 8]><script>window.location.href=ctx+'html/ie.html';</script><![endif]-->
 <!-- 全局js -->
 <script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="../static/js/jquery.particleground.min.js" th:src="@{/js/jquery.particleground.min.js}"></script>
 <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
 <script src="../static/js/jquery.i18n.properties.min.js" th:src="@{/js/jquery.i18n.properties.min.js}"></script>
 
@@ -111,6 +117,16 @@
                 return msgKey;
             }
         }
+
+        $(document).ready(function() {
+            $('#particles').particleground({
+                dotColor:  'rgba(255,255,255,0.3)',
+                lineColor:  'rgba(255,255,255,0.2)'
+            });
+            $('.intro').css({
+                'margin-top': -($('.intro').height() / 2)
+            });
+        });
     </script>
 </body>
 </html>

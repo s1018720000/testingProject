@@ -139,13 +139,13 @@ public class DBQueryServiceImpl implements IDBQueryService {
                 sql.append(" LIMIT ").append(pageSize).append(" OFFSET ").append((pageNum - 1) * pageSize);
             }
         } else {
-            sql.append("SELECT * FROM ( SELECT ROWNUM RN, TMP_PAGE.* FROM ( ");
+            sql.append("SELECT ROWNUM RN,TMP_PAGE.* FROM ( ");
             sql.append(script);
-            sql.append(" ) TMP_PAGE)");
+            sql.append(" ) TMP_PAGE");
             if (pageNum != null && pageSize != null) {
-                sql.append(" WHERE RN <= ");
+                sql.append(" WHERE ROWNUM <= ");
                 sql.append(pageNum * pageSize);
-                sql.append(" AND RN > ");
+                sql.append(" AND ROWNUM > ");
                 sql.append((pageNum - 1) * pageSize);
             }
         }
