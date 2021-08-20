@@ -36,7 +36,7 @@
 			</form>
 		</div>
 		<div class="btn-group-sm" id="toolbar" role="group" style="display: none">
-			<span id="execute-time" class="label label-warning">[[#{sql.job.execution.time}]]：<span class="time"></span></span>
+			<span id="execute-time" class="label label-warning">[[#{funds.total}]]：<span class="total"></span>，[[#{sql.job.execution.time}]]：<span class="time"></span></span>
 		</div>
 		<div class="col-sm-12 select-table table-bordered">
 			<table id="bootstrap-table"></table>
@@ -146,9 +146,10 @@
 		}
 	}
 
-	function onLoadSuccess(){
+	function onLoadSuccess(data){
 		var afterTime = new Date().getTime().toString()
 		executeTime = (parseFloat(afterTime) - parseFloat(beforeTime)) / 1000.0
+		$('#execute-time .total').text(data.total)
 		$('#execute-time .time').text(executeTime.toFixed(3) + 's')
 		$('#toolbar').show()
 		beforeTime = 0
