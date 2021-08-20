@@ -97,17 +97,17 @@ spring:
                 # enabled 数据源开关
                 # remark 測試環境共用
                 enabled: true
-                url:  jdbc:oracle:thin:@DWDB.pf2dev1-oob.com:1521/DW.pf2dev1.com
-                username: AS_MONITOR
-                password: BBdsk_1720ij
+                url: jdbc:oracle:thin:@DB.PF2SIT1-OOB.COM:1521/UB8.pf2sit1.com
+                username: draw
+                password: Draw12800sdjj
                 driverClassName: oracle.jdbc.driver.OracleDriver
             # pf2 ods sit
             pf2-ods:
                 #enabled 数据源开关
-                enabled: false
-                url: jdbc:oracle:thin:@ODS-S.pf2prod.com:1521/ODS.pf2prod.com
-                username: AS_MONITOR
-                password: M0nI7to8S
+                enabled: true
+                url: jdbc:oracle:thin:@DB.PF2SIT1-OOB.COM:1521/UB8.pf2sit1.com
+                username: draw
+                password: Draw12800sdjj
                 driverClassName: oracle.jdbc.driver.OracleDriver
 
 
