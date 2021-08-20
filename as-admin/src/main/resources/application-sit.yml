@@ -96,7 +96,7 @@ spring:
             pf2-dw:
                 # enabled 数据源开关
                 # remark 測試環境共用
-                enabled: true
+                enabled: false
                 url:  jdbc:oracle:thin:@DWDB.pf2dev1-oob.com:1521/DW.pf2dev1.com
                 username: AS_MONITOR
                 password: BBdsk_1720ij
