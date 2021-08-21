@@ -61,7 +61,12 @@ html, body {
 }
 
 body {
-  background: rgba(0,0,255,.55);
+  /*background: rgb(18, 194, 233);*/
+  /*background: linear-gradient(141deg,rgba(159, 184, 173, 1) 0%,rgba(31, 200, 219, 1) 51%,rgba(44, 181, 232, 1) 75%);*/
+  /*background: linear-gradient(to right, rgb(18, 194, 233), rgb(196, 113, 237), rgb(246, 79, 89));*/
+  background: rgb(18, 194, 233);  /* fallback for old browsers */
+  background: -webkit-linear-gradient(-45deg, rgb(246, 79, 89), rgb(196, 113, 237), rgb(18, 194, 233));  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(-45deg, rgb(246, 79, 89), rgb(196, 113, 237), rgb(18, 194, 233)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   font-family: 'Montserrat', sans-serif;
   color: #fff;
   line-height: 1.3;
