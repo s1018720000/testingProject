@@ -68,7 +68,7 @@ public class DBQueryServiceImpl implements IDBQueryService {
     public Map<String, Object> query(String script, String database) {
         setDatasource(database);
         StringBuilder sql = processSql(script, database);
-        int total = queryTotal("SELECT COUNT(0) FROM (" + script + " )  t ");
+        int total = queryTotal("SELECT COUNT(1) FROM (" + script + " )  t ");
         List<Map<String, Object>> result = jdbcTemplate.queryForList(sql.toString());
         Map<String, Object> map = new HashMap<>();
         map.put("result", result);
