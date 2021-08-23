@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniApiLogListNoSuccess" resultMap="MoniApiLogResult">
         <include refid="selectMoniApiLogVo"/>
-        where MAL.STATUS != '0' and MAL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system'
+        where MAL.STATUS != '0' and MAL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system' order by MAL.START_TIME desc
     </select>
         
     <insert id="insertMoniApiLog" parameterType="MoniApiLog" useGeneratedKeys="true" keyProperty="id">

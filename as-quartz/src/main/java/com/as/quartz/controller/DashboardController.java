@@ -58,7 +58,6 @@ public class DashboardController extends BaseController {
     @PostMapping("/updateSqlJob")
     @ResponseBody
     public TableDataInfo updateSqlJob() {
-        startPage();
         List<MoniJobLog> list = moniJobLogService.selectMoniJobLogListNoSuccess();
         return getDataTable(list);
     }
@@ -85,7 +84,6 @@ public class DashboardController extends BaseController {
     @PostMapping("/updateExportJob")
     @ResponseBody
     public TableDataInfo updateExportJob() {
-        startPage();
         List<MoniExportLog> list = moniExportLogService.selectMoniExportLogListNoSuccess();
         return getDataTable(list);
     }
@@ -96,7 +94,6 @@ public class DashboardController extends BaseController {
     @PostMapping("/updateElasticJob")
     @ResponseBody
     public TableDataInfo updateElasticJob() {
-        startPage();
         List<MoniElasticLog> list = moniElasticLogService.selectMoniElasticLogListNoSuccess();
         return getDataTable(list);
     }
@@ -123,7 +120,6 @@ public class DashboardController extends BaseController {
     @PostMapping("/updateApiJob")
     @ResponseBody
     public TableDataInfo updateApiJob() {
-        startPage();
         List<MoniApiLog> list = moniApiLogService.selectMoniApiLogListNoSuccess();
         return getDataTable(list);
     }

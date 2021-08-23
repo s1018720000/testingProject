@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMoniJobLogListNoSuccess" resultMap="MoniJobLogResult">
         <include refid="selectMoniJobLogVo"/>
-        where MJL.STATUS != '0' and MJL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system'
+        where MJL.STATUS != '0' and MJL.START_TIME &gt;= DATE_SUB(NOW(),INTERVAL 1 HOUR) and OPERATOR = 'system' order by MJL.START_TIME desc
     </select>
     
     <select id="selectMoniJobLogById" parameterType="Long" resultMap="MoniJobLogResult">
