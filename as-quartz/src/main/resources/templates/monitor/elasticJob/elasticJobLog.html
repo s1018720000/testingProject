@@ -136,16 +136,16 @@
                 {
                     field: 'startTime',
                     title: i18n('common.start.time'),
-                    formatter: function (value, row, index) {
-                        return $.common.dateFormat(value, 'yyyy-MM-dd HH:mm:ss')
+                    cellStyle: {
+                        css:{"white-space":"nowrap"}
                     },
                     sortable: true
                 },
                 {
                     field: 'endTime',
                     title: i18n('common.end.time'),
-                    formatter: function (value, row, index) {
-                        return $.common.dateFormat(value, 'yyyy-MM-dd HH:mm:ss')
+                    cellStyle: {
+                        css:{"white-space":"nowrap"}
                     },
                     sortable: true
                 },
