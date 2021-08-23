@@ -77,12 +77,11 @@ public class MoniApiExecution extends AbstractQuartzJob {
                     if (!sendResponse.isOk()) {
                         moniApiLog.setStatus(Constants.ERROR);
                         moniApiLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
-                    } else {
-                        //更新最后告警时间
-                        moniApi.setLastAlert(DateUtils.getNowDate());
-                        SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
                     }
                 }
+                //更新最后告警时间
+                moniApi.setLastAlert(DateUtils.getNowDate());
+                SpringUtils.getBean(IMoniApiService.class).updateMoniApiLastAlertTime(moniApi);
             }
         } else {
             moniApiLog.setStatus(Constants.SUCCESS);

@@ -84,21 +84,28 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                 compareResult = SpringUtils.getBean(IMoniElasticService.class).doPf2DrawCompare(hits);
                 doCompare(compareResult);
             } else {
-                if (resultIsExist()) {
-                    //没有重复发生的LOG才发送TG告警，避免频繁发送
-                    moniElasticLog.setStatus(Constants.FAIL);
-                    moniElasticLog.setAlertStatus(Constants.SUCCESS);
-                    sendAlert();
-                } else {
-                    moniElasticLog.setStatus(Constants.SUCCESS);
-                    moniElasticLog.setAlertStatus(Constants.FAIL);
-                }
+                checkAndAlert();
             }
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
             moniElasticLog.setAlertStatus(Constants.FAIL);
         }
 
+    }
+
+    private void checkAndAlert() throws Exception {
+        if (resultIsExist()) {
+            //没有重复发生的LOG才发送TG告警，避免频繁发送
+            moniElasticLog.setStatus(Constants.FAIL);
+            moniElasticLog.setAlertStatus(Constants.SUCCESS);
+            sendAlert();
+            //更新最后告警时间
+            moniElastic.setLastAlert(DateUtils.getNowDate());
+            SpringUtils.getBean(IMoniElasticService.class).updateMoniElasticLastAlertTime(moniElastic);
+        } else {
+            moniElasticLog.setStatus(Constants.SUCCESS);
+            moniElasticLog.setAlertStatus(Constants.FAIL);
+        }
     }
 
     private void saveExportField(SearchHit[] hits) {
@@ -154,15 +161,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         if (!"0".equals(index)) {
             result = String.format("find %s hits;\n", index) + compareResult.get("result");
             moniElasticLog.setExecuteResult(result);
-            if (resultIsExist()) {
-                //没有重复发生的LOG才发送TG告警，避免频繁发送
-                moniElasticLog.setStatus(Constants.FAIL);
-                moniElasticLog.setAlertStatus(Constants.SUCCESS);
-                sendAlert();
-            } else {
-                moniElasticLog.setStatus(Constants.SUCCESS);
-                moniElasticLog.setAlertStatus(Constants.FAIL);
-            }
+            checkAndAlert();
         } else {
             result = "find 0 hits";
             moniElasticLog.setExecuteResult(result);
@@ -178,10 +177,6 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             if (!sendResponse.isOk()) {
                 moniElasticLog.setStatus(Constants.ERROR);
                 moniElasticLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
-            } else {
-                //更新最后告警时间
-                moniElastic.setLastAlert(DateUtils.getNowDate());
-                SpringUtils.getBean(IMoniElasticService.class).updateMoniElasticLastAlertTime(moniElastic);
             }
         }
     }
