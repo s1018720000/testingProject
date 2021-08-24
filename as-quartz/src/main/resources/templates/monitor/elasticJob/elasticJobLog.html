@@ -178,6 +178,7 @@
                             if (!exportResult){
                                 exportResult = array[0]
                             }
+                            exportResult = exportResult.replaceAll("\"","'")
                             return '<p><span class="label label-warning" data-toggle="tooltip" data-placement="left" title="' + exportResult + '">' + array[0] + '</span></p>'
                         }
                         return '<p><span class="label label-warning">NO RESULT</span></p>'

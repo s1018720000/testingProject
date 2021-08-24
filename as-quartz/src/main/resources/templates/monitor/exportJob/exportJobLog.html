@@ -150,7 +150,7 @@
                     formatter: function(value, row, index) {
                         var status = $.table.selectDictLabel(statusDatas, value)
                         if(value === '2'){
-                            return '<p><span data-toggle="tooltip" data-placement="left" title="'+ row.exceptionLog +'">'+ status +'</span></p>'
+                            return '<p><span data-toggle="tooltip" data-placement="left" title="'+ row.exceptionLog.replaceAll("\"","'") +'">'+ status +'</span></p>'
                         }
                        return status;
                     }
