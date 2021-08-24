@@ -100,7 +100,6 @@
 			});
 			if(!table.get(table.options.id)){
 				initTable(columns);
-				// refreshTable(columns);
 			} else {
 				refreshTable(columns);
 			}
@@ -156,7 +155,7 @@
 		}
 		// 搜索
 		function tableSearch(){
-			if ($.validate.form()){
+			if ($("#editor").val().trim()){
 				ajaxColumns();
 			}
 		}
@@ -204,7 +203,7 @@
 			// clearTimeout(pending);
 			// pending = setTimeout(update,200);
 			editor.save();
-			if (!editor.getValue()){
+			if (!editor.getValue().trim()){
 				$('#queryBtn').addClass('disabled')
 			} else {
 				$('#queryBtn').removeClass('disabled')
