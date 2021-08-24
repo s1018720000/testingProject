@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
 	<th:block th:include="include :: header('PF1 sql查询')" />
+	<th:block th:include="include :: codemirror-css" />
 </head>
 <body class="gray-bg">
 <div class="container-div">
@@ -12,7 +13,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<textarea name="script" class="form-control" rows="10" required></textarea>
+							<textarea id="editor" name="script" class="form-control" rows="10" required></textarea>
 						</div>
 					</div>
 				</div>
@@ -26,7 +27,7 @@
 								</select>
 							</div>
 							<div class="col-sm-6">
-								<a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()">
+								<a id="queryBtn" class="btn btn-primary btn-rounded btn-sm disabled" onclick="tableSearch()">
 									<i class="fa fa-search"></i> [[#{db.query.query}]]
 								</a>
 							</div>
@@ -47,6 +48,7 @@
 <th:block th:include="include :: footer" />
 <th:block th:include="include :: bootstrap-table-export-js" />
 <script th:src="@{/js/shortcut.js}"></script>
+<th:block th:include="include :: codemirror-js" />
 <script type="text/javascript" th:inline="javascript">
 	var prefix = ctx + "query/db";
 	var tempScript;
@@ -186,6 +188,34 @@
 		'disable_in_input':false, //是否在输入框内有效
 		'target':document, //作用范围
 	});
+
+	myTextarea = document.getElementById("editor");
+	var editor = CodeMirror.fromTextArea(myTextarea, {
+		mode: "text/x-sql",
+		lineNumbers: true,//显示行数
+		matchBrackets: true,  // 括号匹配（这个需要导入codemirror的matchbrackets.js文件）
+		styleActiveLine: true,
+		theme: 'solarized'
+	});
+	var pending;
+	editor.on("change", function() {
+		// clearTimeout(pending);
+		// pending = setTimeout(update,200);
+		editor.save();
+		if (!editor.getValue()){
+			$('#queryBtn').addClass('disabled')
+		} else {
+			$('#queryBtn').removeClass('disabled')
+		}
+	});
+	// function looksLikeScheme(code) {
+	// 	//正则表达式，判断textarea中输入的是否是sql语句
+	// 	return /^select[\s\S]*/.test(code) || /^insert.*$/.test(code) || /^delete.*$/.test(code) || /^update.*$/.test(code);
+	// }
+	// function update() {
+	// 	//如果输入是sql语句，则给editor设置mode属性为mysql，否则为css
+	// 	editor.setOption("mode", looksLikeScheme(editor.getValue()) ? "text/x-sql" : "text/css");
+	// }
 
 </script>
 </body>

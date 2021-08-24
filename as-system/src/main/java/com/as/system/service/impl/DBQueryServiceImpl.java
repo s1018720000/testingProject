@@ -167,7 +167,7 @@ public class DBQueryServiceImpl implements IDBQueryService {
         } else {
             sql.append("SELECT ROWNUM RN,TMP_PAGE.* FROM ( ");
             sql.append(script);
-            sql.append(" ) TMP_PAGE WHERE ROWNUM  < 1");
+            sql.append(" ) TMP_PAGE WHERE ROWNUM  = 1");
         }
 
         return sql;

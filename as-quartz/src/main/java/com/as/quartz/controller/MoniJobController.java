@@ -176,7 +176,6 @@ public class MoniJobController extends BaseController {
     @PostMapping("/test")
     @ResponseBody
     public AjaxResult test(MoniJob job) {
-        //StringEscapeUtils.unescapeHtml4 作用  防止特殊符号被转义  如<会被转义为 &gt; 影响sql执行
         return toAjax(sysJobService.sqlTest(job.getScript(), job.getJdbc()));
     }
 

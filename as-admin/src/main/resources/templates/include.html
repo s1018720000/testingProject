@@ -260,3 +260,15 @@
 <div th:fragment="bootstrap-table-custom-view-js">
 	<script th:src="@{/ajax/libs/bootstrap-table/extensions/custom-view/bootstrap-table-custom-view.js?v=20210602}"></script>
 </div>
+
+<!-- codemirror插件 -->
+<div th:fragment="codemirror-css">
+	<link th:href="@{/css/codemirror.css}" rel="stylesheet"/>
+	<link th:href="@{/css/solarized.css}" rel="stylesheet"/>
+</div>
+<div th:fragment="codemirror-js">
+	<script th:src="@{/js/plugins/codemirror/codemirror.js}"></script>
+	<script th:src="@{/js/plugins/codemirror/css.js}"></script>
+	<script th:src="@{/js/plugins/codemirror/sql.js}"></script>
+	<script th:src="@{/js/plugins/codemirror/matchbrackets.js}"></script>
+</div>
