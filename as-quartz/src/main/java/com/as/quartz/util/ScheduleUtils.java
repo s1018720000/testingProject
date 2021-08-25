@@ -114,7 +114,9 @@ public class ScheduleUtils {
     public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
         TelegramBot messageBot = new TelegramBot(bot);
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
-        sendMessage.replyMarkup(inlineKeyboard);
+        if (StringUtils.isNotNull(inlineKeyboard)) {
+            sendMessage.replyMarkup(inlineKeyboard);
+        }
         return messageBot.execute(sendMessage);
     }
 
@@ -125,7 +127,9 @@ public class ScheduleUtils {
         TelegramBot photoBot = new TelegramBot(bot);
         SendPhoto sendPhoto = new SendPhoto(chatId, file);
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
-        sendPhoto.replyMarkup(inlineKeyboard);
+        if (StringUtils.isNotNull(inlineKeyboard)) {
+            sendPhoto.replyMarkup(inlineKeyboard);
+        }
         return photoBot.execute(sendPhoto);
     }
 
@@ -136,7 +140,9 @@ public class ScheduleUtils {
         TelegramBot photoBot = new TelegramBot(bot);
         SendDocument sendDocument = new SendDocument(chatId, file);
         sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
-        sendDocument.replyMarkup(inlineKeyboard);
+        if (StringUtils.isNotNull(inlineKeyboard)) {
+            sendDocument.replyMarkup(inlineKeyboard);
+        }
         return photoBot.execute(sendDocument);
     }
 
