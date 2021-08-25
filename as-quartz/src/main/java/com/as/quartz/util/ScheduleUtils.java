@@ -12,16 +12,32 @@ import com.pengrad.telegrambot.request.SendDocument;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
+import okhttp3.OkHttpClient;
 import org.quartz.*;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务工具类
  *
  * @author kolin
  */
+@Component
 public class ScheduleUtils {
+
+    private static OkHttpClient okHttpClient;
+
+    @PostConstruct
+    public void beforeInit() {
+        okHttpClient = new OkHttpClient().newBuilder().connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+    }
 
     /**
      * 得到quartz任务类
@@ -112,7 +128,7 @@ public class ScheduleUtils {
      * 发送tg告警 文字
      */
     public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
-        TelegramBot messageBot = new TelegramBot(bot);
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         if (StringUtils.isNotNull(inlineKeyboard)) {
             sendMessage.replyMarkup(inlineKeyboard);
@@ -124,7 +140,7 @@ public class ScheduleUtils {
      * 发送tg告警 图片
      */
     public static SendResponse sendPhoto(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
-        TelegramBot photoBot = new TelegramBot(bot);
+        TelegramBot photoBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
         SendPhoto sendPhoto = new SendPhoto(chatId, file);
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
         if (StringUtils.isNotNull(inlineKeyboard)) {
@@ -137,13 +153,13 @@ public class ScheduleUtils {
      * 发送tg告警 文件形式
      */
     public static SendResponse sendDocument(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
-        TelegramBot photoBot = new TelegramBot(bot);
+        TelegramBot documentBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
         SendDocument sendDocument = new SendDocument(chatId, file);
         sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
         if (StringUtils.isNotNull(inlineKeyboard)) {
             sendDocument.replyMarkup(inlineKeyboard);
         }
-        return photoBot.execute(sendDocument);
+        return documentBot.execute(sendDocument);
     }
 
 
