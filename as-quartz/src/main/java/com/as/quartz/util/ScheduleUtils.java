@@ -8,6 +8,7 @@ import com.as.common.utils.spring.SpringUtils;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendDocument;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -126,6 +127,17 @@ public class ScheduleUtils {
         sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
         sendPhoto.replyMarkup(inlineKeyboard);
         return photoBot.execute(sendPhoto);
+    }
+
+    /**
+     * 发送tg告警 文件形式
+     */
+    public static SendResponse sendDocument(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
+        TelegramBot photoBot = new TelegramBot(bot);
+        SendDocument sendDocument = new SendDocument(chatId, file);
+        sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
+        sendDocument.replyMarkup(inlineKeyboard);
+        return photoBot.execute(sendDocument);
     }
 
 

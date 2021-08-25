@@ -6,7 +6,7 @@ as:
     #所有文件都会保存在里面(telegram photo、export excel等)，路径不存在会自动创建，不需要手工创建
     profile: /usr/local/backend/uploadPath
     # 项目域名(仅在telegram推送告警时使用，别无他用)
-    asDomain: https://asportal.nuttli.com
+    asDomain: https://asportal.uenvsit.com
 
 elastic:
     #pf1
