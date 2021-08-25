@@ -407,6 +407,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         } catch (Exception e) {
             //图片发送异常则发送文字告警
             execute = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
+            moniJobLog.setExceptionLog("Telegram send photo error:" + ExceptionUtil.getExceptionMessage(e));
         }
         return execute;
     }
