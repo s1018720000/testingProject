@@ -1,6 +1,7 @@
 package com.as.quartz.util;
 
 import com.as.common.constant.ScheduleConstants;
+import com.as.common.utils.StringUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -83,11 +84,11 @@ public abstract class AbstractQuartzJob implements Job {
     public void execute(JobExecutionContext context) {
         Object job = context.getMergedJobDataMap().get(ScheduleConstants.TASK_PROPERTIES);
         try {
-            before(context, job);
-            if (job != null) {
+            if (StringUtils.isNotNull(job)) {
+                before(context, job);
                 doExecute(context, job);
+                after(context, job, null);
             }
-            after(context, job, null);
         } catch (Exception e) {
             log.error("任务执行异常  - ：", e);
             after(context, job, e);
