@@ -111,7 +111,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
     private void saveExportField(SearchHit[] hits) {
         if (hits.length > 0 && StringUtils.isNotEmpty(moniElastic.getExportField())) {
             String[] exportFields = moniElastic.getExportField().split(",");
-            String sourceAsString = hits[0].getSourceAsString();
+            String sourceAsString = hits[hits.length - 1].getSourceAsString();
             JSONObject jsonObject = JSON.parseObject(sourceAsString);
             StringBuilder exportResult = new StringBuilder();
             int count = 1;
