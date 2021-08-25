@@ -20,16 +20,20 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-4 control-label">[[#{db.query.data.source}]]：</label>
-							<div class="col-sm-2">
-								<select name="datasource" class="form-control m-b" th:with="type=${@dict.getType('pf1_data_base_source')}">
-									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'} ? true : false"></option>
-								</select>
-							</div>
-							<div class="col-sm-6">
-								<a id="queryBtn" class="btn btn-primary btn-rounded btn-sm disabled" onclick="tableSearch()">
-									<i class="fa fa-search"></i> [[#{db.query.query}]]
-								</a>
+							<div class="col-sm-3 col-md-offset-4 col-lg-offset-4 col-xl-offset-4">
+								<div class="input-group">
+									<span class="rctheme text-white input-group-addon">
+									<i class="fa fa-database"></i> [[#{db.query.data.source}]]：
+									</span>
+									<select name="datasource" class="form-control" th:with="type=${@dict.getType('pf1_data_base_source')}">
+										<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"  th:selected="${dict.isDefault == 'Y'} ? true : false"></option>
+									</select>
+									<span class="input-group-btn">
+										<a id="queryBtn" class="btn btn-primary btn-rounded btn-sm disabled" onclick="tableSearch()">
+										<i class="fa fa-search"></i> [[#{db.query.query}]]
+										</a>
+									</span>
+								</div>
 							</div>
 						</div>
 					</div>
