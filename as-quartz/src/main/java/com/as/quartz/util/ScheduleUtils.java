@@ -32,9 +32,9 @@ public class ScheduleUtils {
 
     @PostConstruct
     public void beforeInit() {
-        okHttpClient = new OkHttpClient.Builder().connectTimeout(300, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
-                .writeTimeout(300, TimeUnit.SECONDS)
+        okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
     }

@@ -200,6 +200,7 @@
 		styleActiveLine: true,
 		theme: 'solarized'
 	});
+	editor.setSize('auto',getTableHeight()/2)
 	var pending;
 	editor.on("change", function() {
 		// clearTimeout(pending);

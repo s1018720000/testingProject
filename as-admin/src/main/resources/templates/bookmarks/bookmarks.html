@@ -12,7 +12,7 @@
                         <div class="panel panel-primary" th:each="menu : ${menus}">
                             <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" th:href="'#collapse_' + ${menu.menuId}" style="cursor:pointer">
                                 <h5 class="panel-title">
-                                    <i class="fa fa-bookmark"></i> [[${locale == 'zh_CN'} ? ${menu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(menu.menuNameTw)} ? ${menu.menuName} : ${menu.menuNameTw}) : (${#strings.isEmpty(menu.menuNameUs)} ? ${menu.menuName} : ${menu.menuNameUs}))]]
+                                    <i th:class="${menu.icon}"></i> [[${locale == 'zh_CN'} ? ${menu.menuName} : (${locale == 'zh_TW'} ? (${#strings.isEmpty(menu.menuNameTw)} ? ${menu.menuName} : ${menu.menuNameTw}) : (${#strings.isEmpty(menu.menuNameUs)} ? ${menu.menuName} : ${menu.menuNameUs}))]]
                                 </h5>
                             </div>
                             <div th:id="'collapse_' + ${menu.menuId}" th:class="${menu.menuId == 123} ? 'panel-collapse collapse in' : 'panel-collapse collapse'"  th:if="${not #lists.isEmpty(menu.children)}">

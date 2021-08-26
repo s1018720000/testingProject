@@ -217,7 +217,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
         }
 
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniApi.getId())).concat("?lang=en_US")));
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniApi.getId()))));
 
 
         TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
@@ -234,9 +234,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                     jobLog.setId(moniApiLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(response.description()));
                     SpringUtils.getBean(IMoniApiLogService.class).updateMoniApiLog(jobLog);
-                    log.info("{},telegram发送失败", moniApi.getChName());
-                } else {
-                    log.info("{},telegram发送成功", moniApi.getChName());
+                    log.error("API jobId：{},JobName：{},telegram发送信息失败", moniApi.getId(), moniApi.getChName());
                 }
             }
 
@@ -251,7 +249,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                     jobLog.setId(moniApiLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniApiLogService.class).updateMoniApiLog(jobLog);
-                    log.info("{},telegram发送异常,{}", moniApi.getChName(), ExceptionUtil.getExceptionMessage(e));
+                    log.error("API jobId：{},JobName：{},telegram发送信息异常,{}", moniApi.getId(), moniApi.getChName(), ExceptionUtil.getExceptionMessage(e));
                 }
             }
         });

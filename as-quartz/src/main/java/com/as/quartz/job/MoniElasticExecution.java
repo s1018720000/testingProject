@@ -340,7 +340,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         }
 
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniElastic.getId()).concat("?lang=en_US"))));
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniElastic.getId()))));
 
 
         TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
@@ -358,6 +358,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     jobLog.setId(moniElasticLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(response.description()));
                     SpringUtils.getBean(IMoniElasticLogService.class).updateMoniElasticLog(jobLog);
+                    log.error("Log jobId：{},JobName：{},telegram发送信息失败", moniElastic.getId(), moniElastic.getChName());
                 }
             }
 
@@ -373,6 +374,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     jobLog.setId(moniElasticLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniElasticLogService.class).updateMoniElasticLog(jobLog);
+                    log.error("Log jobId：{},JobName：{},telegram发送信息异常,{}", moniElastic.getId(), moniElastic.getChName(), ExceptionUtil.getExceptionMessage(e));
                 }
             }
         });

@@ -76,25 +76,40 @@
 		            widthUnit: '%',
 		            formatter: function(value, row, index) {
 		                if ($.common.isEmpty(row.icon)) {
-		                    return row.menuName;
+		                    return value;
 		                } else {
-		                    return '<i class="' + row.icon + '"></i> <span class="nav-label">' + row.menuName + '</span>';
+		                	if(value){
+								value = value.toString().replaceAll("<","&lt;").replaceAll(">","&gt;")
+							}
+		                    return '<i class="' + row.icon + '"></i> <span class="nav-label">' + $.table.tooltip(value) + '</span>';
 		                }
-		            }
+		            },
 		        },
 				{
 					title: i18n('menu.name.traditional.chinese'),
 					field: 'menuNameTw',
 					width: '20',
 					widthUnit: '%',
-					align: "left"
+					align: "left",
+					formatter: function(value, row, index) {
+						if(value){
+							value = value.toString().replaceAll("<","&lt;").replaceAll(">","&gt;")
+						}
+						return $.table.tooltip(value);
+					}
 				},
 				{
 					title: i18n('menu.name.english'),
 					field: 'menuNameUs',
 					width: '20',
 					widthUnit: '%',
-					align: "left"
+					align: "left",
+					formatter: function(value, row, index) {
+						if(value){
+							value = value.toString().replaceAll("<","&lt;").replaceAll(">","&gt;")
+						}
+						return $.table.tooltip(value);
+					}
 				},
 		        {
 		            field: 'orderNum',

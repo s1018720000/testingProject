@@ -416,8 +416,8 @@ public class MoniJobExecution extends AbstractQuartzJob {
         String imgPath = createImg();
 
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId())).concat("?lang=en_US")),
-                new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId())).concat("?lang=en_US")));
+                new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
+                new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
 
 
         File file = new File(imgPath);
@@ -485,6 +485,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (!response.isOk()) {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
+                    log.error("DB jobId：{},JobName：{},telegram发送图片失败", moniJob.getId(), moniJob.getChName());
                 }
             }
 
@@ -497,6 +498,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 } else {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
+                    log.error("DB jobId：{},JobName：{},telegram发送图片异常,{}", moniJob.getId(), moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));
                 }
             }
         });
@@ -510,6 +512,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (!response.isOk()) {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
+                    log.error("DB jobId：{},JobName：{},telegram发送附件失败", moniJob.getId(), moniJob.getChName());
                 }
             }
 
@@ -522,6 +525,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 } else {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
+                    log.error("DB jobId：{},JobName：{},telegram发送附件异常,{}", moniJob.getId(), moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));
                 }
             }
         });
@@ -538,7 +542,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     jobLog.setId(moniJobLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(response.description()));
                     SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
-                    log.info("{},telegram发送失败", moniJob.getChName());
+                    log.error("DB jobId：{},JobName：{},telegram发送信息失败", moniJob.getId(), moniJob.getChName());
                 }
             }
 
@@ -553,7 +557,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     jobLog.setId(moniJobLog.getId());
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
-                    log.info("{},telegram发送异常,{}", moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));
+                    log.error("DB jobId：{},JobName：{},telegram发送信息异常,{}", moniJob.getId(), moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));
                 }
             }
         });
