@@ -16,7 +16,6 @@ import okhttp3.OkHttpClient;
 import org.quartz.*;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -28,16 +27,20 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduleUtils {
 
-    public static OkHttpClient okHttpClient;
+    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .build();
 
-    @PostConstruct
-    public void beforeInit() {
-        okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .build();
-    }
+//    @PostConstruct
+//    public void beforeInit() {
+//        okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+//                .readTimeout(60, TimeUnit.SECONDS)
+//                .writeTimeout(60, TimeUnit.SECONDS)
+//                .retryOnConnectionFailure(true)
+//                .build();
+//    }
 
     /**
      * 得到quartz任务类

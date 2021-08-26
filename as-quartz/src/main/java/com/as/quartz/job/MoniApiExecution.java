@@ -244,6 +244,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                 if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
                     serversLoadTimes++;
                     messageBot.execute(sendMessage, this);
+                    log.error("API jobId：{},JobName：{},telegram信息超时重发,第{}次", moniApi.getId(), moniApi.getChName(), serversLoadTimes);
                 } else {
                     MoniApiLog jobLog = new MoniApiLog();
                     jobLog.setId(moniApiLog.getId());

@@ -352,7 +352,6 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         messageBot.execute(sendMessage, new Callback<SendMessage, SendResponse>() {
             @Override
             public void onResponse(SendMessage request, SendResponse response) {
-                log.info("{},telegram发送成功", moniElastic.getChName());
                 if (!response.isOk()) {
                     MoniElasticLog jobLog = new MoniElasticLog();
                     jobLog.setId(moniElasticLog.getId());
@@ -368,6 +367,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                 if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
                     serversLoadTimes++;
                     messageBot.execute(sendMessage, this);
+                    log.error("Log jobId：{},JobName：{},telegram信息超时重发,第{}次", moniElastic.getId(), moniElastic.getChName(), serversLoadTimes);
                 } else {
                     log.info("{},telegram发送失败,{}", moniElastic.getChName(), ExceptionUtil.getExceptionMessage(e));
                     MoniElasticLog jobLog = new MoniElasticLog();

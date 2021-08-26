@@ -495,6 +495,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
                     serversLoadTimes++;
                     photoBot.execute(sendPhoto, this);
+                    log.error("DB jobId：{},JobName：{},telegram图片超时重发,第{}次", moniJob.getId(), moniJob.getChName(), serversLoadTimes);
                 } else {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
@@ -522,6 +523,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
                     serversLoadTimes++;
                     documentBot.execute(sendDocument, this);
+                    log.error("DB jobId：{},JobName：{},telegram附件超时重发,第{}次", moniJob.getId(), moniJob.getChName(), serversLoadTimes);
                 } else {
                     //图片文件发送失败则发送文字消息
                     sendMessage();
@@ -552,6 +554,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
                     serversLoadTimes++;
                     messageBot.execute(sendMessage, this);
+                    log.error("DB jobId：{},JobName：{},telegram信息超时重发,第{}次", moniJob.getId(), moniJob.getChName(), serversLoadTimes);
                 } else {
                     MoniJobLog jobLog = new MoniJobLog();
                     jobLog.setId(moniJobLog.getId());
