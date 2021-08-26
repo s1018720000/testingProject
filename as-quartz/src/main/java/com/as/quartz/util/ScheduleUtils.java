@@ -28,13 +28,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduleUtils {
 
-    private static OkHttpClient okHttpClient;
+    public static OkHttpClient okHttpClient;
 
     @PostConstruct
     public void beforeInit() {
-        okHttpClient = new OkHttpClient().newBuilder().connectTimeout(120, TimeUnit.SECONDS)
-                .readTimeout(120, TimeUnit.SECONDS)
-                .writeTimeout(120, TimeUnit.SECONDS)
+        okHttpClient = new OkHttpClient.Builder().connectTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(300, TimeUnit.SECONDS)
+                .writeTimeout(300, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
     }
@@ -108,6 +108,7 @@ public class ScheduleUtils {
             tgData = new String[2];
             tgData[0] = "1937111623:AAHDVpT1bezDDJ_Lf7HmyYCRd8mZeSlHCwM";
             tgData[1] = "-532553117";
+//            tgData[1] = "736145377";
             return tgData;
         }
 

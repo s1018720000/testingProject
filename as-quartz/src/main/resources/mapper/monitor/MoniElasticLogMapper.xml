@@ -37,8 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMoniElasticLogList" parameterType="MoniElasticLog" resultMap="MoniElasticLogResult">
         <include refid="selectMoniElasticLogVo"/>
         <where>
-            <if test="params.jobName != null "> and (ME.CH_NAME like concat('%', #{params.jobName}, '%') or ME.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
-            <if test="elasticId != null "> and MEL.ELASTIC_ID = #{elasticId}</if>
+            <if test="params.jobName != null and params.jobName != ''"> and (ME.CH_NAME like concat('%', #{params.jobName}, '%') or ME.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
+            <if test="elasticId != null and elasticId != ''"> and MEL.ELASTIC_ID = #{elasticId}</if>
             <if test="params.priority != null and params.priority != ''"> and ME.PRIORITY = #{params.priority}</if>
             <if test="params.platform != null and params.platform != ''"> and ME.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->

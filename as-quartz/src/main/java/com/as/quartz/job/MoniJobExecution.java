@@ -19,8 +19,14 @@ import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.HtmlTemplateUtil;
 import com.as.quartz.util.ScheduleUtils;
+import com.pengrad.telegrambot.Callback;
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendDocument;
+import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import gui.ava.html.image.generator.HtmlImageGenerator;
 import org.quartz.DisallowConcurrentExecution;
@@ -31,8 +37,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import javax.imageio.ImageIO;
 import javax.sql.DataSource;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +68,14 @@ public class MoniJobExecution extends AbstractQuartzJob {
     private final MoniJobLog moniJobLog = new MoniJobLog();
 
     private MoniJob moniJob = new MoniJob();
+
+    private int serversLoadTimes;
+
+    private static final int maxLoadTimes = 3; // 最大重连次数
+
+    private String bot;
+
+    private SendMessage sendMessage;
 
     /**
      * 执行方法
@@ -85,10 +103,10 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 moniJobLog.setStatus(Constants.FAIL);
                 moniJobLog.setAlertStatus(Constants.SUCCESS);
                 if (Constants.SUCCESS.equals(moniJob.getTelegramAlert())) {
-                    SendResponse sendResponse = sendTelegram();
-                    if (!sendResponse.isOk()) {
-                        moniJobLog.setExceptionLog("Telegram send error: ".concat(sendResponse.description()));
-                    }
+                    sendTelegram();
+//                    if (!sendResponse.isOk()) {
+//                        moniJobLog.setExceptionLog("Telegram send error: ".concat(sendResponse.description()));
+//                    }
                 }
                 //更新最后告警时间
                 moniJob.setLastAlert(DateUtils.getNowDate());
@@ -375,9 +393,9 @@ public class MoniJobExecution extends AbstractQuartzJob {
         }
     }
 
-    private SendResponse sendTelegram() throws Exception {
+    private void sendTelegram() throws Exception {
         String[] tgData = ScheduleUtils.getTgData(moniJob.getTelegramConfig());
-        String bot = tgData[0];
+        bot = tgData[0];
         String chatId = tgData[1];
         String telegramInfo = moniJob.getTelegramInfo();
         if (StringUtils.isNotEmpty(telegramInfo)) {
@@ -401,31 +419,144 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniJob.getId()))),
                 new InlineKeyboardButton("LOG Details").url(ASConfig.getAsDomain().concat(LOG_DETAIL_URL).concat(String.valueOf(moniJobLog.getId()))));
 
-        SendResponse execute;
-        StringBuilder error = new StringBuilder();
+
+        File file = new File(imgPath);
+        BufferedImage bufferedImage;
+        int width = 1501;
+        int height = 1501;
         try {
-            execute = ScheduleUtils.sendPhoto(bot, chatId, telegramInfo, inlineKeyboard, new File(imgPath));
-            if (!execute.isOk()) {
-                throw new Exception(execute.description());
-            }
+            bufferedImage = ImageIO.read(file);
+            width = bufferedImage.getWidth();
+            height = bufferedImage.getHeight();
         } catch (Exception e) {
-            error.append(ExceptionUtil.getExceptionMessage(e));
-            try {
-                //图片发送异常则以文件形式发送
-                execute = ScheduleUtils.sendDocument(bot, chatId, telegramInfo, inlineKeyboard, new File(imgPath));
-                if (!execute.isOk()) {
-                    throw new Exception(execute.description());
+            //异常忽略，继续往下执行
+        }
+
+        TelegramBot telegramBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
+
+        //图片长宽不超过1500则发送图片，否则发送附件
+        if (width <= 1500 && height <= 1500) {
+            SendPhoto sendPhoto = new SendPhoto(chatId, file);
+            sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
+            sendPhoto.replyMarkup(inlineKeyboard);
+            sendPhoto(telegramBot, sendPhoto);
+        } else {
+            SendDocument sendDocument = new SendDocument(chatId, file);
+            sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
+            sendDocument.replyMarkup(inlineKeyboard);
+            sendDocument(telegramBot, sendDocument);
+        }
+
+        sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        sendMessage.replyMarkup(inlineKeyboard);
+
+//        SendResponse execute;
+//        StringBuilder error = new StringBuilder();
+//        try {
+//            execute = ScheduleUtils.sendPhoto(bot, chatId, telegramInfo, inlineKeyboard, new File(imgPath));
+//            if (!execute.isOk()) {
+//                throw new Exception(execute.description());
+//            }
+//        } catch (Exception e) {
+//            error.append(ExceptionUtil.getExceptionMessage(e));
+//            try {
+//                //图片发送异常则以文件形式发送
+//                execute = ScheduleUtils.sendDocument(bot, chatId, telegramInfo, inlineKeyboard, new File(imgPath));
+//                if (!execute.isOk()) {
+//                    throw new Exception(execute.description());
+//                }
+//            } catch (Exception e1) {
+//                error.append(" AND ").append(ExceptionUtil.getExceptionMessage(e1));
+//                //图片和文件发送均异常则发送文字告警
+//                execute = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
+//            }
+//        }
+//        if (StringUtils.isNotEmpty(error)) {
+//            moniJobLog.setExceptionLog("Telegram send photo error:" + error);
+//        }
+//        return execute;
+    }
+
+    private void sendPhoto(TelegramBot photoBot, SendPhoto sendPhoto) {
+        serversLoadTimes = 0;
+        photoBot.execute(sendPhoto, new Callback<SendPhoto, SendResponse>() {
+            @Override
+            public void onResponse(SendPhoto request, SendResponse response) {
+                if (!response.isOk()) {
+                    //图片文件发送失败则发送文字消息
+                    sendMessage();
                 }
-            } catch (Exception e1) {
-                error.append(" AND ").append(ExceptionUtil.getExceptionMessage(e1));
-                //图片和文件发送均异常则发送文字告警
-                execute = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
             }
-        }
-        if (StringUtils.isNotEmpty(error)) {
-            moniJobLog.setExceptionLog("Telegram send photo error:" + error);
-        }
-        return execute;
+
+            @Override
+            public void onFailure(SendPhoto request, IOException e) {
+                //失败重发
+                if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
+                    serversLoadTimes++;
+                    photoBot.execute(sendPhoto, this);
+                } else {
+                    //图片文件发送失败则发送文字消息
+                    sendMessage();
+                }
+            }
+        });
+    }
+
+    private void sendDocument(TelegramBot documentBot, SendDocument sendDocument) {
+        serversLoadTimes = 1;
+        documentBot.execute(sendDocument, new Callback<SendDocument, SendResponse>() {
+            @Override
+            public void onResponse(SendDocument request, SendResponse response) {
+                if (!response.isOk()) {
+                    //图片文件发送失败则发送文字消息
+                    sendMessage();
+                }
+            }
+
+            @Override
+            public void onFailure(SendDocument request, IOException e) {
+                //失败重发
+                if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
+                    serversLoadTimes++;
+                    documentBot.execute(sendDocument, this);
+                } else {
+                    //图片文件发送失败则发送文字消息
+                    sendMessage();
+                }
+            }
+        });
+    }
+
+    private void sendMessage() {
+        serversLoadTimes = 0;
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
+        messageBot.execute(sendMessage, new Callback<SendMessage, SendResponse>() {
+            @Override
+            public void onResponse(SendMessage request, SendResponse response) {
+                if (!response.isOk()) {
+                    MoniJobLog jobLog = new MoniJobLog();
+                    jobLog.setId(moniJobLog.getId());
+                    jobLog.setExceptionLog("Telegram send message error: ".concat(response.description()));
+                    SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
+                    log.info("{},telegram发送失败", moniJob.getChName());
+                }
+            }
+
+            @Override
+            public void onFailure(SendMessage request, IOException e) {
+                //失败重发
+                if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
+                    serversLoadTimes++;
+                    messageBot.execute(sendMessage, this);
+                } else {
+                    MoniJobLog jobLog = new MoniJobLog();
+                    jobLog.setId(moniJobLog.getId());
+                    jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
+                    SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
+                    log.info("{},telegram发送异常,{}", moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));
+                }
+            }
+        });
     }
 
     private String createImg() {
@@ -441,7 +572,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 HtmlImageGenerator imageGenerator = new HtmlImageGenerator();
                 imageGenerator.loadHtml(htmlContent);
                 imageGenerator.getBufferedImage();
-                path = HtmlTemplateUtil.getPath(DateUtils.datePath() + File.separator + DateUtils.dateTimeNow() + ".png");
+                path = HtmlTemplateUtil.getPath(DateUtils.datePath() + File.separator + new Date().getTime() + ".png");
                 imageGenerator.saveAsImage(path);
             } catch (Exception e) {
                 log.error("创建图片发生异常", e);

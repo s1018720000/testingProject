@@ -36,8 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMoniApiLogList" parameterType="MoniApiLog" resultMap="MoniApiLogResult">
         <include refid="selectMoniApiLogVo"/>
         <where>
-            <if test="params.jobName != null "> and (MA.CH_NAME like concat('%', #{params.jobName}, '%') or MA.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
-            <if test="apiId != null "> and MAL.API_ID = #{apiId}</if>
+            <if test="params.jobName != null and params.jobName != ''"> and (MA.CH_NAME like concat('%', #{params.jobName}, '%') or MA.EN_NAME like concat('%', #{params.jobName}, '%'))</if>
+            <if test="apiId != null and apiId != ''"> and MAL.API_ID = #{apiId}</if>
             <if test="params.priority != null and params.priority != ''"> and MA.PRIORITY = #{params.priority}</if>
             <if test="params.platform != null and params.platform != ''"> and MA.PLATFORM = #{params.platform}</if>
             <if test="params.beginStartTime != null and params.beginStartTime != ''"><!-- 开始时间检索 -->

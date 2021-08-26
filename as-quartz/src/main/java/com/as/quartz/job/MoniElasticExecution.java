@@ -17,8 +17,12 @@ import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.ScheduleUtils;
+import com.pengrad.telegrambot.Callback;
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -30,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +60,10 @@ public class MoniElasticExecution extends AbstractQuartzJob {
     private final MoniElasticLog moniElasticLog = new MoniElasticLog();
 
     private MoniElastic moniElastic = new MoniElastic();
+
+    private int serversLoadTimes;
+
+    private static final int maxLoadTimes = 3; // 最大重连次数
 
     /**
      * 执行方法
@@ -185,11 +195,11 @@ public class MoniElasticExecution extends AbstractQuartzJob {
     private void sendAlert() throws Exception {
         //发送告警
         if (Constants.SUCCESS.equals(moniElastic.getTelegramAlert())) {
-            SendResponse sendResponse = sendTelegram();
-            if (!sendResponse.isOk()) {
-                moniElasticLog.setStatus(Constants.ERROR);
-                moniElasticLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
-            }
+            sendTelegram();
+//            if (!sendResponse.isOk()) {
+//                moniElasticLog.setStatus(Constants.ERROR);
+//                moniElasticLog.setExceptionLog("Telegram send message error: ".concat(sendResponse.description()));
+//            }
         }
     }
 
@@ -309,7 +319,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
     }
 
 
-    private SendResponse sendTelegram() throws Exception {
+    private void sendTelegram() throws Exception {
         String[] tgData = ScheduleUtils.getTgData(moniElastic.getTelegramConfig());
         String bot = tgData[0];
         String chatId = tgData[1];
@@ -332,7 +342,42 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniElastic.getId()))));
 
-        return ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
+
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        sendMessage.replyMarkup(inlineKeyboard);
+
+        serversLoadTimes = 0;
+
+        messageBot.execute(sendMessage, new Callback<SendMessage, SendResponse>() {
+            @Override
+            public void onResponse(SendMessage request, SendResponse response) {
+                log.info("{},telegram发送成功", moniElastic.getChName());
+                if (!response.isOk()) {
+                    MoniElasticLog jobLog = new MoniElasticLog();
+                    jobLog.setId(moniElasticLog.getId());
+                    jobLog.setExceptionLog("Telegram send message error: ".concat(response.description()));
+                    SpringUtils.getBean(IMoniElasticLogService.class).updateMoniElasticLog(jobLog);
+                }
+            }
+
+            @Override
+            public void onFailure(SendMessage request, IOException e) {
+                //失败重发
+                if (e instanceof SocketTimeoutException && serversLoadTimes < maxLoadTimes) {
+                    serversLoadTimes++;
+                    messageBot.execute(sendMessage, this);
+                } else {
+                    log.info("{},telegram发送失败,{}", moniElastic.getChName(), ExceptionUtil.getExceptionMessage(e));
+                    MoniElasticLog jobLog = new MoniElasticLog();
+                    jobLog.setId(moniElasticLog.getId());
+                    jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
+                    SpringUtils.getBean(IMoniElasticLogService.class).updateMoniElasticLog(jobLog);
+                }
+            }
+        });
+
+//        return null;
     }
 
     /**
