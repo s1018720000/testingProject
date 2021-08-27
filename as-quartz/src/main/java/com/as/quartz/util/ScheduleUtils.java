@@ -12,28 +12,7 @@ import org.quartz.*;
  *
  * @author kolin
  */
-//@Component
 public class ScheduleUtils {
-
-//    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
-//            .readTimeout(60, TimeUnit.SECONDS)
-//            .writeTimeout(60, TimeUnit.SECONDS)
-//            .connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES))
-//            .retryOnConnectionFailure(true)
-//            .build();
-
-//    @PostConstruct
-//    public void beforeInit() {
-//        okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
-//                .readTimeout(60, TimeUnit.SECONDS)
-//                .writeTimeout(60, TimeUnit.SECONDS)
-//                .retryOnConnectionFailure(true)
-//                .build();
-//    }
-
-//    @Autowired
-//    private OkHttpClient okHttpClient;
-
     /**
      * 得到quartz任务类
      *
@@ -102,8 +81,8 @@ public class ScheduleUtils {
         if (!"prod".equals(SpringUtils.getActiveProfile())) {
             tgData = new String[2];
             tgData[0] = "1937111623:AAHDVpT1bezDDJ_Lf7HmyYCRd8mZeSlHCwM";
-//            tgData[1] = "-532553117";
-            tgData[1] = "736145377";
+            tgData[1] = "-532553117";
+//            tgData[1] = "736145377";
             return tgData;
         }
 

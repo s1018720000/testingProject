@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import javax.sql.DataSource;
@@ -54,7 +53,6 @@ import java.util.Objects;
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-@Component
 public class MoniJobExecution extends AbstractQuartzJob {
     private static final Logger log = LoggerFactory.getLogger(MoniJobExecution.class);
 

@@ -15,6 +15,7 @@ public class OkHttpUtils {
 
     private static OkHttpClient client = null;
 
+    //单例模式创建OkHttpClient实例，避免重复创建造成资源浪费
     public static OkHttpClient getInstance() {
         if (StringUtils.isNull(client)) {
             synchronized (OkHttpUtils.class) {
