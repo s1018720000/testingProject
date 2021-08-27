@@ -70,6 +70,15 @@
             <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
+
+    <appender name="stash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/sys-json.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}sys-json-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
 	
 	<!-- 系统模块日志级别控制  -->
 	<logger name="com.as" level="info" />
@@ -89,5 +98,10 @@
 	<!--系统用户操作日志-->
     <logger name="sys-user" level="info">
         <appender-ref ref="sys-user"/>
+    </logger>
+
+    <!--json格式日志-->
+    <logger name="stash" level="info">
+        <appender-ref ref="stash"/>
     </logger>
 </configuration> 
