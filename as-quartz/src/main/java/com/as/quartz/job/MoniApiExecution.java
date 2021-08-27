@@ -13,6 +13,7 @@ import com.as.quartz.domain.MoniApiLog;
 import com.as.quartz.service.IMoniApiLogService;
 import com.as.quartz.service.IMoniApiService;
 import com.as.quartz.util.AbstractQuartzJob;
+import com.as.quartz.util.OkHttpUtils;
 import com.as.quartz.util.ScheduleUtils;
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
@@ -21,13 +22,16 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import okhttp3.OkHttpClient;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -42,6 +46,7 @@ import java.util.Objects;
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
+@Component
 public class MoniApiExecution extends AbstractQuartzJob {
     private static final Logger log = LoggerFactory.getLogger(MoniApiExecution.class);
 
@@ -220,7 +225,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniApi.getId()))));
 
 
-        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(OkHttpUtils.getInstance()).build();
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         sendMessage.replyMarkup(inlineKeyboard);
 

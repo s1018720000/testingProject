@@ -16,6 +16,7 @@ import com.as.quartz.domain.MoniElasticLog;
 import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.AbstractQuartzJob;
+import com.as.quartz.util.OkHttpUtils;
 import com.as.quartz.util.ScheduleUtils;
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
@@ -24,6 +25,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import okhttp3.OkHttpClient;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.quartz.DisallowConcurrentExecution;
@@ -31,7 +33,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -47,6 +51,7 @@ import java.util.Objects;
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
+@Component
 public class MoniElasticExecution extends AbstractQuartzJob {
     private static final Logger log = LoggerFactory.getLogger(MoniElasticExecution.class);
 
@@ -343,7 +348,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                 new InlineKeyboardButton("JOB Details").url(ASConfig.getAsDomain().concat(JOB_DETAIL_URL).concat(String.valueOf(moniElastic.getId()))));
 
 
-        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(ScheduleUtils.okHttpClient).build();
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(OkHttpUtils.getInstance()).build();
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         sendMessage.replyMarkup(inlineKeyboard);
 

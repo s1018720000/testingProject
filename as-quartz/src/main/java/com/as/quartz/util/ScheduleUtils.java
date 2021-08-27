@@ -5,35 +5,22 @@ import com.as.common.constant.ScheduleConstants;
 import com.as.common.utils.DictUtils;
 import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ParseMode;
-import com.pengrad.telegrambot.request.SendDocument;
-import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SendPhoto;
-import com.pengrad.telegrambot.response.SendResponse;
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
 import org.quartz.*;
-import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务工具类
  *
  * @author kolin
  */
-@Component
+//@Component
 public class ScheduleUtils {
 
-    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES))
-            .retryOnConnectionFailure(true)
-            .build();
+//    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+//            .readTimeout(60, TimeUnit.SECONDS)
+//            .writeTimeout(60, TimeUnit.SECONDS)
+//            .connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES))
+//            .retryOnConnectionFailure(true)
+//            .build();
 
 //    @PostConstruct
 //    public void beforeInit() {
@@ -43,6 +30,9 @@ public class ScheduleUtils {
 //                .retryOnConnectionFailure(true)
 //                .build();
 //    }
+
+//    @Autowired
+//    private OkHttpClient okHttpClient;
 
     /**
      * 得到quartz任务类
@@ -112,8 +102,8 @@ public class ScheduleUtils {
         if (!"prod".equals(SpringUtils.getActiveProfile())) {
             tgData = new String[2];
             tgData[0] = "1937111623:AAHDVpT1bezDDJ_Lf7HmyYCRd8mZeSlHCwM";
-            tgData[1] = "-532553117";
-//            tgData[1] = "736145377";
+//            tgData[1] = "-532553117";
+            tgData[1] = "736145377";
             return tgData;
         }
 
@@ -130,43 +120,43 @@ public class ScheduleUtils {
         return tgData;
     }
 
-    /**
-     * 发送tg告警 文字
-     */
-    public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
-        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
-        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
-        if (StringUtils.isNotNull(inlineKeyboard)) {
-            sendMessage.replyMarkup(inlineKeyboard);
-        }
-        return messageBot.execute(sendMessage);
-    }
-
-    /**
-     * 发送tg告警 图片
-     */
-    public static SendResponse sendPhoto(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
-        TelegramBot photoBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
-        SendPhoto sendPhoto = new SendPhoto(chatId, file);
-        sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
-        if (StringUtils.isNotNull(inlineKeyboard)) {
-            sendPhoto.replyMarkup(inlineKeyboard);
-        }
-        return photoBot.execute(sendPhoto);
-    }
-
-    /**
-     * 发送tg告警 文件形式
-     */
-    public static SendResponse sendDocument(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
-        TelegramBot documentBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
-        SendDocument sendDocument = new SendDocument(chatId, file);
-        sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
-        if (StringUtils.isNotNull(inlineKeyboard)) {
-            sendDocument.replyMarkup(inlineKeyboard);
-        }
-        return documentBot.execute(sendDocument);
-    }
+//    /**
+//     * 发送tg告警 文字
+//     */
+//    public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
+//        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
+//        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+//        if (StringUtils.isNotNull(inlineKeyboard)) {
+//            sendMessage.replyMarkup(inlineKeyboard);
+//        }
+//        return messageBot.execute(sendMessage);
+//    }
+//
+//    /**
+//     * 发送tg告警 图片
+//     */
+//    public static SendResponse sendPhoto(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
+//        TelegramBot photoBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
+//        SendPhoto sendPhoto = new SendPhoto(chatId, file);
+//        sendPhoto.caption(telegramInfo).parseMode(ParseMode.Markdown);
+//        if (StringUtils.isNotNull(inlineKeyboard)) {
+//            sendPhoto.replyMarkup(inlineKeyboard);
+//        }
+//        return photoBot.execute(sendPhoto);
+//    }
+//
+//    /**
+//     * 发送tg告警 文件形式
+//     */
+//    public static SendResponse sendDocument(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard, File file) {
+//        TelegramBot documentBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
+//        SendDocument sendDocument = new SendDocument(chatId, file);
+//        sendDocument.caption(telegramInfo).parseMode(ParseMode.Markdown);
+//        if (StringUtils.isNotNull(inlineKeyboard)) {
+//            sendDocument.replyMarkup(inlineKeyboard);
+//        }
+//        return documentBot.execute(sendDocument);
+//    }
 
 
 }
