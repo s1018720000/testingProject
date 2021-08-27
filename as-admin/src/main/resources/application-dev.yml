@@ -101,14 +101,6 @@ spring:
                 username: AS_MONITOR
                 password: BBdsk_1720ij
                 driverClassName: oracle.jdbc.driver.OracleDriver
-            # pf2 ods dev
-            pf2-ods:
-                # enabled 数据源开关
-                enabled: true
-                url: jdbc:oracle:thin:@ODSDB.PF2DEV1-OOB.COM:1521/ods.pf2dev1.com
-                username: AS_MONITOR
-                password: BBdsk_1720ij
-                driverClassName: oracle.jdbc.driver.OracleDriver
 
 
             # 初始连接数

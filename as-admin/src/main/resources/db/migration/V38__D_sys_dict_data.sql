@@ -1,0 +1,1 @@
+delete from sys_dict_data where dict_code = 36 and dict_value = 'ub8-pf5-ods';

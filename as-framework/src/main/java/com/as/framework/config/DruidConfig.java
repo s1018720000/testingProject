@@ -83,14 +83,6 @@ public class DruidConfig {
         return druidProperties.dataSource(dataSource);
     }
 
-    @Bean
-    @ConfigurationProperties("spring.datasource.druid.pf2-ods")
-    @ConditionalOnProperty(prefix = "spring.datasource.druid.pf2-ods", name = "enabled", havingValue = "true")
-    public DataSource pf2OdsDataSource(DruidProperties druidProperties) {
-        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-        return druidProperties.dataSource(dataSource);
-    }
-
     @Bean(name = "dynamicDataSource")
     @Primary
     public DynamicDataSource dataSource(DataSource masterDataSource) {
@@ -102,7 +94,6 @@ public class DruidConfig {
         setDataSource(targetDataSources, DataSourceType.PF2_CORE_SEC.name(), "pf2CoreSecDataSource");
         setDataSource(targetDataSources, DataSourceType.PF2_DRAW.name(), "pf2DrawDataSource");
         setDataSource(targetDataSources, DataSourceType.PF2_DW.name(), "pf2DwDataSource");
-        setDataSource(targetDataSources, DataSourceType.PF2_ODS.name(), "pf2OdsDataSource");
         return new DynamicDataSource(masterDataSource, targetDataSources);
     }
 

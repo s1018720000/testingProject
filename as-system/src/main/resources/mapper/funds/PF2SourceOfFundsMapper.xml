@@ -15,18 +15,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="sum_win"    property="sumWin"/>
         <result column="sum_cg_win"    property="sumCgWin"/>
         <result column="sum_deposit"    property="sumDeposit"/>
-        <result column="sum_3rd_pay_deposit"    property="sum3rdPayDeposit"/>
         <result column="sum_withdraw"    property="sumWithdraw"/>
         <result column="sum_ret_bet"    property="sumRetBet"/>
         <result column="promo_active"    property="promoActive"/>
-        <result column="promo_adhoc"    property="promoAdhoc"/>
-        <result column="sum_pf_tran_in"    property="sumPfTranIn"/>
-        <result column="sum_pf_tran_out"    property="sumPfTranOut"/>
-        <result column="sum_comp"    property="sumComp"/>
         <result column="adj_credit"    property="adjCredit"/>
-        <result column="adj_debit"    property="adjDebit"/>
-        <result column="sum_bank_fees"    property="sumBankFees"/>
-        <result column="sum_jackpot_win"    property="sumJackpotWin"/>
         <result column="sum_tran_in"    property="sumTranIn"/>
         <result column="sum_tran_out"    property="sumTranOut"/>
         <result column="sum_ret_agent"    property="sumRetAgent"/>
@@ -37,57 +29,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectPF2SourceOfFundsVo">
         select
         '5.0' as platform,
-        B.customer_name,
-        biz_date,
-        sum_opening,
-        sum_closing,
-        sum_bet,
-        sum_cg_bet,
-        sum_win,
-        sum_cg_win,
-        sum_deposit,
-        sum_3rd_pay_deposit,
-        sum_withdraw,
-        sum_ret_bet,
-        sum_ret_agent,
-        promo_active,
-        promo_adhoc,
-        sum_pf_tran_in,
-        sum_pf_tran_out,
-        sum_comp,
-        adj_credit,
-        adj_debit,
-        sum_bank_fees,
-        sum_jackpot_win,
-        sum_tran_in,
-        sum_tran_out,
-        sum_agent_transfer_in,
-        sum_agent_transfer_out
-        from ods.ods_liability_sum A
-        left join core.us_customer_vw B on A.customer_id = B.customer_id
+        A.CUSTOMER_NAME as customer_name,
+        A.BIZ_DATE as biz_date,
+        B.OPENING as sum_opening,
+        B.CLOSING as sum_closing,
+        A.SUM_BET_LOTT as sum_bet,
+        A.SUM_BET_CASU + A.SUM_BET_CARD + A.SUM_BET_FMC + A.SUM_BET_AG + A.SUM_BET_SPORTS as sum_cg_bet,
+        A.SUM_WIN_LOTT as sum_win,
+        A.SUM_WIN_CASU + A.SUM_WIN_CARD + A.SUM_WIN_FMC + A.SUM_WIN_AG + A.SUM_WIN_SPORTS as sum_cg_win,
+        A.SUM_DEPOSIT as sum_deposit,
+        A.SUM_WITHDRAW as sum_withdraw,
+        A.SUM_RET_BET_LOTT + A.SUM_RET_BET_CASU + A.SUM_RET_BET_CARD + A.SUM_RET_BET_FMC + A.SUM_RET_BET_AG + A.SUM_RET_BET_SPORTS as sum_ret_bet,
+        A.SUM_RET_AGENT_LOTT + A.SUM_RET_AGENT_CASU + A.SUM_RET_AGENT_CARD + A.SUM_RET_AGENT_FMC + A.SUM_RET_AGENT_AG + A.SUM_RET_AGENT_SPORTS as sum_ret_agent,
+        A.SUM_REWARD as promo_active,
+        A.LOTT_TO_CASU + A.LOTT_TO_CARD + A.LOTT_TO_FMC + A.LOTT_TO_AG + A.LOTT_TO_SPORTS as sum_tran_in,
+        A.CASU_TO_LOTT + A.CARD_TO_LOTT + A.FMC_TO_LOTT + A.AG_TO_LOTT + A.SPORTS_TO_LOTT as sum_tran_out,
+        A.SUM_TOT_ADJ as adj_credit,
+        A.SUM_AGENT_TRANIN as sum_agent_transfer_in,
+        A.SUM_AGENT_TRANOUT as sum_agent_transfer_out
+        from dw.DW_F_CUSTOMER_BALANCE B
+        left join dw.DW_R_CUSTOMER_ACTIONDAY A on A.customer_id = B.customer_id and A.BIZ_DATE = B.BIZ_DATE and A.DW_SOURCE = B.DW_SOURCE and B.ACCOUNT_TYPE_ID = '1'
     </sql>
 
     <select id="getPF2SourceOfFound" parameterType="String" resultMap="PF2SourceOfFundsResult">
         <include refid="selectPF2SourceOfFundsVo"/>
         <where>
-            and BIZ_DATE > sysdate-360 and ODS_SRC_TYPE = 'P2_DB'
+            and A.BIZ_DATE > sysdate-360 and A.DW_SOURCE = '2'
             <if test="accounts != null and accounts.length > 0">
-                and B.customer_name in
+                and A.customer_name in
                 <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
                     #{account}
                 </foreach>
             </if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and trunc(biz_date) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
             </if>
             <if test="startTime == null or startTime == ''"><!-- 开始时间检索 -->
-                and trunc(biz_date) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and trunc(biz_date) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
             </if>
         </where>
-        order by biz_date desc
+        order by A.BIZ_DATE desc
     </select>
 
     <resultMap type="PF2SourceOfFundsSummary" id="PF2SourceOfFundsSummaryResult">
@@ -98,47 +82,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result column="sumWin"    property="totalWin"/>
         <result column="sumCgWin"    property="totalCgWin"/>
         <result column="sumRetBet"    property="totalBetReward"/>
-        <result column="sumPfTranIn"    property="totalTransferIn"/>
-        <result column="sumPfTranOut"    property="totalTransferOut"/>
         <result column="adjCredit"    property="totalCredetAdj"/>
         <result column="sumTranIn"    property="totalTransfer3rdIn"/>
         <result column="sumTranOut"    property="totalTransfer3rdOut"/>
     </resultMap>
 
     <select id="getPF2SourceOfFoundSummary" parameterType="String" resultMap="PF2SourceOfFundsSummaryResult">
-        select B.customer_name as accounts,
+        select A.CUSTOMER_NAME as accounts,
         '5.0' as platform,
-        sum(sum_bet) as sumBet,
-        sum(sum_cg_bet) as sumCgBet,
-        sum(sum_win) as sumWin,
-        sum(sum_cg_win) as sumCgWin,
-        sum(sum_ret_bet) as sumRetBet,
-        sum(sum_pf_tran_in) as sumPfTranIn,
-        sum(sum_pf_tran_out) as sumPfTranOut,
-        sum(adj_credit)  as adjCredit  ,
-        sum(sum_tran_in) as sumTranIn,
-        sum(sum_tran_out) as sumTranOut
-        from ods.ods_liability_sum A
-        left join core.us_customer_vw B on A.customer_id = B.customer_id
+        sum(A.SUM_BET_LOTT) as sumBet,
+        sum(A.SUM_BET_CASU) + sum(A.SUM_BET_CARD) + sum(A.SUM_BET_FMC) + sum(A.SUM_BET_AG) + sum(A.SUM_BET_SPORTS) as sumCgBet,
+        sum(A.SUM_WIN_LOTT) as sumWin,
+        sum(A.SUM_WIN_CASU) + sum(A.SUM_WIN_CARD) + sum(A.SUM_WIN_FMC) + sum(A.SUM_WIN_AG) + sum(A.SUM_WIN_SPORTS) as sumCgWin,
+        sum(A.SUM_RET_BET_LOTT) + sum(A.SUM_RET_BET_CASU) + sum(A.SUM_RET_BET_CARD) + sum(A.SUM_RET_BET_FMC) + sum(A.SUM_RET_BET_AG) + sum(A.SUM_RET_BET_SPORTS) as sumRetBet,
+        sum(A.SUM_TOT_ADJ)  as adjCredit,
+        sum(A.LOTT_TO_CASU) + sum(A.LOTT_TO_CARD) + sum(A.LOTT_TO_FMC) + sum(A.LOTT_TO_AG) + sum(A.LOTT_TO_SPORTS) as sumTranIn,
+        sum(A.CASU_TO_LOTT) + sum(A.CARD_TO_LOTT) + sum(A.FMC_TO_LOTT) + sum(A.AG_TO_LOTT) + sum(A.SPORTS_TO_LOTT) as sumTranOut
+        from dw.DW_F_CUSTOMER_BALANCE B
+        left join dw.DW_R_CUSTOMER_ACTIONDAY A on A.customer_id = B.customer_id and A.BIZ_DATE = B.BIZ_DATE and A.DW_SOURCE = B.DW_SOURCE and B.ACCOUNT_TYPE_ID = '1'
         <where>
-            and BIZ_DATE > sysdate-360 and ODS_SRC_TYPE = 'P2_DB'
+            and A.BIZ_DATE > sysdate-360 and A.DW_SOURCE = '2'
             <if test="accounts != null and accounts.length > 0">
-                and B.customer_name in
+                and A.customer_name in
                 <foreach collection="accounts" item="account" index="index" open="(" separator="," close=")">
                     #{account}
                 </foreach>
             </if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and trunc(biz_date) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &gt;= to_date(#{startTime} , 'YYYY-MM-DD')
             </if>
             <if test="startTime == null or startTime == ''"><!-- 开始时间检索 -->
-                and trunc(biz_date) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &gt;= to_date('2016-01-01' , 'YYYY-MM-DD')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and trunc(biz_date) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
+                and trunc(A.BIZ_DATE) &lt;= to_date(#{endTime} , 'YYYY-MM-DD')
             </if>
         </where>
-        group by b.customer_name,'5.0'
+        group by A.customer_name,'5.0'
     </select>
 
 

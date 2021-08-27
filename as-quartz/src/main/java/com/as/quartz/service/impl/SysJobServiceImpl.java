@@ -95,10 +95,6 @@ public class SysJobServiceImpl implements ISysJobService {
     @Qualifier("pf2DwDataSource")
     DataSource pf2DwDataSource;
 
-    @Autowired
-    @Qualifier("pf2OdsDataSource")
-    DataSource pf2OdsDataSource;
-
     Map<String, JdbcTemplate> jdbcMap = new HashMap<String, JdbcTemplate>();
 
     /**
@@ -161,7 +157,6 @@ public class SysJobServiceImpl implements ISysJobService {
         jdbcMap.put("ub8-pf5-core", new JdbcTemplate(pf2CoreDataSource));
         jdbcMap.put("ub8-pf5-core-sec", new JdbcTemplate(pf2CoreSecDataSource));
         jdbcMap.put("ub8-pf5-draw", new JdbcTemplate(pf2DrawDataSource));
-        jdbcMap.put("ub8-pf5-ods", new JdbcTemplate(pf2OdsDataSource));
         jdbcMap.put("data-warehouse", new JdbcTemplate(pf2DwDataSource));
     }
 

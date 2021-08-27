@@ -36,7 +36,7 @@ public class ICheckOrderServiceImpl implements ICheckOrderService {
     }
 
     @Override
-    @DataSource(value = DataSourceType.PF2_ODS)
+    @DataSource(value = DataSourceType.PF2_DW)
     public List<OdsCheckOrder> findAllOdsByAccounts(String account) {
         return checkOrderMapper.findAllOdsByAccounts(account);
     }

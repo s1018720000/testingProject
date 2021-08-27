@@ -53,10 +53,6 @@ public class DBQueryServiceImpl implements IDBQueryService {
     @Qualifier("pf2DwDataSource")
     DataSource pf2DwDataSource;
 
-    @Autowired
-    @Qualifier("pf2OdsDataSource")
-    DataSource pf2OdsDataSource;
-
     /**
      * sql 查询
      *
@@ -104,9 +100,6 @@ public class DBQueryServiceImpl implements IDBQueryService {
                 break;
             case "ub8-pf5-draw":
                 jdbcTemplate = new JdbcTemplate(pf2DrawDataSource);
-                break;
-            case "ub8-pf5-ods":
-                jdbcTemplate = new JdbcTemplate(pf2OdsDataSource);
                 break;
             case "data-warehouse":
                 jdbcTemplate = new JdbcTemplate(pf2DwDataSource);

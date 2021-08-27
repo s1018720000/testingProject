@@ -71,7 +71,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
     private int serversLoadTimes;
 
-    private static final int maxLoadTimes = 5; // 最大重连次数
+    private static final int maxLoadTimes = 3; // 最大重连次数
 
     private String bot;
 
@@ -130,6 +130,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         moniJob = (MoniJob) job;
         moniJobLog.setStartTime(new Date());
         moniJobLog.setJobId(moniJob.getId());
+        moniJobLog.setExpectedResult(moniJob.getExpectedResult());
         //此处先插入一条日志以获取日志id，方便告警拼接url使用
         SpringUtils.getBean(IMoniJobLogService.class).addJobLog(moniJobLog);
         //输出日志
@@ -478,7 +479,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private void sendPhoto(TelegramBot photoBot, SendPhoto sendPhoto) {
-        serversLoadTimes = 0;
+        serversLoadTimes = 3;
         photoBot.execute(sendPhoto, new Callback<SendPhoto, SendResponse>() {
             @Override
             public void onResponse(SendPhoto request, SendResponse response) {
@@ -506,7 +507,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private void sendDocument(TelegramBot documentBot, SendDocument sendDocument) {
-        serversLoadTimes = 1;
+        serversLoadTimes = 3;
         documentBot.execute(sendDocument, new Callback<SendDocument, SendResponse>() {
             @Override
             public void onResponse(SendDocument request, SendResponse response) {

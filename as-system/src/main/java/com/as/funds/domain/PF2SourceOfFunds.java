@@ -30,18 +30,10 @@ public class PF2SourceOfFunds implements Serializable {
     private String sumWin;      // SUM_WIN 中獎
     private String sumCgWin;    // SUM_CG_WIN 老虎機中獎
     private String sumDeposit;
-    private String sum3rdPayDeposit;
     private String sumWithdraw;
     private String sumRetBet;   //返點
     private String promoActive;
-    private String promoAdhoc;
-    private String sumPfTranIn;  // 平台轉入
-    private String sumPfTranOut; // 平台轉出
-    private String sumComp;
     private String adjCredit;    // CREDIT_ADJ 充正
-    private String adjDebit;
-    private String sumBankFees;
-    private String sumJackpotWin;
     private String sumTranIn;    // 老虎機平台轉入
     private String sumTranOut;   // 老虎機平台轉出
     private String sumRetAgent;

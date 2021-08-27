@@ -12,6 +12,7 @@ import com.pengrad.telegrambot.request.SendDocument;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.quartz.*;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class ScheduleUtils {
     public static final OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+            .connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES))
             .retryOnConnectionFailure(true)
             .build();
 

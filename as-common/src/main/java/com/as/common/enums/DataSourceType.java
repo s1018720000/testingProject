@@ -40,10 +40,5 @@ public enum DataSourceType
     /**
      * PF2 DW
      */
-    PF2_DW,
-
-    /**
-     * PF2 ODS
-     */
-    PF2_ODS
+    PF2_DW
 }

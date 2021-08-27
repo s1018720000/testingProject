@@ -100,15 +100,6 @@ spring:
                 username: draw
                 password: Jadd_1720ij
                 driverClassName: oracle.jdbc.driver.OracleDriver
-            # pf2 ods uat
-            pf2-ods:
-                # enabled 数据源开关
-                enabled: true
-                url: jdbc:oracle:thin:@DB.PF2UAT1-OOB.COM:1521/UB8.pf2uat1.com
-                username: draw
-                password: Jadd_1720ij
-                driverClassName: oracle.jdbc.driver.OracleDriver
-
 
             # 初始连接数
             initialSize: 5

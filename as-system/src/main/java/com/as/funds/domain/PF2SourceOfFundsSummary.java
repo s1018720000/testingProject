@@ -23,8 +23,6 @@ public class PF2SourceOfFundsSummary implements Serializable {
     private String totalWin;
     private String totalCgWin;
     private String totalBetReward;
-    private String totalTransferIn;
-    private String totalTransferOut;
     private String totalCredetAdj;
     private String totalTransfer3rdIn;
     private String totalTransfer3rdOut;

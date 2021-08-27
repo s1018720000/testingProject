@@ -100,15 +100,6 @@ spring:
                 username: AS_MONITOR
                 password: Jn3Ms9qoOc
                 driverClassName: oracle.jdbc.driver.OracleDriver
-            # pf2 ods prod
-            pf2-ods:
-                # enabled 数据源开关
-                enabled: true
-                url: jdbc:oracle:thin:@ODS-S.pf2prod.com:1521/ODS.pf2prod.com
-                username: AS_MONITOR
-                password: M0nI7to8S
-                driverClassName: oracle.jdbc.driver.OracleDriver
-
 
             # 初始连接数
             initialSize: 5
