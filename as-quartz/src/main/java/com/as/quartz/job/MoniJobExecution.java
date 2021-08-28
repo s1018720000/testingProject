@@ -489,11 +489,11 @@ public class MoniJobExecution extends AbstractQuartzJob {
             @Override
             public void onResponse(SendPhoto request, SendResponse response) {
                 if (response.isOk()) {
-                    deleteMessage(photoBot);
                     MoniJobLog jobLog = new MoniJobLog();
                     jobLog.setId(moniJobLog.getId());
                     jobLog.setStatus(Constants.FAIL);
                     SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
+                    deleteMessage(photoBot);
                 } else {
                     //图片文件发送失败则发送文字消息
 //                    sendMessage();
@@ -523,11 +523,11 @@ public class MoniJobExecution extends AbstractQuartzJob {
             @Override
             public void onResponse(SendDocument request, SendResponse response) {
                 if (response.isOk()) {
-                    deleteMessage(documentBot);
                     MoniJobLog jobLog = new MoniJobLog();
                     jobLog.setId(moniJobLog.getId());
                     jobLog.setStatus(Constants.FAIL);
                     SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
+                    deleteMessage(documentBot);
                 } else {
                     //图片文件发送失败则发送文字消息
 //                    sendMessage();
