@@ -12,13 +12,14 @@ dependencies {
     implementation("org.quartz-scheduler:quartz") {
         exclude group: "com.mchange", module: "c3p0"
     }
-    implementation ('com.github.pengrad:java-telegram-bot-api:5.2.0'){
-        exclude group: "com.squareup.okhttp3", module: "okhttp"
-        exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
-    }
+    implementation ('com.github.pengrad:java-telegram-bot-api:5.2.0')
+//            {
+//        exclude group: "com.squareup.okhttp3", module: "okhttp"
+//        exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
+//    }
 
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.1"
+//    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+//    implementation "com.squareup.okhttp3:logging-interceptor:4.9.1"
 
     implementation 'javax.mail:mail:1.4.1'
 

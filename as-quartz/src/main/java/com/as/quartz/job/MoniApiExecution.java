@@ -59,7 +59,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
 
     private int serversLoadTimes;
 
-    private static final int maxLoadTimes = 3; // 最大重连次数
+    private static final int maxLoadTimes = 5; // 最大重连次数
 
     /**
      * 执行方法
@@ -249,6 +249,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
                 } else {
                     MoniApiLog jobLog = new MoniApiLog();
                     jobLog.setId(moniApiLog.getId());
+                    jobLog.setStatus(Constants.ERROR);
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniApiLogService.class).updateMoniApiLog(jobLog);
                     log.error("API jobId：{},JobName：{},telegram发送信息异常,{}", moniApi.getId(), moniApi.getChName(), ExceptionUtil.getExceptionMessage(e));

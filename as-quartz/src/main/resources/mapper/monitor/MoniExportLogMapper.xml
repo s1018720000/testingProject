@@ -22,11 +22,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="chName"    column="CH_NAME"    />
         <result property="platform"    column="PLATFORM"    />
         <result property="ticketNumber"    column="TICKET_NUMBER"    />
+        <result property="asid"    column="ASID"    />
     </resultMap>
 
     <sql id="selectMoniExportLogVo">
         select MEL.ID, MEL.EXPORT_ID, MEL.START_TIME, MEL.END_TIME, MEL.FILE_NAME, MEL.EXCEPTION_LOG, MEL.EXECUTE_TIME, MEL.STATUS, MEL.OPERATOR,
-         ME.EN_NAME, ME.CH_NAME, ME.PLATFORM, ME.TICKET_NUMBER
+         ME.EN_NAME, ME.CH_NAME, ME.PLATFORM, ME.TICKET_NUMBER, ME.ASID
         from moni_export_log MEL
         left join moni_export ME on MEL.EXPORT_ID = ME.ID
     </sql>

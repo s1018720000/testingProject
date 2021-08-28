@@ -70,7 +70,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
     private int serversLoadTimes;
 
-    private static final int maxLoadTimes = 3; // 最大重连次数
+    private static final int maxLoadTimes = 5; // 最大重连次数
 
     private String bot;
 
@@ -443,7 +443,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         sendMessage.replyMarkup(inlineKeyboard);
         sendMessage(telegramBot, sendMessage);
-        Thread.sleep(3000);
         //图片长宽不超过1500则发送图片，否则发送附件
         if (width <= 1500 && height <= 1500) {
             SendPhoto sendPhoto = new SendPhoto(chatId, file);
@@ -485,12 +484,16 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private void sendPhoto(TelegramBot photoBot, SendPhoto sendPhoto) {
-        serversLoadTimes = 3;
+        serversLoadTimes = 5;
         photoBot.execute(sendPhoto, new Callback<SendPhoto, SendResponse>() {
             @Override
             public void onResponse(SendPhoto request, SendResponse response) {
                 if (response.isOk()) {
                     deleteMessage(photoBot);
+                    MoniJobLog jobLog = new MoniJobLog();
+                    jobLog.setId(moniJobLog.getId());
+                    jobLog.setStatus(Constants.FAIL);
+                    SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
                 } else {
                     //图片文件发送失败则发送文字消息
 //                    sendMessage();
@@ -515,12 +518,16 @@ public class MoniJobExecution extends AbstractQuartzJob {
     }
 
     private void sendDocument(TelegramBot documentBot, SendDocument sendDocument) {
-        serversLoadTimes = 3;
+        serversLoadTimes = 5;
         documentBot.execute(sendDocument, new Callback<SendDocument, SendResponse>() {
             @Override
             public void onResponse(SendDocument request, SendResponse response) {
                 if (response.isOk()) {
                     deleteMessage(documentBot);
+                    MoniJobLog jobLog = new MoniJobLog();
+                    jobLog.setId(moniJobLog.getId());
+                    jobLog.setStatus(Constants.FAIL);
+                    SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
                 } else {
                     //图片文件发送失败则发送文字消息
 //                    sendMessage();
@@ -546,11 +553,11 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
     private void deleteMessage(TelegramBot bot) {
         if (StringUtils.isNotNull(messageId)) {
-            telegramInfo = telegramInfo + "\n\n" + "*This message will be deleted in 10 seconds*";
+            telegramInfo = telegramInfo + "\n\n" + "*This message will be deleted in 5 seconds*";
             EditMessageText editMessageText = new EditMessageText(chatId, messageId, telegramInfo).parseMode(ParseMode.Markdown);
             bot.execute(editMessageText);
             try {
-                Thread.sleep(10000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -585,6 +592,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 } else {
                     MoniJobLog jobLog = new MoniJobLog();
                     jobLog.setId(moniJobLog.getId());
+                    jobLog.setStatus(Constants.ERROR);
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniJobLogService.class).updateJobLog(jobLog);
                     log.error("DB jobId：{},JobName：{},telegram发送信息异常,{}", moniJob.getId(), moniJob.getChName(), ExceptionUtil.getExceptionMessage(e));

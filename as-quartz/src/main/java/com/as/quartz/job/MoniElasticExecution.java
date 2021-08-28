@@ -64,7 +64,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
 
     private int serversLoadTimes;
 
-    private static final int maxLoadTimes = 3; // 最大重连次数
+    private static final int maxLoadTimes = 5; // 最大重连次数
 
     /**
      * 执行方法
@@ -373,6 +373,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
                     log.info("{},telegram发送失败,{}", moniElastic.getChName(), ExceptionUtil.getExceptionMessage(e));
                     MoniElasticLog jobLog = new MoniElasticLog();
                     jobLog.setId(moniElasticLog.getId());
+                    jobLog.setStatus(Constants.ERROR);
                     jobLog.setExceptionLog("Telegram send message error: ".concat(ExceptionUtil.getExceptionMessage(e).replace("\"", "'")));
                     SpringUtils.getBean(IMoniElasticLogService.class).updateMoniElasticLog(jobLog);
                     log.error("Log jobId：{},JobName：{},telegram发送信息异常,{}", moniElastic.getId(), moniElastic.getChName(), ExceptionUtil.getExceptionMessage(e));

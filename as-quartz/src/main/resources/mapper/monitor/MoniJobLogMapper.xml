@@ -25,11 +25,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="descr"    column="DESCR"    />
         <result property="platform"    column="PLATFORM"    />
         <result property="priority"    column="PRIORITY"    />
+        <result property="asid"    column="ASID"    />
     </resultMap>
 
     <sql id="selectMoniJobLogVo">
         select MJL.ID, MJL.JOB_ID, MJL.START_TIME, MJL.END_TIME, MJL.EXECUTE_RESULT, MJL.EXPECTED_RESULT, MJL.EXCEPTION_LOG, MJL.EXECUTE_TIME, MJL.STATUS, MJL.ALERT_STATUS, MJL.OPERATOR,
-        MJ.EN_NAME, MJ.CH_NAME, MJ.DESCR, MJ.PLATFORM, MJ.PRIORITY
+        MJ.EN_NAME, MJ.CH_NAME, MJ.DESCR, MJ.PLATFORM, MJ.PRIORITY, MJ.ASID
         from moni_job_log MJL
         left join moni_job MJ on MJL.JOB_ID = MJ.ID
     </sql>
