@@ -5,6 +5,11 @@ import com.as.common.constant.ScheduleConstants;
 import com.as.common.utils.DictUtils;
 import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
 import org.quartz.*;
 
 /**
@@ -99,17 +104,17 @@ public class ScheduleUtils {
         return tgData;
     }
 
-//    /**
-//     * 发送tg告警 文字
-//     */
-//    public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
-//        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(okHttpClient).build();
-//        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
-//        if (StringUtils.isNotNull(inlineKeyboard)) {
-//            sendMessage.replyMarkup(inlineKeyboard);
-//        }
-//        return messageBot.execute(sendMessage);
-//    }
+    /**
+     * 发送tg告警 文字
+     */
+    public static SendResponse sendMessage(String bot, String chatId, String telegramInfo, InlineKeyboardMarkup inlineKeyboard) {
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(OkHttpUtils.getInstance()).build();
+        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        if (StringUtils.isNotNull(inlineKeyboard)) {
+            sendMessage.replyMarkup(inlineKeyboard);
+        }
+        return messageBot.execute(sendMessage);
+    }
 //
 //    /**
 //     * 发送tg告警 图片

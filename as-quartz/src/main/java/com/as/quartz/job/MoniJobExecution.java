@@ -442,7 +442,11 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         sendMessage.replyMarkup(inlineKeyboard);
-        sendMessage(telegramBot, sendMessage);
+//        sendMessage(telegramBot, sendMessage);
+        SendResponse response = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
+        if (response.isOk()) {
+            messageId = response.message().messageId();
+        }
         //图片长宽不超过1500则发送图片，否则发送附件
         if (width <= 1500 && height <= 1500) {
             SendPhoto sendPhoto = new SendPhoto(chatId, file);
