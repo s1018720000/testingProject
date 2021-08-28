@@ -25,7 +25,7 @@ public class OkHttpUtils {
                             .writeTimeout(120, TimeUnit.SECONDS)
                             .connectionPool(new ConnectionPool(50, 5, TimeUnit.MINUTES))
                             .retryOnConnectionFailure(false)
-                            .dns(new OkHttpDns(60))
+//                            .dns(new OkHttpDns(60))
                             .build();
                 }
             }
