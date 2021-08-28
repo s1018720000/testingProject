@@ -23,9 +23,8 @@ public class OkHttpUtils {
                     client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
                             .readTimeout(60, TimeUnit.SECONDS)
                             .writeTimeout(120, TimeUnit.SECONDS)
-                            .connectionPool(new ConnectionPool(50, 5, TimeUnit.MINUTES))
+                            .connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES))
                             .retryOnConnectionFailure(true)
-                            .dns(new OkHttpDns(60))
                             .build();
                 }
             }
