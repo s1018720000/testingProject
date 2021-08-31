@@ -254,7 +254,11 @@ public class MoniApiServiceImpl implements IMoniApiService {
         MoniApi tmpObj = selectMoniApiById(job.getId());
         // 参数
         JobDataMap dataMap = new JobDataMap();
+        try {
         dataMap.put("operator", ShiroUtils.getLoginName());
+        } catch (Exception e){
+            //时ShiroUtils.getLoginName()会异常，此处吞掉异常继续执行調用API
+        }
         dataMap.put(ScheduleConstants.TASK_PROPERTIES, tmpObj);
         scheduler.triggerJob(ScheduleUtils.getJobKey(jobCode, tmpObj.getPlatform()), dataMap);
     }

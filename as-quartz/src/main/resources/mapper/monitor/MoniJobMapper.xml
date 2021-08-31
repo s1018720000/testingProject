@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="UPDATE_BY"    />
         <result property="updateTime"    column="UPDATE_TIME"    />
         <result property="relExport"    column="REL_EXPORT"    />
+        <result property="relApi"    column="REL_API"    />
         <result property="telegramAlert"    column="TELEGRAM_ALERT"    />
         <result property="telegramInfo"    column="TELEGRAM_INFO"    />
         <result property="telegramConfig"    column="TELEGRAM_CONFIG"    />
@@ -34,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMoniJobVo">
-        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT, IGNORE_ALERT from moni_job
+        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT, IGNORE_ALERT, REL_API from moni_job
     </sql>
 
     <select id="selectMoniJobList" parameterType="MoniJob" resultMap="MoniJobResult">
@@ -85,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null and updateBy != ''">UPDATE_BY,</if>
             <if test="updateTime != null">UPDATE_TIME,</if>
             <if test="relExport != null">REL_EXPORT,</if>
+            <if test="relApi != null">REL_API,</if>
             <if test="telegramAlert != null and telegramAlert != ''">TELEGRAM_ALERT,</if>
             <if test="telegramInfo != null">TELEGRAM_INFO,</if>
             <if test="telegramConfig != null and telegramConfig != ''">TELEGRAM_CONFIG,</if>
@@ -112,6 +114,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="relExport != null">#{relExport},</if>
+            <if test="relApi != null">#{relApi},</if>
             <if test="telegramAlert != null and telegramAlert != ''">#{telegramAlert},</if>
             <if test="telegramInfo != null">#{telegramInfo},</if>
             <if test="telegramConfig != null and telegramConfig != ''">#{telegramConfig},</if>
@@ -143,6 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null and updateBy != ''">UPDATE_BY = #{updateBy},</if>
             <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
             <if test="relExport != null">REL_EXPORT = #{relExport},</if>
+            <if test="relApi != null">REL_API = #{relApi},</if>
             <if test="telegramAlert != null and telegramAlert != ''">TELEGRAM_ALERT = #{telegramAlert},</if>
             <if test="telegramInfo != null">TELEGRAM_INFO = #{telegramInfo},</if>
             <if test="telegramConfig != null and telegramConfig != ''">TELEGRAM_CONFIG = #{telegramConfig},</if>

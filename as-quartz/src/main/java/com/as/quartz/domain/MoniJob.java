@@ -165,6 +165,12 @@ public class MoniJob extends BaseEntity {
     private Date lastAlert;
 
     /**
+     * 調用API
+     */
+    @Excel(name = "調用API")
+    private String relApi;
+
+    /**
      * 忽略x分钟内告警
      */
     @Excel(name = "忽略x分钟内告警")
@@ -205,6 +211,7 @@ public class MoniJob extends BaseEntity {
                 .append("actionItem", getActionItem())
                 .append("lastAlert", getLastAlert())
                 .append("ignoreAlert", getIgnoreAlert())
+                .append("relApi", getRelApi())
                 .toString();
     }
 }

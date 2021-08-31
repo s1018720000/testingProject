@@ -57,6 +57,14 @@ public class MoniApiController extends BaseController {
     }
 
     /**
+     * 获取选择表格
+     */
+    @GetMapping("/getSelectTable")
+    public String getSelectTable() {
+        return prefix + "/selectTable";
+    }
+
+    /**
      * 导出自动API检测任务列表
      */
     @RequiresPermissions("monitor:apiJob:export")
