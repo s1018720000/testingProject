@@ -477,7 +477,8 @@ public class MoniElasticServiceImpl implements IMoniElasticService {
                 //如果未找到匹配的开奖数据则记录
 
                 int count = pf2DrawCompareMapper.selectPF2DrawNumberCount(gameCode, numero, winNo);
-                if (count != 1) {
+                //PF2 沒有BJKL8不比對
+                if (count != 1 && !gameCode.equals("BJKL8")) {
                     String winNumber = pf2DrawCompareMapper.selectPF2DrawNumber(gameCode, numero);
                     if (StringUtils.isBlank(winNumber)) {
                         winNumber = "Not Found";
