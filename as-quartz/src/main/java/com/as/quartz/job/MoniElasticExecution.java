@@ -409,7 +409,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         moniElasticExecution.setId(String.valueOf(moniElastic.getId()));
         moniElasticExecution.setCronExpression(moniElastic.getCronExpression());
         moniElasticExecution.setStatus(moniElastic.getStatus());
-        moniElasticExecution.setJobContent(moniElastic.getPlatform());
+        moniElasticExecution.setJobGroup(moniElastic.getPlatform());
         moniElasticExecution.setJobContent(moniElastic);
         return moniElasticExecution;
     }

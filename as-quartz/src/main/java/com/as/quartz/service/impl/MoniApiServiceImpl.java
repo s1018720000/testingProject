@@ -323,8 +323,13 @@ public class MoniApiServiceImpl implements IMoniApiService {
             request = new HttpEntity<>(multiValueMap, headerMap);
             response = restTemplate.exchange(url, method, request, String.class);
         } else {
-            request = new HttpEntity<>(null, headerMap);
-            response = restTemplate.exchange(url, method, request, String.class, hashMap);
+            if (HttpMethod.POST.equals(method)){
+                request = new HttpEntity<>(hashMap, headerMap);
+                response = restTemplate.exchange(url, method, request, String.class);
+            } else {
+                request = new HttpEntity<>(null, headerMap);
+                response = restTemplate.exchange(url, method, request, String.class, hashMap);
+            }
         }
 
         return response;
