@@ -116,7 +116,6 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             moniElastic.setLastAlert(DateUtils.getNowDate());
             SpringUtils.getBean(IMoniElasticService.class).updateMoniElasticLastAlertTime(moniElastic);
             //調用API
-            System.out.println("RelApi-----------------------"+moniElastic.getRelApi());
             doApi(moniElastic.getRelApi());
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
