@@ -62,6 +62,17 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{sql.job.related.api}]]：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input name="relApi" id="relApi" class="form-control" th:field="*{relApi}" type="text">
+                        <span class="input-group-btn" onclick="selectAPI()">
+                        <button type="button" class="btn btn-default" style="padding-bottom: 3px;"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">[[#{sql.job.tg.alert}]]：</label>
                 <div class="col-sm-8">
@@ -246,6 +257,25 @@
                 }
             });
         });
+        
+        function selectAPI(){
+            var options = {
+                title: i18n('sql.job.select.api'),
+                url: ctx + "monitor/apiJob/getSelectTable",
+                callBack: doSubmitApi
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmitApi(index, layero){
+            var rows = layero.find("iframe")[0].contentWindow.getSelections();
+            if (rows.length === 0) {
+                $.modal.alertWarning(i18n('home.select.one'));
+                return;
+            }
+            $('#relApi').val(rows.join())
+            layer.close(index);
+        }
     </script>
 </body>
 </html>

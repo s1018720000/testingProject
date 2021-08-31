@@ -11,8 +11,10 @@ import com.as.common.utils.DictUtils;
 import com.as.common.utils.ExceptionUtil;
 import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
+import com.as.quartz.domain.MoniApi;
 import com.as.quartz.domain.MoniElastic;
 import com.as.quartz.domain.MoniElasticLog;
+import com.as.quartz.service.IMoniApiService;
 import com.as.quartz.service.IMoniElasticLogService;
 import com.as.quartz.service.IMoniElasticService;
 import com.as.quartz.util.AbstractQuartzJob;
@@ -113,6 +115,9 @@ public class MoniElasticExecution extends AbstractQuartzJob {
             //更新最后告警时间
             moniElastic.setLastAlert(DateUtils.getNowDate());
             SpringUtils.getBean(IMoniElasticService.class).updateMoniElasticLastAlertTime(moniElastic);
+            //調用API
+            System.out.println("RelApi-----------------------"+moniElastic.getRelApi());
+            doApi(moniElastic.getRelApi());
         } else {
             moniElasticLog.setStatus(Constants.SUCCESS);
             moniElasticLog.setAlertStatus(Constants.FAIL);
@@ -409,5 +414,26 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         moniElasticExecution.setJobPlatform(moniElastic.getPlatform());
         moniElasticExecution.setJobContent(moniElastic);
         return moniElasticExecution;
+    }
+
+    /**
+     * 調用Api
+     *
+     * @param relApi
+     */
+    private void doApi(String relApi) throws Exception {
+        if (StringUtils.isNotEmpty(relApi)) {
+            IMoniApiService moniApiService = SpringUtils.getBean(IMoniApiService.class);
+            String[] ids = relApi.split(",");
+            for (String id : ids) {
+                MoniApi moniApi = moniApiService.selectMoniApiById(Long.parseLong(id));
+                if(StringUtils.isNotNull(moniApi)){
+                    moniApiService.run(moniApi);
+                }else{
+                    throw new Exception("The related api job does not exist");
+                }
+
+            }
+        }
     }
 }
