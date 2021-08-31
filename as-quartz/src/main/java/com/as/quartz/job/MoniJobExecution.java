@@ -15,7 +15,7 @@ import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.service.IMoniExportService;
 import com.as.quartz.service.IMoniJobLogService;
 import com.as.quartz.service.IMoniJobService;
-import com.as.quartz.service.ISysJobService;
+import com.as.quartz.service.IJobService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.HtmlTemplateUtil;
 import com.as.quartz.util.OkHttpUtils;
@@ -64,7 +64,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
     private static final String LOG_DETAIL_URL = "/monitor/sqlJobLog/detail/";
     private static final String JOB_DETAIL_URL = "/monitor/sqlJob/detail/";
 
-    private final MoniJobLog moniJobLog = new MoniJobLog();
+    private MoniJobLog moniJobLog = new MoniJobLog();
 
     private MoniJob moniJob = new MoniJob();
 
@@ -82,6 +82,8 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
     private String telegramInfo;
 
+    private SendMessage sendMessage;
+
     /**
      * 执行方法
      *
@@ -91,7 +93,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
      */
     @Override
     protected void doExecute(JobExecutionContext context, Object job) throws Exception {
-        Map<String, JdbcTemplate> jdbcMap = SpringUtils.getBean(ISysJobService.class).getJdbcMap();
+        Map<String, JdbcTemplate> jdbcMap = SpringUtils.getBean(IJobService.class).getJdbcMap();
         SqlRowSet rowSet = jdbcMap.get(moniJob.getJdbc().trim()).queryForRowSet(moniJob.getScript());
         String exeResult = getResultTable(rowSet);
         log.info("执行结果:{}", exeResult);
@@ -440,13 +442,18 @@ public class MoniJobExecution extends AbstractQuartzJob {
 
         TelegramBot telegramBot = new TelegramBot.Builder(bot).okHttpClient(OkHttpUtils.getInstance()).build();
 
-        SendMessage sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
+        sendMessage = new SendMessage(chatId, telegramInfo).parseMode(ParseMode.Markdown);
         sendMessage.replyMarkup(inlineKeyboard);
 //        sendMessage(telegramBot, sendMessage);
-        SendResponse response = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
-        if (response.isOk()) {
-            messageId = response.message().messageId();
+        try {
+            SendResponse response = ScheduleUtils.sendMessage(bot, chatId, telegramInfo, inlineKeyboard);
+            if (response.isOk()) {
+                messageId = response.message().messageId();
+            }
+        } catch (Exception e) {
+
         }
+
         //图片长宽不超过1500则发送图片，否则发送附件
         if (width <= 1500 && height <= 1500) {
             SendPhoto sendPhoto = new SendPhoto(chatId, file);
@@ -500,7 +507,9 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     deleteMessage(photoBot);
                 } else {
                     //图片文件发送失败则发送文字消息
-//                    sendMessage();
+                    if (StringUtils.isNull(messageId)) {
+                        sendMessage();
+                    }
                     log.error("DB jobId：{},JobName：{},telegram发送图片失败", moniJob.getId(), moniJob.getChName());
                 }
             }
@@ -534,7 +543,9 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     deleteMessage(documentBot);
                 } else {
                     //图片文件发送失败则发送文字消息
-//                    sendMessage();
+                    if (StringUtils.isNull(messageId)) {
+                        sendMessage();
+                    }
                     log.error("DB jobId：{},JobName：{},telegram发送附件失败", moniJob.getId(), moniJob.getChName());
                 }
             }
@@ -570,8 +581,9 @@ public class MoniJobExecution extends AbstractQuartzJob {
         }
     }
 
-    private void sendMessage(TelegramBot messageBot, SendMessage sendMessage) {
+    private void sendMessage() {
         serversLoadTimes = 0;
+        TelegramBot messageBot = new TelegramBot.Builder(bot).okHttpClient(OkHttpUtils.getInstance()).build();
         messageBot.execute(sendMessage, new Callback<SendMessage, SendResponse>() {
             @Override
             public void onResponse(SendMessage request, SendResponse response) {
@@ -649,7 +661,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
         moniJobExecution.setId(String.valueOf(moniJob.getId()));
         moniJobExecution.setCronExpression(moniJob.getCronExpression());
         moniJobExecution.setStatus(moniJob.getStatus());
-        moniJobExecution.setJobPlatform(moniJob.getPlatform());
+        moniJobExecution.setJobGroup(moniJob.getPlatform());
         moniJobExecution.setJobContent(moniJob);
         return moniJobExecution;
     }

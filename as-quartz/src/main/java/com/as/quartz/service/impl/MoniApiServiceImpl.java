@@ -285,7 +285,7 @@ public class MoniApiServiceImpl implements IMoniApiService {
         HttpHeaders headerMap = new HttpHeaders();
         String headers = job.getHeader();
         if (StringUtils.isNotEmpty(headers)) {
-            String[] headerArray = headers.split("\n");
+            String[] headerArray = headers.split("\r\n");
             for (String param : headerArray) {
                 String[] value = param.split(":");
                 headerMap.add(value[0], value[1]);
@@ -313,13 +313,14 @@ public class MoniApiServiceImpl implements IMoniApiService {
 
         assert method != null;
         HttpEntity<Object> request;
+        ResponseEntity<String> response;
         if (!(MediaType.APPLICATION_JSON_UTF8.equals(mediaType) || MediaType.APPLICATION_JSON.equals(mediaType)) && HttpMethod.POST.equals(method)) {
             request = new HttpEntity<>(multiValueMap, headerMap);
+            response = restTemplate.exchange(url, method, request, String.class);
         } else {
-            request = new HttpEntity<>(hashMap, headerMap);
-
+            request = new HttpEntity<>(null, headerMap);
+            response = restTemplate.exchange(url, method, request, String.class, hashMap);
         }
-        ResponseEntity<String> response = restTemplate.exchange(url, method, request, String.class);
 
         return response;
     }
