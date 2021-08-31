@@ -118,4 +118,11 @@ public interface IMoniApiService {
      * @return
      */
     public ResponseEntity<String> doUrlCheck(MoniApi job);
+
+    /**
+     * 調用Api
+     *
+     * @param relApi
+     */
+    public void doApi(String relApi) throws Exception;
 }

@@ -7,6 +7,7 @@ import com.as.common.utils.DateUtils;
 import com.as.common.utils.DictUtils;
 import com.as.common.utils.ShiroUtils;
 import com.as.common.utils.StringUtils;
+import com.as.common.utils.spring.SpringUtils;
 import com.as.quartz.domain.MoniApi;
 import com.as.quartz.job.MoniApiExecution;
 import com.as.quartz.mapper.MoniApiMapper;
@@ -327,5 +328,27 @@ public class MoniApiServiceImpl implements IMoniApiService {
         }
 
         return response;
+    }
+
+    /**
+     * 調用Api
+     *
+     * @param relApi
+     */
+    @Override
+    @Transactional
+    public void doApi(String relApi) throws Exception{
+        if (StringUtils.isNotEmpty(relApi)) {
+            String[] ids = relApi.split(",");
+            for (String id : ids) {
+                MoniApi moniApi = selectMoniApiById(Long.parseLong(id));
+                if(StringUtils.isNotNull(moniApi)){
+                   run(moniApi);
+                }else{
+                    throw new Exception("The related api job does not exist");
+                }
+
+            }
+        }
     }
 }

@@ -10,7 +10,6 @@ import com.as.common.utils.ExceptionUtil;
 import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
 import com.as.quartz.domain.MoniExport;
-import com.as.quartz.domain.MoniApi;
 import com.as.quartz.domain.MoniJob;
 import com.as.quartz.domain.MoniJobLog;
 import com.as.quartz.service.IMoniExportService;
@@ -123,7 +122,7 @@ public class MoniJobExecution extends AbstractQuartzJob {
                 //关联导出
                 doExport(moniJob.getRelExport());
                 //調用API
-                doApi(moniJob.getRelApi());
+                SpringUtils.getBean(IMoniApiService.class).doApi(moniJob.getRelApi());
             }
         } else {
             moniJobLog.setStatus(Constants.SUCCESS);
@@ -399,27 +398,6 @@ public class MoniJobExecution extends AbstractQuartzJob {
                     moniExportService.run(moniExport);
                 } else {
                     throw new Exception("The related export job does not exist");
-                }
-
-            }
-        }
-    }
-
-    /**
-     * 調用Api
-     *
-     * @param relApi
-     */
-    private void doApi(String relApi) throws Exception {
-        if (StringUtils.isNotEmpty(relApi)) {
-            IMoniApiService moniApiService = SpringUtils.getBean(IMoniApiService.class);
-            String[] ids = relApi.split(",");
-            for (String id : ids) {
-                MoniApi moniApi = moniApiService.selectMoniApiById(Long.parseLong(id));
-                if(StringUtils.isNotNull(moniApi)){
-                    moniApiService.run(moniApi);
-                }else{
-                    throw new Exception("The related api job does not exist");
                 }
 
             }
