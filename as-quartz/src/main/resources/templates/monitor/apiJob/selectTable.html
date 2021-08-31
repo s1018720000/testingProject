@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('自动API检测任务列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse" style="display: none;">
+            <form autocomplete="off" id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label th:title="#{common.support.batch}"><i class="fa fa-question-circle-o"></i> [[#{sql.job.id}]]：</label>
+                            <input type="text" name="params[ids]"/>
+                        </li>
+                        <li>
+                            <label>ASID：</label>
+                            <input type="text" name="asid"/>
+                        </li>
+                        <li>
+                            <label>[[#{sql.job.name}]]：</label>
+                            <input type="text" name="chName"/>
+                        </li>
+                        <li>
+                            <label>[[#{sql.job.platform}]]：</label>
+                            <select name="platform" th:with="type=${@dict.getType('ub8_platform_type')}">
+                                <option value="">[[#{user.list.all}]]</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>[[#{common.create.time}]]：</label>
+                            <input type="text" class="time-input" id="startTime" th:placeholder="#{common.start.time}" name="params[beginCreateTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:placeholder="#{common.end.time}" name="params[endCreateTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{common.query}]]</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{common.reset}]]</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+        var platformDatas = [[${@dict.getType('ub8_platform_type')}]];
+        var prefix = ctx + "monitor/apiJob";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                sortName: "createTime",
+                sortOrder: "desc",
+                rememberSelected: true,
+                showToggle: false,
+                showRefresh: false,
+                showColumns: false,
+                columns: [{
+                    field: 'state',
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    sortable: true
+                },
+                {
+                    field: 'asid',
+                    title: 'ASID',
+                    sortable: true
+                },
+                {
+                    field: 'chName',
+                    title: i18n('sql.job.name_zh'),
+                    visible: i18n('locale') !== 'en-US'
+                },
+                {
+                    field: 'enName',
+                    title: i18n('sql.job.name_en'),
+                    visible: i18n('locale') === 'en-US'
+                },
+                {
+                    field: 'platform',
+                    title: i18n('sql.job.platform'),
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(platformDatas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: i18n('common.create.time'),
+                    sortable: true
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /* 添加用户-选择用户-提交(回调形式-父页面调用子页面) */
+        function getSelections() {
+            return $.table.selectFirstColumns();
+        }
+    </script>
+</body>
+</html>
