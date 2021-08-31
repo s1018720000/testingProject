@@ -74,7 +74,7 @@
     <appender name="stash" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}/sys-json.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}sys-json-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/sys-json-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
