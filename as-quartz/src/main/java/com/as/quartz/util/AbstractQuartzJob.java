@@ -31,9 +31,9 @@ public abstract class AbstractQuartzJob implements Job {
     protected String cronExpression;
 
     /**
-     * 平台  用平台做 job group
+     * 平台  monitor job用平台做 job group
      */
-    protected String jobPlatform;
+    protected String jobGroup;
 
     /**
      * 状态
@@ -64,12 +64,12 @@ public abstract class AbstractQuartzJob implements Job {
         this.cronExpression = cronExpression;
     }
 
-    public String getJobPlatform() {
-        return jobPlatform;
+    public String getJobGroup() {
+        return jobGroup;
     }
 
-    public void setJobPlatform(String jobPlatform) {
-        this.jobPlatform = jobPlatform;
+    public void setJobGroup(String jobGroup) {
+        this.jobGroup = jobGroup;
     }
 
     public String getStatus() {

@@ -8,9 +8,9 @@ import com.as.common.utils.StringUtils;
 import com.as.common.utils.spring.SpringUtils;
 import com.as.quartz.domain.MoniExport;
 import com.as.quartz.domain.MoniExportLog;
+import com.as.quartz.service.IJobService;
 import com.as.quartz.service.IMoniExportLogService;
 import com.as.quartz.service.IMoniExportService;
-import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.AbstractQuartzJob;
 import com.as.quartz.util.ExcelUtil;
 import com.as.quartz.util.Mail;
@@ -41,7 +41,7 @@ public class MoniExportExecution extends AbstractQuartzJob {
      */
     private static final String JOB_CODE = "EXPORT-JOB";
 
-    private final MoniExportLog moniExportLog = new MoniExportLog();
+    private MoniExportLog moniExportLog = new MoniExportLog();
 
     private MoniExport moniExport = new MoniExport();
 
@@ -54,7 +54,7 @@ public class MoniExportExecution extends AbstractQuartzJob {
      */
     @Override
     protected void doExecute(JobExecutionContext context, Object job) throws Exception {
-        Map<String, JdbcTemplate> jdbcMap = SpringUtils.getBean(ISysJobService.class).getJdbcMap();
+        Map<String, JdbcTemplate> jdbcMap = SpringUtils.getBean(IJobService.class).getJdbcMap();
         SqlRowSet rowSet = jdbcMap.get(moniExport.getJdbc().trim()).queryForRowSet(moniExport.getScript());
         File file = export(rowSet, moniExport.getTicketNumber());
         moniExportLog.setFileName(file.getName());
@@ -81,7 +81,7 @@ public class MoniExportExecution extends AbstractQuartzJob {
         mail.setSubject("[Export Data] " + moniExport.getMailSubject());
         mail.setContent(moniExport.getMailContent());
         mail.setAttachment(file);
-        SpringUtils.getBean(ISysJobService.class).sendEmail(mail);
+        SpringUtils.getBean(IJobService.class).sendEmail(mail);
 
         moniExportLog.setStatus(Constants.SUCCESS);
         //更新最后导出时间
@@ -195,7 +195,7 @@ public class MoniExportExecution extends AbstractQuartzJob {
         moniExportExecution.setId(String.valueOf(moniExport.getId()));
         moniExportExecution.setCronExpression(moniExport.getCronExpression());
         moniExportExecution.setStatus(moniExport.getStatus());
-        moniExportExecution.setJobPlatform(moniExport.getPlatform());
+        moniExportExecution.setJobGroup(moniExport.getPlatform());
         moniExportExecution.setJobContent(moniExport);
         return moniExportExecution;
     }

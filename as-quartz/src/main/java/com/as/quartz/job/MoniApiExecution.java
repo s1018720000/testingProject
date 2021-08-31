@@ -53,7 +53,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
 
     private static final String JOB_DETAIL_URL = "/monitor/apiJob/detail/";
 
-    private final MoniApiLog moniApiLog = new MoniApiLog();
+    private MoniApiLog moniApiLog = new MoniApiLog();
 
     private MoniApi moniApi = new MoniApi();
 
@@ -282,7 +282,7 @@ public class MoniApiExecution extends AbstractQuartzJob {
         moniApiExecution.setId(String.valueOf(moniApi.getId()));
         moniApiExecution.setCronExpression(moniApi.getCronExpression());
         moniApiExecution.setStatus(moniApi.getStatus());
-        moniApiExecution.setJobPlatform(moniApi.getPlatform());
+        moniApiExecution.setJobGroup(moniApi.getPlatform());
         moniApiExecution.setJobContent(moniApi);
         return moniApiExecution;
     }

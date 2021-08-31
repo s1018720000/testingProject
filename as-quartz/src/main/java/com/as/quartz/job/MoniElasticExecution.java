@@ -58,7 +58,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
 
     private static final String JOB_DETAIL_URL = "/monitor/elasticJob/detail/";
 
-    private final MoniElasticLog moniElasticLog = new MoniElasticLog();
+    private MoniElasticLog moniElasticLog = new MoniElasticLog();
 
     private MoniElastic moniElastic = new MoniElastic();
 
@@ -406,7 +406,7 @@ public class MoniElasticExecution extends AbstractQuartzJob {
         moniElasticExecution.setId(String.valueOf(moniElastic.getId()));
         moniElasticExecution.setCronExpression(moniElastic.getCronExpression());
         moniElasticExecution.setStatus(moniElastic.getStatus());
-        moniElasticExecution.setJobPlatform(moniElastic.getPlatform());
+        moniElasticExecution.setJobContent(moniElastic.getPlatform());
         moniElasticExecution.setJobContent(moniElastic);
         return moniElasticExecution;
     }

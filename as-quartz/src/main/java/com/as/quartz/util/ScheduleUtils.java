@@ -49,7 +49,7 @@ public class ScheduleUtils {
         Class<? extends Job> jobClass = getQuartzJobClass(job);
         // 构建job信息
         String jobCode = job.toString();
-        String jobGroup = job.getJobPlatform();
+        String jobGroup = job.getJobGroup();
         JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(getJobKey(jobCode, jobGroup)).build();
 
         // 表达式调度构建器

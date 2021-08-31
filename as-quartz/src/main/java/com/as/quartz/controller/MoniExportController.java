@@ -7,8 +7,8 @@ import com.as.common.core.page.TableDataInfo;
 import com.as.common.enums.BusinessType;
 import com.as.common.utils.poi.ExcelUtil;
 import com.as.quartz.domain.MoniExport;
+import com.as.quartz.service.IJobService;
 import com.as.quartz.service.IMoniExportService;
-import com.as.quartz.service.ISysJobService;
 import com.as.quartz.util.CronUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
@@ -35,7 +35,7 @@ public class MoniExportController extends BaseController {
     private IMoniExportService moniExportService;
 
     @Autowired
-    private ISysJobService sysJobService;
+    private IJobService sysJobService;
 
     @RequiresPermissions("monitor:exportJob:view")
     @GetMapping()

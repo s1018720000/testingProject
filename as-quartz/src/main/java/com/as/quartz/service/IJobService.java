@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author kolin
  */
-public interface ISysJobService {
+public interface IJobService {
 
     /**
      * 校验cron表达式是否有效
@@ -23,7 +23,7 @@ public interface ISysJobService {
     public boolean checkCronExpressionIsValid(String cronExpression);
 
     /**
-     * 校验cron表达式是否有效
+     * 校验SQL是否有效
      *
      * @param script sql
      * @param jdbc   数据源

@@ -14,7 +14,7 @@ import com.as.quartz.mapper.MoniApiMapper;
 import com.as.quartz.mapper.MoniElasticMapper;
 import com.as.quartz.mapper.MoniExportMapper;
 import com.as.quartz.mapper.MoniJobMapper;
-import com.as.quartz.service.ISysJobService;
+import com.as.quartz.service.IJobService;
 import com.as.quartz.util.CronUtils;
 import com.as.quartz.util.Mail;
 import com.as.quartz.util.ScheduleUtils;
@@ -47,7 +47,7 @@ import java.util.Map;
  */
 @Service
 @DependsOn("flywayConfig")
-public class SysJobServiceImpl implements ISysJobService {
+public class JobServiceImpl implements IJobService {
     @Autowired
     private Scheduler scheduler;
 
