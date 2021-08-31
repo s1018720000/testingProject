@@ -184,6 +184,12 @@ public class MoniElastic extends BaseEntity {
     @Excel(name = "导出字段")
     private String exportField;
 
+    /**
+     * 調用API
+     */
+    @Excel(name = "調用API")
+    private String relApi;
+
     public Date getNextValidTime() {
         if (StringUtils.isNotEmpty(cronExpression)) {
             return CronUtils.getNextExecution(cronExpression);
@@ -222,6 +228,7 @@ public class MoniElastic extends BaseEntity {
                 .append("lastAlert", getLastAlert())
                 .append("ignoreAlert", getIgnoreAlert())
                 .append("exportField", getExportField())
+                .append("relApi", getRelApi())
                 .toString();
     }
 }
