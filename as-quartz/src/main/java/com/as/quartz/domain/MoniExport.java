@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
- * 自动报表任务对象 moni_export
+ * 自动报表任务对象 MONI_EXPORT
  *
  * @author kolin
  * @date 2021-07-23

@@ -31,8 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectMoniElasticLogVo">
         select MEL.ID, MEL.ELASTIC_ID, MEL.START_TIME, MEL.END_TIME, MEL.EXPECTED_RESULT, MEL.EXECUTE_RESULT, MEL.EXCEPTION_LOG, MEL.EXECUTE_TIME, MEL.STATUS, MEL.ALERT_STATUS, MEL.OPERATOR, MEL.EXPORT_RESULT,
         ME.EN_NAME, ME.CH_NAME, ME.PLATFORM, ME.PRIORITY, ME.ASID
-        from moni_elastic_log MEL
-        left join moni_elastic ME on MEL.ELASTIC_ID = ME.ID
+        from MONI_ELASTIC_log MEL
+        left join MONI_ELASTIC ME on MEL.ELASTIC_ID = ME.ID
     </sql>
 
     <select id="selectMoniElasticLogList" parameterType="MoniElasticLog" resultMap="MoniElasticLogResult">
@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <update id="cleanElasticJobLog">
-            truncate table moni_elastic_log
+            truncate table MONI_ELASTIC_log
     </update>
 
     <select id="selectMoniElasticLogListNoSuccess" resultMap="MoniElasticLogResult">
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
         
     <insert id="insertMoniElasticLog" parameterType="MoniElasticLog" useGeneratedKeys="true" keyProperty="id">
-        insert into moni_elastic_log
+        insert into MONI_ELASTIC_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="elasticId != null">ELASTIC_ID,</if>
             <if test="startTime != null">START_TIME,</if>
@@ -97,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateMoniElasticLog" parameterType="MoniElasticLog">
-        update moni_elastic_log
+        update MONI_ELASTIC_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="elasticId != null">ELASTIC_ID = #{elasticId},</if>
             <if test="startTime != null">START_TIME = #{startTime},</if>
@@ -115,18 +115,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteMoniElasticLogById" parameterType="Long">
-        delete from moni_elastic_log where ID = #{id}
+        delete from MONI_ELASTIC_log where ID = #{id}
     </delete>
 
     <delete id="deleteMoniElasticLogByIds" parameterType="String">
-        delete from moni_elastic_log where ID in 
+        delete from MONI_ELASTIC_log where ID in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <update id="callbackElasticLog" parameterType="MoniElasticLog">
-        update moni_elastic_log
+        update MONI_ELASTIC_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="alertStatus != null">ALERT_STATUS = #{alertStatus},</if>
             <if test="operator != null">OPERATOR = #{operator},</if>

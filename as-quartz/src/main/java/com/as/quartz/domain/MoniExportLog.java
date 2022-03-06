@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * 自动报表任务LOG对象 moni_export_log
+ * 自动报表任务LOG对象 MONI_EXPORT_log
  *
  * @author kolin
  * @date 2021-07-23

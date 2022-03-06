@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * ElasticSearch任务LOG对象 moni_elastic_log
+ * ElasticSearch任务LOG对象 MONI_ELASTIC_log
  *
  * @author kolin
  * @date 2021-07-28

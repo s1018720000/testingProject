@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * SQL检测任務LOG对象 moni_job_log
+ * SQL检测任務LOG对象 MONI_JOB_log
  *
  * @author kolin
  * @date 2021-07-16

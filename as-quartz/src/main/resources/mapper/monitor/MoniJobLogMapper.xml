@@ -31,8 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectMoniJobLogVo">
         select MJL.ID, MJL.JOB_ID, MJL.START_TIME, MJL.END_TIME, MJL.EXECUTE_RESULT, MJL.EXPECTED_RESULT, MJL.EXCEPTION_LOG, MJL.EXECUTE_TIME, MJL.STATUS, MJL.ALERT_STATUS, MJL.OPERATOR,
         MJ.EN_NAME, MJ.CH_NAME, MJ.DESCR, MJ.PLATFORM, MJ.PRIORITY, MJ.ASID
-        from moni_job_log MJL
-        left join moni_job MJ on MJL.JOB_ID = MJ.ID
+        from MONI_JOB_log MJL
+        left join MONI_JOB MJ on MJL.JOB_ID = MJ.ID
     </sql>
 
     <select id="selectMoniJobLogList" parameterType="MoniJobLog" resultMap="MoniJobLogResult">
@@ -77,11 +77,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
      	<update id="cleanSqlJobLog">
-            truncate table moni_job_log
+            truncate table MONI_JOB_log
         </update>
         
     <insert id="insertMoniJobLog" parameterType="MoniJobLog" useGeneratedKeys="true" keyProperty="id">
-        insert into moni_job_log
+        insert into MONI_JOB_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="jobId != null">JOB_ID,</if>
             <if test="startTime != null">START_TIME,</if>
@@ -109,7 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateMoniJobLog" parameterType="MoniJobLog">
-        update moni_job_log
+        update MONI_JOB_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="startTime != null">START_TIME = #{startTime},</if>
             <if test="endTime != null">END_TIME = #{endTime},</if>
@@ -125,7 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="callbackMoniJobLog" parameterType="MoniJobLog">
-        update moni_job_log
+        update MONI_JOB_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="alertStatus != null">ALERT_STATUS = #{alertStatus},</if>
             <if test="operator != null">OPERATOR = #{operator},</if>
@@ -134,11 +134,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteMoniJobLogById" parameterType="Long">
-        delete from moni_job_log where ID = #{id}
+        delete from MONI_JOB_log where ID = #{id}
     </delete>
 
     <delete id="deleteMoniJobLogByIds" parameterType="String">
-        delete from moni_job_log where ID in 
+        delete from MONI_JOB_log where ID in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

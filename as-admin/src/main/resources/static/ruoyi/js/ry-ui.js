@@ -1066,11 +1066,7 @@ var table = {
             	    $.operate.submit(url, "post", "json", "");
             	});
             },
-            // 添加信息
-            add: function(id) {
-            	table.set();
-            	$.modal.open(i18n('home.add') + ' ' + table.options.modalName, $.operate.addUrl(id));
-            },
+            
             // 添加信息，以tab页展现
             addTab: function (id) {
             	table.set();

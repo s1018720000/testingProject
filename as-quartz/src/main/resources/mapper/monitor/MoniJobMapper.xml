@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMoniJobVo">
-        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT, IGNORE_ALERT, REL_API from moni_job
+        select ID, EN_NAME, CH_NAME, DESCR, STATUS, JDBC, PLATFORM, CRON_EXPRESSION, SCRIPT, AUTO_MATCH, EXPECTED_RESULT, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME, REL_EXPORT, TELEGRAM_ALERT, TELEGRAM_INFO, TELEGRAM_CONFIG, ASID, REQUESTER, TICKET_NUMBER, PRIORITY, ACTION_ITEM, LAST_ALERT, IGNORE_ALERT, REL_API from MONI_JOB
     </sql>
 
     <select id="selectMoniJobList" parameterType="MoniJob" resultMap="MoniJobResult">
@@ -69,7 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="insertMoniJob" parameterType="MoniJob" useGeneratedKeys="true" keyProperty="id">
-        insert into moni_job
+        insert into MONI_JOB
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="enName != null and enName != ''">EN_NAME,</if>
             <if test="chName != null and chName != ''">CH_NAME,</if>
@@ -129,7 +129,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateMoniJob" parameterType="MoniJob">
-        update moni_job
+        update MONI_JOB
         <trim prefix="SET" suffixOverrides=",">
             <if test="enName != null and enName != ''">EN_NAME = #{enName},</if>
             <if test="chName != null and chName != ''">CH_NAME = #{chName},</if>
@@ -162,7 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="updateMoniJobLastAlertTime" parameterType="MoniJob">
-        update moni_job
+        update MONI_JOB
         <trim prefix="SET" suffixOverrides=",">
             <if test="lastAlert != null">LAST_ALERT = #{lastAlert},</if>
         </trim>
@@ -170,11 +170,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteMoniJobById" parameterType="Long">
-        delete from moni_job where ID = #{id}
+        delete from MONI_JOB where ID = #{id}
     </delete>
 
     <delete id="deleteMoniJobByIds" parameterType="String">
-        delete from moni_job where ID in
+        delete from MONI_JOB where ID in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

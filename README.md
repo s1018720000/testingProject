@@ -13,7 +13,7 @@ Open gradle file as a project
 ### Centos install flyway  
 1.wget -qO- https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/6.2.2/flyway-commandline-6.2.2-linux-x64.tar.gz | tar xvz && sudo ln -s `pwd`/flyway-6.2.2/flyway /usr/local/bin
 
-### Window install guide  
+### Window install guide  22222
 ====== mysql db ============================  
 install mysql >= 5.7 (5.7.34.0)  
 tips：mysql 5.6 does not support flyway, must install version 5.7 and above  

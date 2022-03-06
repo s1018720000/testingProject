@@ -30,8 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectMoniApiLogVo">
         select MAL.ID, MAL.API_ID, MAL.START_TIME, MAL.END_TIME, MAL.EXPECTED_CODE, MAL.EXECUTE_RESULT, MAL.EXCEPTION_LOG, MAL.EXECUTE_TIME, MAL.STATUS, MAL.ALERT_STATUS, MAL.OPERATOR,
         MA.EN_NAME, MA.CH_NAME, MA.PLATFORM, MA.PRIORITY,MA.ASID
-        from moni_api_log MAL
-        left join moni_api MA on MAL.API_ID = MA.ID
+        from MONI_API_log MAL
+        left join MONI_API MA on MAL.API_ID = MA.ID
     </sql>
 
     <select id="selectMoniApiLogList" parameterType="MoniApiLog" resultMap="MoniApiLogResult">
@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <update id="cleanApiJobLog">
-            truncate table moni_api_log
+            truncate table MONI_API_log
     </update>
 
     <select id="selectMoniApiLogListNoSuccess" resultMap="MoniApiLogResult">
@@ -66,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
         
     <insert id="insertMoniApiLog" parameterType="MoniApiLog" useGeneratedKeys="true" keyProperty="id">
-        insert into moni_api_log
+        insert into MONI_API_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="apiId != null">API_ID,</if>
             <if test="startTime != null">START_TIME,</if>
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateMoniApiLog" parameterType="MoniApiLog">
-        update moni_api_log
+        update MONI_API_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="apiId != null">API_ID = #{apiId},</if>
             <if test="startTime != null">START_TIME = #{startTime},</if>
@@ -111,18 +111,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteMoniApiLogById" parameterType="Long">
-        delete from moni_api_log where ID = #{id}
+        delete from MONI_API_log where ID = #{id}
     </delete>
 
     <delete id="deleteMoniApiLogByIds" parameterType="String">
-        delete from moni_api_log where ID in 
+        delete from MONI_API_log where ID in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <update id="callbackMoniApiLog" parameterType="MoniApiLog">
-        update moni_api_log
+        update MONI_API_log
         <trim prefix="SET" suffixOverrides=",">
             <if test="alertStatus != null">ALERT_STATUS = #{alertStatus},</if>
             <if test="operator != null">OPERATOR = #{operator},</if>

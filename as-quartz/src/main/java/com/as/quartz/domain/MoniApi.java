@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
- * 自动API检测任务对象 moni_api
+ * 自动API检测任务对象 MONI_API
  *
  * @author kolin
  * @date 2021-07-26

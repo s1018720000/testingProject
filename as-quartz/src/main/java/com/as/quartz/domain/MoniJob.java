@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
- * SQL检测任务对象 moni_job
+ * SQL检测任务对象 MONI_JOB
  *
  * @author kolin
  * @date 2021-07-14
